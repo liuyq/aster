@@ -10,8 +10,11 @@ import org.zeroxlab.owl.PlainTemplateMatcher;
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
+import com.android.chimpchat.core.ChimpImageBase;
 import com.android.chimpchat.core.TouchPressType;
 import com.android.chimpchat.hierarchyviewer.HierarchyViewer;
+
+import java.io.FileNotFoundException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -23,16 +26,16 @@ public class WookieeAPI {
     private PlainTemplateMatcher matcher;
     private static ChimpChat chimpchat;
 
-    public WookieeAPI(float timeout, String id) {
-        IChimpDevice device = chimpchat.waitForConnection(timeout, id);
-        chimpchat = new WookieeDevice(device);
+    public WookieeAPI(long timeout, String id) {
+        chimpchat = ChimpChat.getInstance();
+        impl = chimpchat.waitForConnection(timeout, id);
         matcher = new PlainTemplateMatcher();
     }
 
     private String getCurrentSnapshot() {
         IChimpImage image = impl.takeSnapshot();
-        MonkeyImage img = new MonkeyImage(image);
-        img.writeToFile("/tmp/owl.png", "png");
+        image.writeToFile("/tmp/owl.png", "png");
+        return "/tmp/owl.png";
     }
 
     public IChimpDevice getImpl() {
@@ -51,7 +54,8 @@ public class WookieeAPI {
         return impl.getProperty(key);
     }
 
-    public void touch(String img, String typstr) {
+    public void touch(String name, String typestr)
+        throws FileNotFoundException {
         MatchResult r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
@@ -59,14 +63,15 @@ public class WookieeAPI {
         impl.touch(r.cx, r.cy, type);
     }
 
-    public void drag(String start_img, String end_img, int steps, double sec) {
+    public void drag(String start_img, String end_img, int steps, double sec)
+        throws FileNotFoundException {
         String current = getCurrentSnapshot();
         MatchResult rs = Finder.dispatch(matcher, current, start_img);
         MatchResult re = Finder.dispatch(matcher, current, end_img);
         impl.drag(rs.cx, rs.cy, re.cx, rs.cy, steps, (long)sec*1000);
     }
 
-    public void press(String name, String type) {
+    public void press(String name, String typestr) {
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
             type = TouchPressType.DOWN_AND_UP;

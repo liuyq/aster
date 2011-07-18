@@ -40,6 +40,8 @@ import org.python.core.PyDictionary;
 import org.python.core.PyObject;
 import org.python.core.PyTuple;
 
+import java.io.FileNotFoundException;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -78,6 +80,12 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     public IChimpDevice getImpl() {
         return impl;
+    }
+
+    private String getCurrentSnapshot() {
+        IChimpImage image = impl.takeSnapshot();
+        image.writeToFile("/tmp/owl.png", "png");
+        return "/tmp/owl.png";
     }
 
     @MonkeyRunnerExported(doc = "Get the HierarchyViewer object for the device.",
@@ -123,11 +131,12 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             argDocs = { "x coordinate in pixels",
                         "y coordinate in pixels",
                         "touch event type as returned by TouchPressType()"})
-    public void touch(PyObject[] args, String[] kws) {
+    public void touch(PyObject[] args, String[] kws)
+        throws FileNotFoundException{
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        String img_path = ap.getString(0);
+        String name = ap.getString(0);
 
         TouchPressType type = TouchPressType.fromIdentifier(ap.getString(1));
         if (type == null) {
@@ -146,7 +155,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             "The end point for the drag (a tuple (x,y) in pixels",
             "Duration of the drag in seconds (default is 1.0 seconds)",
             "The number of steps to take when interpolating points. (default is 10)"})
-    public void drag(PyObject[] args, String[] kws) {
+    public void drag(PyObject[] args, String[] kws) 
+        throws FileNotFoundException {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
