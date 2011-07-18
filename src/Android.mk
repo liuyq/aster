@@ -16,26 +16,10 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-# Build WookieeRunner
-LOCAL_MODULE := wookieerunner
-LOCAL_MODULE_TAGS := optional
-LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/wookieerunner)
-LOCAL_JAR_MANIFEST := ../etc/wookieerunner/manifest.txt
-LOCAL_JAVA_LIBRARIES := \
-	chimpchat \
-	monkeyrunner \
-	jython \
-	sdklib \
-	ddmlib \
-	guavalib
-#LOCAL_JAVA_RESOURCE_DIRS := resources
-include $(BUILD_HOST_JAVA_LIBRARY)
-include $(CLEAR_VARS)
-
 LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := \
 	javacv:../lib/javacv/javacv.jar \
 	javacpp:../lib/javacv/javacpp.jar \
-	javacv-linux-x86:../lib/javacv/javacv-linux-x86.jar
+	javacv-linux-x86:../lib/javacv/javacv-linux-x86.jar \
 include $(BUILD_MULTI_PREBUILT)
 include $(CLEAR_VARS)
 
@@ -50,3 +34,20 @@ LOCAL_STATIC_JAVA_LIBRARIES := \
 	javacv-linux-x86
 include $(BUILD_HOST_JAVA_LIBRARY)
 include $(CLEAR_VARS)
+
+# Build WookieeRunner
+#LOCAL_MODULE := wookieerunner
+#LOCAL_MODULE_TAGS := optional
+#LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/wookieerunner)
+#LOCAL_JAR_MANIFEST := ../etc/wookieerunner/manifest.txt
+#LOCAL_STATIC_JAVA_LIBRARIES := owl
+#LOCAL_JAVA_LIBRARIES := \
+#	chimpchat \
+#	monkeyrunner \
+#	jython \
+#	sdklib \
+#	ddmlib \
+#	guavalib
+##LOCAL_JAVA_RESOURCE_DIRS := resources
+#include $(BUILD_HOST_JAVA_LIBRARY)
+#include $(CLEAR_VARS)

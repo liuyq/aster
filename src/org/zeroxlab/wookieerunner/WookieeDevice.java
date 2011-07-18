@@ -15,6 +15,10 @@
  */
 package org.zeroxlab.wookieerunner;
 
+import org.zeroxlab.owl.Finder;
+import org.zeroxlab.owl.MatchResult;
+import org.zeroxlab.owl.PlainTemplateMatcher;
+
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -50,6 +54,7 @@ import java.util.logging.Logger;
 @MonkeyRunnerExported(doc = "Represents a device attached to the system.")
 public class WookieeDevice extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeDevice.class.getName());
+    private PlainTemplateMatcher matcher;
 
     public static void classDictInit(PyObject dict) {
         JythonUtils.convertDocAnnotationsForClass(WookieeDevice.class, dict);
@@ -68,6 +73,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     public WookieeDevice(IChimpDevice impl) {
         this.impl = impl;
+        matcher = new PlainTemplateMatcher();
     }
 
     public IChimpDevice getImpl() {
@@ -121,17 +127,17 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        int x = ap.getInt(0);
-        int y = ap.getInt(1);
+        String img_path = ap.getString(0);
 
-        TouchPressType type = TouchPressType.fromIdentifier(ap.getString(2));
+        TouchPressType type = TouchPressType.fromIdentifier(ap.getString(1));
         if (type == null) {
             LOG.warning(String.format("Invalid TouchPressType specified (%s) default used instead",
-                    ap.getString(2)));
+                    ap.getString(1)));
             type = TouchPressType.DOWN_AND_UP;
         }
 
-        impl.touch(x, y, type);
+        MatchResult r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
+        impl.touch(r.cx, r.cy, type);
     }
 
     @MonkeyRunnerExported(doc = "Simulates dragging (touch, hold, and move) on the device screen.",
@@ -144,29 +150,19 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        PyObject startObject = ap.getPyObject(0);
-        if (!(startObject instanceof PyTuple)) {
-            throw Py.TypeError("Agrument 0 is not a tuple");
-        }
-        PyObject endObject = ap.getPyObject(1);
-        if (!(endObject instanceof PyTuple)) {
-            throw Py.TypeError("Agrument 1 is not a tuple");
-        }
-
-        PyTuple start = (PyTuple) startObject;
-        PyTuple end = (PyTuple) endObject;
-
-        int startx = (Integer) start.__getitem__(0).__tojava__(Integer.class);
-        int starty = (Integer) start.__getitem__(1).__tojava__(Integer.class);
-        int endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
-        int endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
+        String start_img = ap.getString(0);
+        String end_img = ap.getString(1);
 
         double seconds = JythonUtils.getFloat(ap, 2, 1.0);
         long ms = (long) (seconds * 1000.0);
 
         int steps = ap.getInt(3, 10);
 
-        impl.drag(startx, starty, endx, endy, steps, ms);
+        String current = getCurrentSnapshot();
+        MatchResult rs = Finder.dispatch(matcher, current, start_img);
+        MatchResult re = Finder.dispatch(matcher, current, end_img);
+
+        impl.drag(rs.cx, rs.cy, re.cx, re.cy, steps, ms);
     }
 
     @MonkeyRunnerExported(doc = "Send a key event to the specified key",
