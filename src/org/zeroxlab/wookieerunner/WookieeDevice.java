@@ -37,7 +37,9 @@ import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
+import org.python.core.PyInteger;
 import org.python.core.PyObject;
+import org.python.core.PyString;
 import org.python.core.PyTuple;
 
 import java.io.FileNotFoundException;
@@ -127,26 +129,43 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
     }
 
     @MonkeyRunnerExported(doc = "Sends a touch event at the specified location",
-            args = { "x", "y", "type" },
-            argDocs = { "x coordinate in pixels",
-                        "y coordinate in pixels",
+            args = { "name", "type" },
+            argDocs = { "name name of the image",
                         "touch event type as returned by TouchPressType()"})
     public void touch(PyObject[] args, String[] kws)
         throws FileNotFoundException{
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        String name = ap.getString(0);
+        int targetx, targety;
+        int pos = 0;
+        PyObject arg1 = new PyObject();
+        PyObject arg2 = new PyObject();
+        PyObject arg3 = new PyObject();
 
-        TouchPressType type = TouchPressType.fromIdentifier(ap.getString(1));
+        arg1 = ap.getPyObject(pos++);
+        if (arg1 instanceof PyInteger) {
+            arg2 = ap.getPyObject(pos++);
+        }
+
+        TouchPressType type = TouchPressType.fromIdentifier(ap.getString(pos));
         if (type == null) {
             LOG.warning(String.format("Invalid TouchPressType specified (%s) default used instead",
-                    ap.getString(1)));
+                    ap.getString(pos)));
             type = TouchPressType.DOWN_AND_UP;
         }
 
-        MatchResult r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
-        impl.touch(r.cx, r.cy, type);
+        if (pos == 2) {
+            targetx = ((PyInteger) arg1).asInt();
+            targety = ((PyInteger) arg2).asInt();
+        } else {
+            String target = ((PyString) arg1).asString();
+            String current = getCurrentSnapshot();
+            MatchResult r = Finder.dispatch(matcher, current, target);
+            targetx = r.cx;
+            targety = r.cy;
+        }
+        impl.touch(targetx, targety, type);
     }
 
     @MonkeyRunnerExported(doc = "Simulates dragging (touch, hold, and move) on the device screen.",
@@ -160,19 +179,36 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        String start_img = ap.getString(0);
-        String end_img = ap.getString(1);
+        PyObject startObject = ap.getPyObject(0);
+        PyObject endObject = ap.getPyObject(1);
+
+        int startx, starty, endx, endy;
+
+        if (startObject instanceof PyTuple) {
+            PyTuple start = (PyTuple) startObject;
+            PyTuple end = (PyTuple) endObject;
+
+            startx = (Integer) start.__getitem__(0).__tojava__(Integer.class);
+            starty = (Integer) start.__getitem__(1).__tojava__(Integer.class);
+            endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
+            endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
+        } else {
+            String current = getCurrentSnapshot();
+            String start = ((PyString) startObject).asString();
+            String end = ((PyString) endObject).asString();
+            MatchResult rs = Finder.dispatch(matcher, current, start);
+            MatchResult re = Finder.dispatch(matcher, current, end);
+            startx = rs.cx;
+            starty = rs.cy;
+            endx = re.cx;
+            endy = re.cy;
+        }
 
         double seconds = JythonUtils.getFloat(ap, 2, 1.0);
         long ms = (long) (seconds * 1000.0);
-
         int steps = ap.getInt(3, 10);
 
-        String current = getCurrentSnapshot();
-        MatchResult rs = Finder.dispatch(matcher, current, start_img);
-        MatchResult re = Finder.dispatch(matcher, current, end_img);
-
-        impl.drag(rs.cx, rs.cy, re.cx, re.cy, steps, ms);
+        impl.drag(startx, starty, endx, endy, steps, ms);
     }
 
     @MonkeyRunnerExported(doc = "Send a key event to the specified key",

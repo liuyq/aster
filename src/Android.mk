@@ -23,15 +23,19 @@ include $(CLEAR_VARS)
 #include $(BUILD_MULTI_PREBUILT)
 #include $(CLEAR_VARS)
 
+# Build JavaCV
+LOCAL_MODULE := javacv
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := $(call all-java-files-under, com)
+LOCAL_C_INCLUDES := $(JNI_H_INCLUDE)
+include $(BUILD_HOST_JAVA_LIBRARY)
+include $(CLEAR_VARS)
+
 # Build Owl
 LOCAL_MODULE := owl
 LOCAL_MODULE_TAGS := optional
-LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/owl) $(call all-java-files-under, com)
+LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/owl)
 LOCAL_JAR_MANIFEST := ../etc/owl/manifest.txt
-#LOCAL_STATIC_JAVA_LIBRARIES := \
-#	javacv \
-#	javacpp \
-#	javacv-linux-x86
 include $(BUILD_HOST_JAVA_LIBRARY)
 include $(CLEAR_VARS)
 
