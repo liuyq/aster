@@ -59,6 +59,7 @@
         </java>
     </target>
     <target name="-pre-jar">
+    <!--
         <delete>
             <fileset dir="${build.classes.dir}/com/googlecode/javacv/cpp/" includes="*.h"/>
         </delete>
@@ -69,6 +70,7 @@
         <delete dir="${build.classes.dir}/com/googlecode/javacv/cpp/macosx-x86_64/"/>
         <delete dir="${build.classes.dir}/com/googlecode/javacv/cpp/windows-x86/"/>
         <delete dir="${build.classes.dir}/com/googlecode/javacv/cpp/windows-x86_64/"/>
+    -->
     </target>
     <target name="-post-jar">
         <delete file="${dist.dir}/README.TXT"/>
