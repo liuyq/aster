@@ -34,7 +34,8 @@ include $(CLEAR_VARS)
 # Build Owl
 LOCAL_MODULE := owl
 LOCAL_MODULE_TAGS := optional
-LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/owl)
+LOCAL_SRC_FILES := $(call all-java-files-under, org/zeroxlab/owl) $(call all-java-files-under, com)
+LOCAL_C_INCLUDES := $(JNI_H_INCLUDE)
 LOCAL_JAR_MANIFEST := ../etc/owl/manifest.txt
 include $(BUILD_HOST_JAVA_LIBRARY)
 include $(CLEAR_VARS)

@@ -12,8 +12,6 @@ public class MatchResult {
     public int y;
     public int w;
     public int h;
-    public int cx;
-    public int cy;
     public double maxval;
 
     public MatchResult() {}
@@ -23,13 +21,19 @@ public class MatchResult {
         this.y = y;
         this.w = w;
         this.h = h;
-        this.cx = x + w / 2;
-        this.cy = y + h / 2;
         this.maxval = val;
+    }
+
+    public int cx() {
+        return x + w / 2;
+    }
+
+    public int cy() {
+        return y + h / 2;
     }
 
     @Override
     public String toString() {
-        return cvRect(x, y, w, h).toString() + ": " + maxval;
+        return String.format("%s: %f", cvRect(x, y, w, h).toString(), maxval);
     }
 }
