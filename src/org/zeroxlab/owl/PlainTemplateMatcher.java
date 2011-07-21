@@ -27,6 +27,11 @@ public class PlainTemplateMatcher implements IMatcher {
         CvPoint max_pos = new CvPoint();
         cvMinMaxLoc(result, min, max, min_pos, max_pos, null);
 
+        if (1.0 - min[0] < min_similarity) {
+            System.out.printf("Failed: %f\n", 1.0 - min[0]);
+            throw new TemplateNotFoundException();
+        }
+
         return new MatchResult(min_pos.x(), min_pos.y(),
                                needle.width(), needle.height(), 1.0 - min[0]);
     }

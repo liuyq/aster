@@ -22,6 +22,10 @@ public class Finder {
             throw new FileNotFoundException("can't open `" + haystack +"'");
         else if (tmpl == null)
             throw new FileNotFoundException("can't open `" + needle +"'");
-        return matcher.find(img, tmpl);
+        long start = System.nanoTime();
+        MatchResult result = matcher.find(img, tmpl);
+        System.out.println(result);
+        System.out.printf("%f\n", (System.nanoTime() - start) / 1000000.0);
+        return result;
     }
 };

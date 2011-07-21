@@ -31,7 +31,6 @@ public class PyramidTemplateMatcher implements IMatcher {
     private double factor;
     private int levels;
     private final int target_min_side = 5;
-    private final double min_similarity = 0.90;
 
     public PyramidTemplateMatcher() {
         this.factor = 2.0;
@@ -59,11 +58,15 @@ public class PyramidTemplateMatcher implements IMatcher {
          * levels equals zero and we still can't find the image, an exception
          * is thrown.  */
         while (true) {
-            result = findImpl();
-            if (result.maxval > min_similarity)
-                break;
-            else if (--levels == 0)
-                throw new TemplateNotFoundException();
+            System.out.println("levels: " + levels);
+            try {
+                result = findImpl();
+            } catch (TemplateNotFoundException e) {
+                if (--levels == 0)
+                    throw new TemplateNotFoundException();
+                continue;
+            }
+            break;
         }
         layers.clear();
         return result;
@@ -94,10 +97,9 @@ public class PyramidTemplateMatcher implements IMatcher {
         MatchResult match = plainmatcher.find(layer.source, layer.target);
 
         for (int i = levels - 2; i >= 0; --i) {
-            int scale = (int)factor;
-            int div = 50;                  /* Number of divisions */
-            int x = match.x * scale;
-            int y = match.y * scale;
+            int div = 10;                  /* Number of divisions */
+            int x = (int)(match.x * factor);
+            int y = (int)(match.y * factor);
 
             layer = layers.get(i);
             int xchunk = (int)((double)layer.source.width() / div);
