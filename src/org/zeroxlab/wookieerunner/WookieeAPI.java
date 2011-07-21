@@ -56,20 +56,47 @@ public class WookieeAPI {
         return impl.getProperty(key);
     }
 
-    public void touch(String name, String typestr)
+    public void touch(String name, String typestr, double timeout)
         throws FileNotFoundException, TemplateNotFoundException {
-        MatchResult r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
             type = TouchPressType.DOWN_AND_UP;
+
+        long st = System.nanoTime();
+        MatchResult r = new MatchResult();
+        while (true) {
+            try {
+                r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
+            } catch (TemplateNotFoundException e) {
+                if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                    throw e;
+                continue;
+            }
+            break;
+        }
         impl.touch(r.cx(), r.cy(), type);
     }
 
-    public void drag(String start_img, String end_img, int steps, double sec)
+    public void drag(String start_img, String end_img, int steps, double sec,
+                     double timeout)
         throws FileNotFoundException, TemplateNotFoundException {
-        String current = getCurrentSnapshot();
-        MatchResult rs = Finder.dispatch(matcher, current, start_img);
-        MatchResult re = Finder.dispatch(matcher, current, end_img);
+        MatchResult rs = new MatchResult();
+        MatchResult re = new MatchResult();
+        String current;
+        long st = System.nanoTime();
+
+        while (true) {
+            try {
+                current = getCurrentSnapshot();
+                rs = Finder.dispatch(matcher, current, start_img);
+                re = Finder.dispatch(matcher, current, end_img);
+            } catch (TemplateNotFoundException e) {
+                if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                    throw e;
+                continue;
+            }
+            break;
+        }
         impl.drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, (long)sec*1000);
     }
 

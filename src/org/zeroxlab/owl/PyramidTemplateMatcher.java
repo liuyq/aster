@@ -62,8 +62,10 @@ public class PyramidTemplateMatcher implements IMatcher {
             try {
                 result = findImpl();
             } catch (TemplateNotFoundException e) {
-                if (--levels == 0)
+                if (--levels == 0) {
+                    layers.clear();
                     throw new TemplateNotFoundException();
+                }
                 continue;
             }
             break;

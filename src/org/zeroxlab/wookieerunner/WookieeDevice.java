@@ -62,6 +62,7 @@ import java.util.logging.Logger;
 public class WookieeDevice extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeDevice.class.getName());
     private IMatcher matcher;
+    private final double default_timeout = 3;
 
     public static void classDictInit(PyObject dict) {
         JythonUtils.convertDocAnnotationsForClass(WookieeDevice.class, dict);
@@ -163,9 +164,20 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             targetx = ((PyInteger) arg1).asInt();
             targety = ((PyInteger) arg2).asInt();
         } else {
+            long st = System.nanoTime();
+            double timeout = JythonUtils.getFloat(ap, 2, default_timeout);
             String target = ((PyString) arg1).asString();
-            String current = getCurrentSnapshot();
-            MatchResult r = Finder.dispatch(matcher, current, target);
+            MatchResult r = new MatchResult();
+            while (true) {
+                try {
+                    r = Finder.dispatch(matcher, getCurrentSnapshot(), target);
+                } catch (TemplateNotFoundException e) {
+                    if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                        throw e;
+                    continue;
+                }
+                break;
+            }
             targetx = r.cx();
             targety = r.cy();
         }
@@ -197,11 +209,26 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
             endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
         } else {
-            String current = getCurrentSnapshot();
             String start = ((PyString) startObject).asString();
             String end = ((PyString) endObject).asString();
-            MatchResult rs = Finder.dispatch(matcher, current, start);
-            MatchResult re = Finder.dispatch(matcher, current, end);
+            long st = System.nanoTime();
+            double timeout = JythonUtils.getFloat(ap, 4, default_timeout);
+            MatchResult rs = new MatchResult();
+            MatchResult re = new MatchResult();
+            String current;
+
+            while (true) {
+                try {
+                    current = getCurrentSnapshot();
+                    rs = Finder.dispatch(matcher, current, start);
+                    re = Finder.dispatch(matcher, current, end);
+                } catch (TemplateNotFoundException e) {
+                    if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                        throw e;
+                    continue;
+                }
+                break;
+            }
             startx = rs.cx();
             starty = rs.cy();
             endx = re.cx();
