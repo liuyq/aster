@@ -4,8 +4,10 @@
 package org.zeroxlab.wookieerunner;
 
 import org.zeroxlab.owl.Finder;
+import org.zeroxlab.owl.IMatcher;
 import org.zeroxlab.owl.MatchResult;
-import org.zeroxlab.owl.PlainTemplateMatcher;
+import org.zeroxlab.owl.PyramidTemplateMatcher;
+import org.zeroxlab.owl.TemplateNotFoundException;
 
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
@@ -23,13 +25,13 @@ import java.util.Map;
 
 public class WookieeAPI {
     private IChimpDevice impl;
-    private PlainTemplateMatcher matcher;
+    private IMatcher matcher;
     private static ChimpChat chimpchat;
 
     public WookieeAPI(long timeout, String id) {
         chimpchat = ChimpChat.getInstance();
         impl = chimpchat.waitForConnection(timeout, id);
-        matcher = new PlainTemplateMatcher();
+        matcher = new PyramidTemplateMatcher();
     }
 
     private String getCurrentSnapshot() {
@@ -55,20 +57,20 @@ public class WookieeAPI {
     }
 
     public void touch(String name, String typestr)
-        throws FileNotFoundException {
+        throws FileNotFoundException, TemplateNotFoundException {
         MatchResult r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
             type = TouchPressType.DOWN_AND_UP;
-        impl.touch(r.cx, r.cy, type);
+        impl.touch(r.cx(), r.cy(), type);
     }
 
     public void drag(String start_img, String end_img, int steps, double sec)
-        throws FileNotFoundException {
+        throws FileNotFoundException, TemplateNotFoundException {
         String current = getCurrentSnapshot();
         MatchResult rs = Finder.dispatch(matcher, current, start_img);
         MatchResult re = Finder.dispatch(matcher, current, end_img);
-        impl.drag(rs.cx, rs.cy, re.cx, rs.cy, steps, (long)sec*1000);
+        impl.drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, (long)sec*1000);
     }
 
     public void press(String name, String typestr) {

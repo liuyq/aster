@@ -9,8 +9,8 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
-import java.util.ArrayList;
 import java.lang.Math;
+import java.util.ArrayList;
 
 class PyramidTemplateMatcherLayer {
     public IplImage source;
@@ -26,31 +26,54 @@ class PyramidTemplateMatcherLayer {
  * A coarse-to-find pyramid template matcher
  */
 public class PyramidTemplateMatcher implements IMatcher {
-    private ArrayList<MatchResult> results;
     private ArrayList<PyramidTemplateMatcherLayer> layers;
     private PlainTemplateMatcher plainmatcher;
     private double factor;
     private int levels;
+    private final int target_min_side = 5;
+    private final double min_similarity = 0.90;
 
-    public PyramidTemplateMatcher(double scale, int levels) {
+    public PyramidTemplateMatcher() {
         this.factor = 2.0;
-        this.levels = levels;
         this.plainmatcher = new PlainTemplateMatcher();
-        this.results = new ArrayList<MatchResult>();
         this.layers = new ArrayList<PyramidTemplateMatcherLayer>();
     }
 
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle) {
+    public MatchResult find(IplImage haystack, IplImage needle)
+        throws TemplateNotFoundException {
+        MatchResult result;
+        int side = Math.min(needle.width(), needle.height());
+
+        /* Calculate number of base levels */
+        levels = 0;
+        while (side > target_min_side) {
+            side /= factor;
+            ++levels;
+        }
         initPyramid(haystack, needle);
-        return findImpl();
+
+        /* Since too many levels may leads to false match, we set a min value
+         * of similarity. If the result similarity is smaller than the value
+         * we defined, we restart the matching with one level less. If the
+         * levels equals zero and we still can't find the image, an exception
+         * is thrown.  */
+        while (true) {
+            result = findImpl();
+            if (result.maxval > min_similarity)
+                break;
+            else if (--levels == 0)
+                throw new TemplateNotFoundException();
+        }
+        layers.clear();
+        return result;
     }
 
     private void initPyramid(IplImage source, IplImage target) {
         layers.add(new PyramidTemplateMatcherLayer(source, target));
         PyramidTemplateMatcherLayer last = layers.get(0);
 
-        for (int i = 0; i < levels; ++i) {
+        for (int i = 0; i < levels -1; ++i) {
             last = layers.get(i);
             IplImage src = IplImage.create(last.source.width() / 2,
                                            last.source.height() / 2,
@@ -62,41 +85,41 @@ public class PyramidTemplateMatcher implements IMatcher {
             cvPyrDown(last.source, src, CV_GAUSSIAN_5x5);
             cvPyrDown(last.target, tgt, CV_GAUSSIAN_5x5);
 
-            System.out.println(cvGetSize(last.target));
             layers.add(new PyramidTemplateMatcherLayer(src, tgt));
         }
     }
 
-    private MatchResult findImpl() {
+    private MatchResult findImpl() throws TemplateNotFoundException {
         PyramidTemplateMatcherLayer layer = layers.get(levels - 1);
         MatchResult match = plainmatcher.find(layer.source, layer.target);
 
         for (int i = levels - 2; i >= 0; --i) {
             int scale = (int)factor;
+            int div = 50;                  /* Number of divisions */
             int x = match.x * scale;
             int y = match.y * scale;
 
             layer = layers.get(i);
-            int x0 = Math.max(x - scale * 3, 0);
-            int y0 = Math.max(y - scale * 3, 0);
-            int x1 = Math.min(x + layer.target.width() + scale * 3,
-                              layer.source.width());
-            int y1 = Math.min(y + layer.target.height() + scale * 3,
-                              layer.source.height());
+            int xchunk = (int)((double)layer.source.width() / div);
+            int ychunk = (int)((double)layer.source.height() / div);
+            int x0 = x / xchunk * xchunk;
+            int y0 = y / ychunk * ychunk;
+            int x1 = ((x + layer.target.width()) / xchunk + 1) * xchunk;
+            int y1 = ((y + layer.target.height()) / ychunk + 1) * ychunk;
 
             CvRect roi = cvRect(x0, y0, x1 - x0, y1 - y0);
-
             cvSetImageROI(layer.source, roi);
             IplImage n_src = cvCreateImage(cvGetSize(layer.source),
                                            layer.source.depth(),
                                            layer.source.nChannels());
             cvCopy(layer.source, n_src, null);
-            layer.source = n_src;
+            cvResetImageROI(layer.source);
 
-            match = plainmatcher.find(layer.source, layer.target);
+            match = plainmatcher.find(n_src, layer.target);
             match.x += x0;
             match.y += y0;
         }
+
         return match;
     }
 }

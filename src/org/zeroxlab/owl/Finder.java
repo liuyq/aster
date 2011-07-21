@@ -10,12 +10,11 @@ import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
 import java.io.FileNotFoundException;
 
-
 public class Finder {
     public static MatchResult dispatch(IMatcher matcher,
                                        String haystack,
                                        String needle)
-        throws FileNotFoundException {
+        throws FileNotFoundException, TemplateNotFoundException {
         IplImage img = cvLoadImage(haystack);
         IplImage tmpl = cvLoadImage(needle);
 

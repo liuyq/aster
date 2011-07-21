@@ -13,7 +13,8 @@ import static java.lang.Math.abs;
 
 public class PlainTemplateMatcher implements IMatcher {
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle) {
+    public MatchResult find(IplImage haystack, IplImage needle)
+        throws TemplateNotFoundException {
         CvSize rsize = cvSize(abs(haystack.width() - needle.width()) + 1,
                               abs(haystack.height() - needle.height()) + 1);
 

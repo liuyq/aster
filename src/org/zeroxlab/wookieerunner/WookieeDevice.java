@@ -17,7 +17,10 @@ package org.zeroxlab.wookieerunner;
 
 import org.zeroxlab.owl.Finder;
 import org.zeroxlab.owl.MatchResult;
+import org.zeroxlab.owl.IMatcher;
 import org.zeroxlab.owl.PlainTemplateMatcher;
+import org.zeroxlab.owl.PyramidTemplateMatcher;
+import org.zeroxlab.owl.TemplateNotFoundException;
 
 import com.google.common.base.Functions;
 import com.google.common.base.Preconditions;
@@ -58,7 +61,7 @@ import java.util.logging.Logger;
 @MonkeyRunnerExported(doc = "Represents a device attached to the system.")
 public class WookieeDevice extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeDevice.class.getName());
-    private PlainTemplateMatcher matcher;
+    private IMatcher matcher;
 
     public static void classDictInit(PyObject dict) {
         JythonUtils.convertDocAnnotationsForClass(WookieeDevice.class, dict);
@@ -77,7 +80,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     public WookieeDevice(IChimpDevice impl) {
         this.impl = impl;
-        matcher = new PlainTemplateMatcher();
+        //matcher = new PlainTemplateMatcher();
+        matcher = new PyramidTemplateMatcher();
     }
 
     public IChimpDevice getImpl() {
@@ -133,7 +137,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             argDocs = { "name name of the image",
                         "touch event type as returned by TouchPressType()"})
     public void touch(PyObject[] args, String[] kws)
-        throws FileNotFoundException{
+        throws FileNotFoundException, TemplateNotFoundException {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
@@ -162,8 +166,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             String target = ((PyString) arg1).asString();
             String current = getCurrentSnapshot();
             MatchResult r = Finder.dispatch(matcher, current, target);
-            targetx = r.cx;
-            targety = r.cy;
+            targetx = r.cx();
+            targety = r.cy();
         }
         impl.touch(targetx, targety, type);
     }
@@ -174,8 +178,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             "The end point for the drag (a tuple (x,y) in pixels",
             "Duration of the drag in seconds (default is 1.0 seconds)",
             "The number of steps to take when interpolating points. (default is 10)"})
-    public void drag(PyObject[] args, String[] kws) 
-        throws FileNotFoundException {
+    public void drag(PyObject[] args, String[] kws)
+        throws FileNotFoundException, TemplateNotFoundException {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
@@ -198,10 +202,10 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             String end = ((PyString) endObject).asString();
             MatchResult rs = Finder.dispatch(matcher, current, start);
             MatchResult re = Finder.dispatch(matcher, current, end);
-            startx = rs.cx;
-            starty = rs.cy;
-            endx = re.cx;
-            endy = re.cy;
+            startx = rs.cx();
+            starty = rs.cy();
+            endx = re.cx();
+            endy = re.cy();
         }
 
         double seconds = JythonUtils.getFloat(ap, 2, 1.0);

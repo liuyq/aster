@@ -9,5 +9,6 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
 
 public interface IMatcher {
     /* Find needle in a haystack */
-    public MatchResult find(IplImage haystack, IplImage needle);
+    public MatchResult find(IplImage haystack, IplImage needle)
+        throws TemplateNotFoundException;
 }
