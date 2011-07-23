@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="aster" default="jar">
     <!--
-         Initialize Section
+         Initialization
     -->
     <target name="init">
         <property file="build.properties"/>
@@ -14,7 +14,6 @@
     -->
     <target name="javacv" depends="init">
         <subant target="jar">
-            <property name="dist.dir" value="dist"/>
             <fileset dir="external" includes="*/build.xml"/>
         </subant>
         <copy file="external/javacv/dist/javacv.jar" todir="${dist.dir}"/>
@@ -29,7 +28,7 @@
     <!--
          Owl
     -->
-    <target name="-compile-owl">
+    <target name="-compile-owl" depends="init">
         <javac includeantruntime="false"
                srcdir="src/org/zeroxlab/owl"
                destdir="${build.classes.dir}">
@@ -41,14 +40,14 @@
     <target name="-jar-owl" depends="-compile-owl">
         <jar destfile="${dist.dir}/owl.jar"
              basedir="${build.classes.dir}"
-             includes="org/zeroxlab/owl/*.class"
+             includes="org/zeroxlab/owl/**/*.class"
              manifest="etc/owl/manifest.txt"/>
     </target>
 
     <!--
          WookieeRunner
     -->
-    <target name="-compile-wookieerunner" depends="-compile-owl">
+    <target name="-compile-wookieerunner" depends="init">
         <javac includeantruntime="false"
                srcdir="src/org/zeroxlab/wookieerunner"
                destdir="${build.classes.dir}">
@@ -61,18 +60,39 @@
     <target name="-jar-wookieerunner" depends="-compile-wookieerunner">
         <jar destfile="${dist.dir}/wookieerunner.jar"
              basedir="${build.classes.dir}"
-             includes="org/zeroxlab/wookieerunner/*.class"
+             includes="org/zeroxlab/wookieerunner/**/*.class"
              manifest="etc/wookieerunner/manifest.txt"/>
+    </target>
+
+    <!--
+         Aster IDE
+    -->
+    <target name="-compile-aster" depends="init">
+        <javac includeantruntime="false"
+            srcdir="src/org/zeroxlab/aster"
+            destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-aster" depends="-compile-aster">
+        <jar destfile="${dist.dir}/aster.jar"
+             basedir="${build.classes.dir}"
+             includes="org/zeroxlab/aster/**/*.class"
+             manifest="etc/aster/manifest.txt"/>
     </target>
 
     <!--
          Targets
     -->
-    <target name="compile" depends="init,-compile-owl,-compile-wookieerunner"/>
+    <target name="compile"
+            depends="init,-compile-owl,-compile-wookieerunner,-compile-aster"/>
 
-    <target name="jar" depends="init,-jar-owl,-jar-wookieerunner"/>
+    <target name="jar" depends="init,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
+        <copy file="etc/aster/aster" todir="${dist.dir}"/>
     </target>
 
     <target name="clean" depends="init">
