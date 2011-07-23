@@ -33,7 +33,7 @@
                srcdir="src/org/zeroxlab/owl"
                destdir="${build.classes.dir}">
             <classpath>
-                <fileset dir="lib/prebuilt" includes="**/*.jar"/>
+                <fileset dir="${prebuilt.dir}" includes="**/*.jar"/>
             </classpath>
         </javac>
     </target>
@@ -52,7 +52,7 @@
                srcdir="src/org/zeroxlab/wookieerunner"
                destdir="${build.classes.dir}">
             <classpath>
-                <fileset dir="lib/prebuilt" includes="**/*.jar"/>
+                <fileset dir="${prebuilt.dir}" includes="**/*.jar"/>
                 <fileset dir="${framework.dir}" includes="**/*.jar"/>
             </classpath>
         </javac>
