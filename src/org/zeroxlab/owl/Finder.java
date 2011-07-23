@@ -24,8 +24,8 @@ public class Finder {
             throw new FileNotFoundException("can't open `" + needle +"'");
         long start = System.nanoTime();
         MatchResult result = matcher.find(img, tmpl);
+        System.out.printf("In: %f\n", (System.nanoTime() - start) / 1000000.0);
         System.out.println(result);
-        System.out.printf("%f\n", (System.nanoTime() - start) / 1000000.0);
         return result;
     }
 };
