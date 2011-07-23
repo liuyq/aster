@@ -1,2 +1,7 @@
 .*.swp
 *.class
+build
+dist
+external/*/build
+external/*/dist
+external/*/manifest.mf

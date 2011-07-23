@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="aster" default="jar">
+    <!--
+         Initialize Section
+    -->
+    <target name="init">
+        <property file="build.properties"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes.dir}"/>
+    </target>
+
+    <!--
+         JavaCV
+    -->
+    <target name="javacv" depends="init">
+        <subant target="jar">
+            <property name="dist.dir" value="dist"/>
+            <fileset dir="external" includes="*/build.xml"/>
+        </subant>
+        <copy file="external/javacv/dist/javacv.jar" todir="${dist.dir}"/>
+        <copy file="external/javacpp/dist/javacpp.jar" todir="${dist.dir}"/>
+    </target>
+    <target name="-clean-javacv">
+        <subant target="clean">
+            <fileset dir="external" includes="*/build.xml"/>
+        </subant>
+    </target>
+
+    <!--
+         Owl
+    -->
+    <target name="-compile-owl">
+        <javac includeantruntime="false"
+               srcdir="src/org/zeroxlab/owl"
+               destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="lib/prebuilt" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-owl" depends="-compile-owl">
+        <jar destfile="${dist.dir}/owl.jar"
+             basedir="${build.classes.dir}"
+             includes="org/zeroxlab/owl/*.class"
+             manifest="etc/owl/manifest.txt"/>
+    </target>
+
+    <!--
+         WookieeRunner
+    -->
+    <target name="-compile-wookieerunner" depends="-compile-owl">
+        <javac includeantruntime="false"
+               srcdir="src/org/zeroxlab/wookieerunner"
+               destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="lib/prebuilt" includes="**/*.jar"/>
+                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-wookieerunner" depends="-compile-wookieerunner">
+        <jar destfile="${dist.dir}/wookieerunner.jar"
+             basedir="${build.classes.dir}"
+             includes="org/zeroxlab/wookieerunner/*.class"
+             manifest="etc/wookieerunner/manifest.txt"/>
+    </target>
+
+    <!--
+         Targets
+    -->
+    <target name="compile" depends="init,-compile-owl,-compile-wookieerunner"/>
+
+    <target name="jar" depends="init,-jar-owl,-jar-wookieerunner"/>
+    <target name="dist" depends="jar">
+        <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
+    </target>
+
+    <target name="clean" depends="init">
+        <delete dir="${build.dir}"/>
+    </target>
+</project>
+<!-- vim: set ts=4 sts=4 sw=4 expandtab: -->
