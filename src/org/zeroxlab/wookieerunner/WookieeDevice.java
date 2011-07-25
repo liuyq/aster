@@ -84,7 +84,6 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     public WookieeDevice(IChimpDevice impl) {
         this.impl = impl;
-        //matcher = new PlainTemplateMatcher();
         matcher = new PyramidTemplateMatcher();
     }
 

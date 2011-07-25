@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="aster" default="jar">
+<project name="aster" default="dist">
     <!--
          Initialization
     -->
@@ -12,14 +12,22 @@
     <!--
          JavaCV
     -->
-    <target name="javacv" depends="init">
+    <target name="-compile-javacv" depends="init" unless="${useprebuilt}">
         <subant target="jar">
             <fileset dir="external" includes="*/build.xml"/>
         </subant>
+    </target>
+    <target name="-jar-javacv" depends="-compile-javacv,-jar-javacv-build,-jar-javacv-prebuilt" unless="${useprebuilt}"/>
+    <target name="-jar-javacv-build" unless="${useprebuilt}">
         <copy file="external/javacv/dist/javacv.jar" todir="${dist.dir}"/>
         <copy file="external/javacpp/dist/javacpp.jar" todir="${dist.dir}"/>
     </target>
-    <target name="-clean-javacv">
+    <target name="-jar-javacv-prebuilt" if="${useprebuilt}">
+        <copy todir="${dist.dir}">
+            <fileset dir="${prebuilt.dir}" includes="**/*.jar"/>
+        </copy>
+    </target>
+    <target name="-clean-javacv" unless="${useprebuilt}">
         <subant target="clean">
             <fileset dir="external" includes="*/build.xml"/>
         </subant>
@@ -86,16 +94,17 @@
     <!--
          Targets
     -->
-    <target name="compile"
-            depends="init,-compile-owl,-compile-wookieerunner,-compile-aster"/>
+    <target name="compile" depends="init,-compile-javacv,-compile-owl,-compile-wookieerunner,-compile-aster"/>
 
-    <target name="jar" depends="init,-jar-owl,-jar-wookieerunner,-jar-aster"/>
+    <target name="jar" depends="init,-jar-javacv,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
         <copy file="etc/aster/aster" todir="${dist.dir}"/>
+        <chmod file="${dist.dir}/wookieerunner" perm="ugo+x"/>
+        <chmod file="${dist.dir}/aster" perm="ugo+x"/>
     </target>
 
-    <target name="clean" depends="init">
+    <target name="clean" depends="init,-clean-javacv">
         <delete dir="${build.dir}"/>
     </target>
 </project>
