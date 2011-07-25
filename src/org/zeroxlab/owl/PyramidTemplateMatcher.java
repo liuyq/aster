@@ -46,6 +46,8 @@ public class PyramidTemplateMatcher implements IMatcher {
     private double factor;
     private int levels;
     private final int target_min_side = 5;
+    private final int margin = 10;
+    private final int margin_min = 30;
 
     public PyramidTemplateMatcher() {
         this.factor = 2.0;
@@ -55,6 +57,29 @@ public class PyramidTemplateMatcher implements IMatcher {
 
     @Override
     public MatchResult find(IplImage haystack, IplImage needle)
+        throws TemplateNotFoundException {
+        try {
+            /* Search the image with margin cropped */
+            if (needle.width() < margin_min || needle.height() < margin_min)
+                throw new TemplateNotFoundException();
+
+            CvRect roi = cvRect(margin, margin,
+                                needle.width() - margin * 2,
+                                needle.height() - margin * 2);
+
+            cvSetImageROI(needle, roi);
+            IplImage needlep = cvCreateImage(cvGetSize(needle), needle.depth(),
+                                             needle.nChannels());
+            cvCopy(needle, needlep, null);
+            cvResetImageROI(needle);
+            return doFind(haystack, needlep);
+        } catch (TemplateNotFoundException e) {
+            /* Search the original image */
+            return doFind(haystack, needle);
+        }
+    }
+
+    public MatchResult doFind(IplImage haystack, IplImage needle)
         throws TemplateNotFoundException {
         MatchResult result;
         int side = Math.min(needle.width(), needle.height());
@@ -79,7 +104,7 @@ public class PyramidTemplateMatcher implements IMatcher {
             } catch (TemplateNotFoundException e) {
                 if (--levels == 0) {
                     layers.clear();
-                    throw new TemplateNotFoundException();
+                    throw e;
                 }
                 continue;
             }
