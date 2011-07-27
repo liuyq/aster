@@ -43,6 +43,7 @@ import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
+import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
 import org.python.core.PyString;
@@ -65,6 +66,7 @@ import java.util.logging.Logger;
 public class WookieeDevice extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeDevice.class.getName());
     private IMatcher matcher;
+    private WookieeAPI wookiee;
     private final double default_timeout = 3;
 
     public static void classDictInit(PyObject dict) {
@@ -84,7 +86,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     public WookieeDevice(IChimpDevice impl) {
         this.impl = impl;
-        matcher = new PyramidTemplateMatcher();
+        this.matcher = new PyramidTemplateMatcher();
+        this.wookiee = new WookieeAPI(impl);
     }
 
     public IChimpDevice getImpl() {
@@ -144,46 +147,24 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
-        int targetx, targety;
-        int pos = 0;
-        PyObject arg1 = new PyObject();
-        PyObject arg2 = new PyObject();
-        PyObject arg3 = new PyObject();
+        PyObject arg1 = ap.getPyObject(0);
+        PyObject arg2 = ap.getPyObject(1);
 
-        arg1 = ap.getPyObject(pos++);
         if (arg1 instanceof PyInteger) {
-            arg2 = ap.getPyObject(pos++);
-        }
-
-        TouchPressType type = TouchPressType.fromIdentifier(ap.getString(pos));
-        if (type == null) {
-            LOG.warning(String.format("Invalid TouchPressType specified (%s) default used instead",
-                    ap.getString(pos)));
-            type = TouchPressType.DOWN_AND_UP;
-        }
-
-        if (pos == 2) {
-            targetx = ((PyInteger) arg1).asInt();
-            targety = ((PyInteger) arg2).asInt();
-        } else {
-            long st = System.nanoTime();
-            double timeout = JythonUtils.getFloat(ap, 2, default_timeout);
-            String target = ((PyString) arg1).asString();
-            MatchResult r = new MatchResult();
-            while (true) {
-                try {
-                    r = Finder.dispatch(matcher, getCurrentSnapshot(), target);
-                } catch (TemplateNotFoundException e) {
-                    if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
-                        throw e;
-                    continue;
-                }
-                break;
+            String typestr = ap.getString(2);
+            TouchPressType type = TouchPressType.fromIdentifier(typestr);
+            if (type == null) {
+                LOG.warning(String.format("Invalid TouchPressType specified (%s) default used instead",
+                        typestr));
+                type = TouchPressType.DOWN_AND_UP;
             }
-            targetx = r.cx();
-            targety = r.cy();
+            impl.touch(((PyInteger) arg1).asInt(), ((PyInteger) arg2).asInt(),
+                        type);
+        } else {
+            wookiee.touch(((PyString) arg1).asString(),
+                          ((PyString) arg2).asString(),
+                          JythonUtils.getFloat(ap, 2, default_timeout));
         }
-        impl.touch(targetx, targety, type);
     }
 
     @MonkeyRunnerExported(doc = "Simulates dragging (touch, hold, and move) on the device screen.",
@@ -199,49 +180,27 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
         PyObject startObject = ap.getPyObject(0);
         PyObject endObject = ap.getPyObject(1);
+        int steps = ap.getInt(3, 10);
 
         int startx, starty, endx, endy;
+        double seconds = JythonUtils.getFloat(ap, 2, 1.0);
 
         if (startObject instanceof PyTuple) {
             PyTuple start = (PyTuple) startObject;
             PyTuple end = (PyTuple) endObject;
+            long ms = (long) (seconds * 1000.0);
 
             startx = (Integer) start.__getitem__(0).__tojava__(Integer.class);
             starty = (Integer) start.__getitem__(1).__tojava__(Integer.class);
             endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
             endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
+            impl.drag(startx, starty, endx, endy, steps, ms);
         } else {
-            String start = ((PyString) startObject).asString();
-            String end = ((PyString) endObject).asString();
-            long st = System.nanoTime();
-            double timeout = JythonUtils.getFloat(ap, 4, default_timeout);
-            MatchResult rs = new MatchResult();
-            MatchResult re = new MatchResult();
-            String current;
-
-            while (true) {
-                try {
-                    current = getCurrentSnapshot();
-                    rs = Finder.dispatch(matcher, current, start);
-                    re = Finder.dispatch(matcher, current, end);
-                } catch (TemplateNotFoundException e) {
-                    if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
-                        throw e;
-                    continue;
-                }
-                break;
-            }
-            startx = rs.cx();
-            starty = rs.cy();
-            endx = re.cx();
-            endy = re.cy();
+            wookiee.drag(((PyString) startObject).asString(),
+                         ((PyString) endObject).asString(),
+                         steps, seconds,
+                         JythonUtils.getFloat(ap, 4, default_timeout));
         }
-
-        double seconds = JythonUtils.getFloat(ap, 2, 1.0);
-        long ms = (long) (seconds * 1000.0);
-        int steps = ap.getInt(3, 10);
-
-        impl.drag(startx, starty, endx, endy, steps, ms);
     }
 
     @MonkeyRunnerExported(doc = "Send a key event to the specified key",

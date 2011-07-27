@@ -24,7 +24,6 @@ import org.zeroxlab.owl.MatchResult;
 import org.zeroxlab.owl.PyramidTemplateMatcher;
 import org.zeroxlab.owl.TemplateNotFoundException;
 
-import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
 import com.android.chimpchat.core.ChimpImageBase;
@@ -41,12 +40,10 @@ import java.util.Map;
 public class WookieeAPI {
     private IChimpDevice impl;
     private IMatcher matcher;
-    private static ChimpChat chimpchat;
 
-    public WookieeAPI(long timeout, String id) {
-        chimpchat = ChimpChat.getInstance();
-        impl = chimpchat.waitForConnection(timeout, id);
-        matcher = new PyramidTemplateMatcher();
+    public WookieeAPI(IChimpDevice impl) {
+        this.impl = impl;
+        this.matcher = new PyramidTemplateMatcher();
     }
 
     private String getCurrentSnapshot() {
@@ -99,6 +96,7 @@ public class WookieeAPI {
         MatchResult re = new MatchResult();
         String current;
         long st = System.nanoTime();
+        long ms = (long) (sec * 1000.0);
 
         while (true) {
             try {
@@ -112,7 +110,7 @@ public class WookieeAPI {
             }
             break;
         }
-        impl.drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, (long)sec*1000);
+        impl.drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, ms);
     }
 
     public void press(String name, String typestr) {
