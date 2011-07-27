@@ -1,0 +1,535 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+AdbBackend	adb/AdbBackend.java	/^    public AdbBackend() {$/;"	m	class:AdbBackend	access:public	signature:()
+AdbBackend	adb/AdbBackend.java	/^    public AdbBackend(String location) {$/;"	m	class:AdbBackend	access:public	signature:(String location)
+AdbBackend	adb/AdbBackend.java	/^public class AdbBackend implements IChimpBackend {$/;"	c	inherits:IChimpBackend
+AdbBackend.AdbBackend	adb/AdbBackend.java	/^    public AdbBackend() {$/;"	m	class:AdbBackend	access:public	signature:()
+AdbBackend.AdbBackend	adb/AdbBackend.java	/^    public AdbBackend(String location) {$/;"	m	class:AdbBackend	access:public	signature:(String location)
+AdbBackend.CONNECTION_ITERATION_TIMEOUT_MS	adb/AdbBackend.java	/^    private static final int CONNECTION_ITERATION_TIMEOUT_MS = 200;$/;"	f	class:AdbBackend	file:	access:private
+AdbBackend.LOG	adb/AdbBackend.java	/^    private static Logger LOG = Logger.getLogger(AdbBackend.class.getCanonicalName());$/;"	f	class:AdbBackend	file:	access:private
+AdbBackend.bridge	adb/AdbBackend.java	/^    private final AndroidDebugBridge bridge;$/;"	f	class:AdbBackend	file:	access:private
+AdbBackend.devices	adb/AdbBackend.java	/^    private final List<IChimpDevice> devices = Lists.newArrayList();$/;"	f	class:AdbBackend	file:	access:private
+AdbBackend.findAdb	adb/AdbBackend.java	/^    private String findAdb() {$/;"	m	class:AdbBackend	file:	access:private	signature:()
+AdbBackend.findAttachedDevice	adb/AdbBackend.java	/^    private IDevice findAttachedDevice(String deviceIdRegex) {$/;"	m	class:AdbBackend	file:	access:private	signature:(String deviceIdRegex)
+AdbBackend.shutdown	adb/AdbBackend.java	/^    public void shutdown() {$/;"	m	class:AdbBackend	access:public	signature:()
+AdbBackend.waitForConnection	adb/AdbBackend.java	/^    public IChimpDevice waitForConnection() {$/;"	m	class:AdbBackend	access:public	signature:()
+AdbBackend.waitForConnection	adb/AdbBackend.java	/^    public IChimpDevice waitForConnection(long timeoutMs, String deviceIdRegex) {$/;"	m	class:AdbBackend	access:public	signature:(long timeoutMs, String deviceIdRegex)
+AdbChimpDevice	adb/AdbChimpDevice.java	/^    public AdbChimpDevice(IDevice device) {$/;"	m	class:AdbChimpDevice	access:public	signature:(IDevice device)
+AdbChimpDevice	adb/AdbChimpDevice.java	/^public class AdbChimpDevice implements IChimpDevice {$/;"	c	inherits:IChimpDevice
+AdbChimpDevice.AdbChimpDevice	adb/AdbChimpDevice.java	/^    public AdbChimpDevice(IDevice device) {$/;"	m	class:AdbChimpDevice	access:public	signature:(IDevice device)
+AdbChimpDevice.LOG	adb/AdbChimpDevice.java	/^    private static final Logger LOG = Logger.getLogger(AdbChimpDevice.class.getName());$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.MANAGER_CREATE_TIMEOUT_MS	adb/AdbChimpDevice.java	/^    private static final long MANAGER_CREATE_TIMEOUT_MS = 30 * 1000; \/\/ 30 seconds$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.MANAGER_CREATE_WAIT_TIME_MS	adb/AdbChimpDevice.java	/^    private static final long MANAGER_CREATE_WAIT_TIME_MS = 1000; \/\/ wait 1 second$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.ZERO_LENGTH_STRING_ARRAY	adb/AdbChimpDevice.java	/^    private static final String[] ZERO_LENGTH_STRING_ARRAY = new String[0];$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.broadcastIntent	adb/AdbChimpDevice.java	/^    public void broadcastIntent(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	access:public	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+AdbChimpDevice.buildIntentArgString	adb/AdbChimpDevice.java	/^    private List<String> buildIntentArgString(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+AdbChimpDevice.convertInstrumentResult	adb/AdbChimpDevice.java	/^    \/* package *\/ static Map<String, Object> convertInstrumentResult(String result) {$/;"	m	class:AdbChimpDevice	access:default	signature:(String result)
+AdbChimpDevice.createManager	adb/AdbChimpDevice.java	/^    private ChimpManager createManager(String address, int port) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String address, int port)
+AdbChimpDevice.device	adb/AdbChimpDevice.java	/^    private final IDevice device;$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.dispose	adb/AdbChimpDevice.java	/^    public void dispose() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpDevice.drag	adb/AdbChimpDevice.java	/^    public void drag(int startx, int starty, int endx, int endy, int steps, long ms) {$/;"	m	class:AdbChimpDevice	access:public	signature:(int startx, int starty, int endx, int endy, int steps, long ms)
+AdbChimpDevice.executeAsyncCommand	adb/AdbChimpDevice.java	/^    private void executeAsyncCommand(final String command,$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(final String command, final LoggingOutputReceiver logger)
+AdbChimpDevice.executor	adb/AdbChimpDevice.java	/^    private final ExecutorService executor = Executors.newSingleThreadExecutor();$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.getHierarchyViewer	adb/AdbChimpDevice.java	/^    public HierarchyViewer getHierarchyViewer() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpDevice.getManager	adb/AdbChimpDevice.java	/^    public ChimpManager getManager() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpDevice.getProperty	adb/AdbChimpDevice.java	/^    public String getProperty(String key) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String key)
+AdbChimpDevice.getPropertyList	adb/AdbChimpDevice.java	/^    public Collection<String> getPropertyList() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpDevice.getSystemProperty	adb/AdbChimpDevice.java	/^    public String getSystemProperty(String key) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String key)
+AdbChimpDevice.installPackage	adb/AdbChimpDevice.java	/^    public boolean installPackage(String path) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String path)
+AdbChimpDevice.instrument	adb/AdbChimpDevice.java	/^    public Map<String, Object> instrument(String packageName, Map<String, Object> args) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String packageName, Map<String, Object> args)
+AdbChimpDevice.isNullOrEmpty	adb/AdbChimpDevice.java	/^    private static boolean isNullOrEmpty(@Nullable String string) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(@ullable String string)
+AdbChimpDevice.manager	adb/AdbChimpDevice.java	/^    private ChimpManager manager;$/;"	f	class:AdbChimpDevice	file:	access:private
+AdbChimpDevice.press	adb/AdbChimpDevice.java	/^    public void press(String keyName, TouchPressType type) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String keyName, TouchPressType type)
+AdbChimpDevice.reboot	adb/AdbChimpDevice.java	/^    public void reboot(String into) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String into)
+AdbChimpDevice.removePackage	adb/AdbChimpDevice.java	/^    public boolean removePackage(String packageName) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String packageName)
+AdbChimpDevice.shell	adb/AdbChimpDevice.java	/^    private String shell(String... args) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String... args)
+AdbChimpDevice.shell	adb/AdbChimpDevice.java	/^    public String shell(String cmd) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String cmd)
+AdbChimpDevice.startActivity	adb/AdbChimpDevice.java	/^    public void startActivity(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	access:public	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+AdbChimpDevice.takeSnapshot	adb/AdbChimpDevice.java	/^    public IChimpImage takeSnapshot() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpDevice.touch	adb/AdbChimpDevice.java	/^    public void touch(int x, int y, TouchPressType type) {$/;"	m	class:AdbChimpDevice	access:public	signature:(int x, int y, TouchPressType type)
+AdbChimpDevice.type	adb/AdbChimpDevice.java	/^    public void type(String string) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String string)
+AdbChimpDevice.wake	adb/AdbChimpDevice.java	/^    public void wake() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+AdbChimpImage	adb/AdbChimpImage.java	/^    AdbChimpImage(RawImage image) {$/;"	m	class:AdbChimpImage	access:default	signature:(RawImage image)
+AdbChimpImage	adb/AdbChimpImage.java	/^public class AdbChimpImage extends ChimpImageBase {$/;"	c	inherits:ChimpImageBase
+AdbChimpImage.AdbChimpImage	adb/AdbChimpImage.java	/^    AdbChimpImage(RawImage image) {$/;"	m	class:AdbChimpImage	access:default	signature:(RawImage image)
+AdbChimpImage.createBufferedImage	adb/AdbChimpImage.java	/^    public BufferedImage createBufferedImage() {$/;"	m	class:AdbChimpImage	access:public	signature:()
+AdbChimpImage.getRawImage	adb/AdbChimpImage.java	/^    public RawImage getRawImage() {$/;"	m	class:AdbChimpImage	access:public	signature:()
+AdbChimpImage.image	adb/AdbChimpImage.java	/^    private final RawImage image;$/;"	f	class:AdbChimpImage	file:	access:private
+BACK	core/PhysicalButton.java	/^    BACK("back"),$/;"	e	enum:PhysicalButton	file:	access:public
+BAND_OFFSETS_16	adb/image/ImageUtils.java	/^    private static int[] BAND_OFFSETS_16 = { 0, 1 };$/;"	f	class:ImageUtils	file:	access:private
+BAND_OFFSETS_32	adb/image/ImageUtils.java	/^    private static int[] BAND_OFFSETS_32 = { 0, 1, 2, 3 };$/;"	f	class:ImageUtils	file:	access:private
+BITS	adb/image/SixteenBitColorModel.java	/^    private static final int[] BITS = {$/;"	f	class:SixteenBitColorModel	file:	access:private
+BITS	adb/image/ThirtyTwoBitColorModel.java	/^    private static final int[] BITS = {$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+BufferedImageChimpImage	core/ChimpImageBase.java	/^        public BufferedImageChimpImage(BufferedImage image) {$/;"	m	class:ChimpImageBase.BufferedImageChimpImage	access:public	signature:(BufferedImage image)
+BufferedImageChimpImage	core/ChimpImageBase.java	/^    private static class BufferedImageChimpImage extends ChimpImageBase {$/;"	c	class:ChimpImageBase	inherits:ChimpImageBase	access:private
+CONNECTION_ITERATION_TIMEOUT_MS	adb/AdbBackend.java	/^    private static final int CONNECTION_ITERATION_TIMEOUT_MS = 200;$/;"	f	class:AdbBackend	file:	access:private
+Callback	adb/LinearInterpolator.java	/^    public interface Callback {$/;"	i	class:LinearInterpolator	access:public
+CaptureRawAndConvertedImage	adb/image/CaptureRawAndConvertedImage.java	/^public class CaptureRawAndConvertedImage {$/;"	c
+CaptureRawAndConvertedImage.ChimpRawImage	adb/image/CaptureRawAndConvertedImage.java	/^    public static class ChimpRawImage implements Serializable {$/;"	c	class:CaptureRawAndConvertedImage	inherits:Serializable	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.ChimpRawImage	adb/image/CaptureRawAndConvertedImage.java	/^        public ChimpRawImage(RawImage rawImage) {$/;"	m	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public	signature:(RawImage rawImage)
+CaptureRawAndConvertedImage.ChimpRawImage.alpha_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int alpha_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.alpha_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int alpha_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.blue_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int blue_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.blue_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int blue_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.bpp	adb/image/CaptureRawAndConvertedImage.java	/^        public int bpp;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.data	adb/image/CaptureRawAndConvertedImage.java	/^        public byte[] data;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.green_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int green_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.green_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int green_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.height	adb/image/CaptureRawAndConvertedImage.java	/^        public int height;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.red_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int red_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.red_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int red_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.size	adb/image/CaptureRawAndConvertedImage.java	/^        public int size;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.toRawImage	adb/image/CaptureRawAndConvertedImage.java	/^        public RawImage toRawImage() {$/;"	m	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public	signature:()
+CaptureRawAndConvertedImage.ChimpRawImage.version	adb/image/CaptureRawAndConvertedImage.java	/^        public int version;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.ChimpRawImage.width	adb/image/CaptureRawAndConvertedImage.java	/^        public int width;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+CaptureRawAndConvertedImage.main	adb/image/CaptureRawAndConvertedImage.java	/^    public static void main(String[] args) throws IOException {$/;"	m	class:CaptureRawAndConvertedImage	access:public	signature:(String[] args)
+CaptureRawAndConvertedImage.writeOutImage	adb/image/CaptureRawAndConvertedImage.java	/^    private static void writeOutImage(RawImage screenshot, String name) throws IOException {$/;"	m	class:CaptureRawAndConvertedImage	file:	access:private	signature:(RawImage screenshot, String name)
+ChimpChat	ChimpChat.java	/^    private ChimpChat(IChimpBackend backend) {$/;"	m	class:ChimpChat	file:	access:private	signature:(IChimpBackend backend)
+ChimpChat	ChimpChat.java	/^public class ChimpChat {$/;"	c
+ChimpChat.ChimpChat	ChimpChat.java	/^    private ChimpChat(IChimpBackend backend) {$/;"	m	class:ChimpChat	file:	access:private	signature:(IChimpBackend backend)
+ChimpChat.createBackendByName	ChimpChat.java	/^    private static IChimpBackend createBackendByName(String backendName) {$/;"	m	class:ChimpChat	file:	access:private	signature:(String backendName)
+ChimpChat.getInstance	ChimpChat.java	/^    public static ChimpChat getInstance() {$/;"	m	class:ChimpChat	access:public	signature:()
+ChimpChat.getInstance	ChimpChat.java	/^    public static ChimpChat getInstance(Map<String, String> options) {$/;"	m	class:ChimpChat	access:public	signature:(Map<String, String> options)
+ChimpChat.mBackend	ChimpChat.java	/^    private final IChimpBackend mBackend;$/;"	f	class:ChimpChat	file:	access:private
+ChimpChat.sAdbLocation	ChimpChat.java	/^    private static String sAdbLocation;$/;"	f	class:ChimpChat	file:	access:private
+ChimpChat.shutdown	ChimpChat.java	/^    public void shutdown(){$/;"	m	class:ChimpChat	access:public	signature:()
+ChimpChat.waitForConnection	ChimpChat.java	/^    public IChimpDevice waitForConnection(){$/;"	m	class:ChimpChat	access:public	signature:()
+ChimpChat.waitForConnection	ChimpChat.java	/^    public IChimpDevice waitForConnection(long timeoutMs, String deviceId){$/;"	m	class:ChimpChat	access:public	signature:(long timeoutMs, String deviceId)
+ChimpImageBase	core/ChimpImageBase.java	/^public abstract class ChimpImageBase implements IChimpImage {$/;"	c	inherits:IChimpImage
+ChimpImageBase.BufferedImageChimpImage	core/ChimpImageBase.java	/^    private static class BufferedImageChimpImage extends ChimpImageBase {$/;"	c	class:ChimpImageBase	inherits:ChimpImageBase	access:private
+ChimpImageBase.BufferedImageChimpImage.BufferedImageChimpImage	core/ChimpImageBase.java	/^        public BufferedImageChimpImage(BufferedImage image) {$/;"	m	class:ChimpImageBase.BufferedImageChimpImage	access:public	signature:(BufferedImage image)
+ChimpImageBase.BufferedImageChimpImage.createBufferedImage	core/ChimpImageBase.java	/^        public BufferedImage createBufferedImage() {$/;"	m	class:ChimpImageBase.BufferedImageChimpImage	access:public	signature:()
+ChimpImageBase.BufferedImageChimpImage.image	core/ChimpImageBase.java	/^        private final BufferedImage image;$/;"	f	class:ChimpImageBase.BufferedImageChimpImage	file:	access:private
+ChimpImageBase.LOG	core/ChimpImageBase.java	/^    private static Logger LOG = Logger.getLogger(ChimpImageBase.class.getCanonicalName());$/;"	f	class:ChimpImageBase	file:	access:private
+ChimpImageBase.cachedBufferedImage	core/ChimpImageBase.java	/^    private WeakReference<BufferedImage> cachedBufferedImage = null;$/;"	f	class:ChimpImageBase	file:	access:private
+ChimpImageBase.convertSnapshot	core/ChimpImageBase.java	/^    private BufferedImage convertSnapshot() {$/;"	m	class:ChimpImageBase	file:	access:private	signature:()
+ChimpImageBase.convertToBytes	core/ChimpImageBase.java	/^    public byte[] convertToBytes(String format) {$/;"	m	class:ChimpImageBase	access:public	signature:(String format)
+ChimpImageBase.createBufferedImage	core/ChimpImageBase.java	/^    public abstract BufferedImage createBufferedImage();$/;"	m	class:ChimpImageBase	access:public	signature:()
+ChimpImageBase.getBufferedImage	core/ChimpImageBase.java	/^    public BufferedImage getBufferedImage() {$/;"	m	class:ChimpImageBase	access:public	signature:()
+ChimpImageBase.getPixel	core/ChimpImageBase.java	/^    public int getPixel(int x, int y) {$/;"	m	class:ChimpImageBase	access:public	signature:(int x, int y)
+ChimpImageBase.getSubImage	core/ChimpImageBase.java	/^    public IChimpImage getSubImage(int x, int y, int w, int h) {$/;"	m	class:ChimpImageBase	access:public	signature:(int x, int y, int w, int h)
+ChimpImageBase.loadImageFromFile	core/ChimpImageBase.java	/^    public static IChimpImage loadImageFromFile(String path) {$/;"	m	class:ChimpImageBase	access:public	signature:(String path)
+ChimpImageBase.sameAs	core/ChimpImageBase.java	/^    public boolean sameAs(IChimpImage other, double percent) {$/;"	m	class:ChimpImageBase	access:public	signature:(IChimpImage other, double percent)
+ChimpImageBase.writeToFile	core/ChimpImageBase.java	/^    public boolean writeToFile(String path, String format) {$/;"	m	class:ChimpImageBase	access:public	signature:(String path, String format)
+ChimpImageBase.writeToFileHelper	core/ChimpImageBase.java	/^    private boolean writeToFileHelper(String path, String format) {$/;"	m	class:ChimpImageBase	file:	access:private	signature:(String path, String format)
+ChimpManager	ChimpManager.java	/^    public ChimpManager(Socket monkeySocket) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(Socket monkeySocket)
+ChimpManager	ChimpManager.java	/^public class ChimpManager {$/;"	c
+ChimpManager.ChimpManager	ChimpManager.java	/^    public ChimpManager(Socket monkeySocket) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(Socket monkeySocket)
+ChimpManager.LOG	ChimpManager.java	/^    private static Logger LOG = Logger.getLogger(ChimpManager.class.getName());$/;"	f	class:ChimpManager	file:	access:private
+ChimpManager.close	ChimpManager.java	/^    public void close() {$/;"	m	class:ChimpManager	access:public	signature:()
+ChimpManager.done	ChimpManager.java	/^    public void done() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+ChimpManager.getVariable	ChimpManager.java	/^    public String getVariable(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+ChimpManager.keyDown	ChimpManager.java	/^    public boolean keyDown(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+ChimpManager.keyUp	ChimpManager.java	/^    public boolean keyUp(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+ChimpManager.listVariable	ChimpManager.java	/^    public Collection<String> listVariable() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+ChimpManager.monkeyReader	ChimpManager.java	/^    private BufferedReader monkeyReader;$/;"	f	class:ChimpManager	file:	access:private
+ChimpManager.monkeySocket	ChimpManager.java	/^    private Socket monkeySocket;$/;"	f	class:ChimpManager	file:	access:private
+ChimpManager.monkeyWriter	ChimpManager.java	/^    private BufferedWriter monkeyWriter;$/;"	f	class:ChimpManager	file:	access:private
+ChimpManager.parseResponseForExtra	ChimpManager.java	/^    private String parseResponseForExtra(String monkeyResponse) {$/;"	m	class:ChimpManager	file:	access:private	signature:(String monkeyResponse)
+ChimpManager.parseResponseForSuccess	ChimpManager.java	/^    private boolean parseResponseForSuccess(String monkeyResponse) {$/;"	m	class:ChimpManager	file:	access:private	signature:(String monkeyResponse)
+ChimpManager.press	ChimpManager.java	/^    public boolean press(PhysicalButton button) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(PhysicalButton button)
+ChimpManager.press	ChimpManager.java	/^    public boolean press(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+ChimpManager.quit	ChimpManager.java	/^    public void quit() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+ChimpManager.sendMonkeyEvent	ChimpManager.java	/^    private boolean sendMonkeyEvent(String command) throws IOException {$/;"	m	class:ChimpManager	file:	access:private	signature:(String command)
+ChimpManager.sendMonkeyEventAndGetResponse	ChimpManager.java	/^    private String sendMonkeyEventAndGetResponse(String command) throws IOException {$/;"	m	class:ChimpManager	file:	access:private	signature:(String command)
+ChimpManager.tap	ChimpManager.java	/^    public boolean tap(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+ChimpManager.touch	ChimpManager.java	/^    public boolean touch(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+ChimpManager.touchDown	ChimpManager.java	/^    public boolean touchDown(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+ChimpManager.touchMove	ChimpManager.java	/^    public boolean touchMove(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+ChimpManager.touchUp	ChimpManager.java	/^    public boolean touchUp(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+ChimpManager.type	ChimpManager.java	/^    public boolean type(String text) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String text)
+ChimpManager.type	ChimpManager.java	/^    public boolean type(char keyChar) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(char keyChar)
+ChimpManager.wake	ChimpManager.java	/^    public void wake() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+ChimpRawImage	adb/image/CaptureRawAndConvertedImage.java	/^        public ChimpRawImage(RawImage rawImage) {$/;"	m	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public	signature:(RawImage rawImage)
+ChimpRawImage	adb/image/CaptureRawAndConvertedImage.java	/^    public static class ChimpRawImage implements Serializable {$/;"	c	class:CaptureRawAndConvertedImage	inherits:Serializable	access:public
+CommandOutputCapture	adb/CommandOutputCapture.java	/^public class CommandOutputCapture implements IShellOutputReceiver {$/;"	c	inherits:IShellOutputReceiver
+CommandOutputCapture.addOutput	adb/CommandOutputCapture.java	/^    public void addOutput(byte[] data, int offset, int length) {$/;"	m	class:CommandOutputCapture	access:public	signature:(byte[] data, int offset, int length)
+CommandOutputCapture.builder	adb/CommandOutputCapture.java	/^    private final StringBuilder builder = new StringBuilder();$/;"	f	class:CommandOutputCapture	file:	access:private
+CommandOutputCapture.flush	adb/CommandOutputCapture.java	/^    public void flush() { }$/;"	m	class:CommandOutputCapture	access:public	signature:()
+CommandOutputCapture.isCancelled	adb/CommandOutputCapture.java	/^    public boolean isCancelled() {$/;"	m	class:CommandOutputCapture	access:public	signature:()
+CommandOutputCapture.toString	adb/CommandOutputCapture.java	/^    public String toString() {$/;"	m	class:CommandOutputCapture	access:public	signature:()
+DOWN	core/TouchPressType.java	/^    DOWN("down"), UP("up"), DOWN_AND_UP("downAndUp");$/;"	e	enum:TouchPressType	file:	access:public
+DOWN_AND_UP	core/TouchPressType.java	/^    DOWN("down"), UP("up"), DOWN_AND_UP("downAndUp");$/;"	e	enum:TouchPressType	file:	access:public
+DPAD_CENTER	core/PhysicalButton.java	/^    DPAD_CENTER("DPAD_CENTER"),$/;"	e	enum:PhysicalButton	file:	access:public
+DPAD_DOWN	core/PhysicalButton.java	/^    DPAD_DOWN("DPAD_DOWN"),$/;"	e	enum:PhysicalButton	file:	access:public
+DPAD_LEFT	core/PhysicalButton.java	/^    DPAD_LEFT("DPAD_LEFT"),$/;"	e	enum:PhysicalButton	file:	access:public
+DPAD_RIGHT	core/PhysicalButton.java	/^    DPAD_RIGHT("DPAD_RIGHT"),$/;"	e	enum:PhysicalButton	file:	access:public
+DPAD_UP	core/PhysicalButton.java	/^    DPAD_UP("DPAD_UP"),$/;"	e	enum:PhysicalButton	file:	access:public
+EMPTY_HASH	adb/image/ImageUtils.java	/^    private static Hashtable<?,?> EMPTY_HASH = new Hashtable();$/;"	f	class:ImageUtils	file:	access:private
+ENTER	core/PhysicalButton.java	/^    ENTER("enter");$/;"	e	enum:PhysicalButton	file:	access:public
+HOME	core/PhysicalButton.java	/^    HOME("home"),$/;"	e	enum:PhysicalButton	file:	access:public
+HierarchyViewer	hierarchyviewer/HierarchyViewer.java	/^    public HierarchyViewer(IDevice device) {$/;"	m	class:HierarchyViewer	access:public	signature:(IDevice device)
+HierarchyViewer	hierarchyviewer/HierarchyViewer.java	/^public class HierarchyViewer {$/;"	c
+HierarchyViewer.HierarchyViewer	hierarchyviewer/HierarchyViewer.java	/^    public HierarchyViewer(IDevice device) {$/;"	m	class:HierarchyViewer	access:public	signature:(IDevice device)
+HierarchyViewer.TAG	hierarchyviewer/HierarchyViewer.java	/^    public static final String TAG = "hierarchyviewer";$/;"	f	class:HierarchyViewer	access:public
+HierarchyViewer.findViewById	hierarchyviewer/HierarchyViewer.java	/^    public ViewNode findViewById(String id) {$/;"	m	class:HierarchyViewer	access:public	signature:(String id)
+HierarchyViewer.findViewById	hierarchyviewer/HierarchyViewer.java	/^    public ViewNode findViewById(String id, ViewNode rootNode) {$/;"	m	class:HierarchyViewer	access:public	signature:(String id, ViewNode rootNode)
+HierarchyViewer.getAbsoluteCenterOfView	hierarchyviewer/HierarchyViewer.java	/^    public static Point getAbsoluteCenterOfView(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+HierarchyViewer.getAbsolutePositionOfView	hierarchyviewer/HierarchyViewer.java	/^    public static Point getAbsolutePositionOfView(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+HierarchyViewer.getFocusedWindowName	hierarchyviewer/HierarchyViewer.java	/^    public String getFocusedWindowName() {$/;"	m	class:HierarchyViewer	access:public	signature:()
+HierarchyViewer.getText	hierarchyviewer/HierarchyViewer.java	/^    public String getText(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+HierarchyViewer.mDevice	hierarchyviewer/HierarchyViewer.java	/^    private IDevice mDevice;$/;"	f	class:HierarchyViewer	file:	access:private
+HierarchyViewer.setupViewServer	hierarchyviewer/HierarchyViewer.java	/^    private void setupViewServer() {$/;"	m	class:HierarchyViewer	file:	access:private	signature:()
+HierarchyViewer.visible	hierarchyviewer/HierarchyViewer.java	/^    public boolean visible(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+IChimpBackend	core/IChimpBackend.java	/^public interface IChimpBackend {$/;"	i
+IChimpBackend.shutdown	core/IChimpBackend.java	/^    void shutdown();$/;"	m	interface:IChimpBackend	access:public	signature:()
+IChimpBackend.waitForConnection	core/IChimpBackend.java	/^    IChimpDevice waitForConnection();$/;"	m	interface:IChimpBackend	access:public	signature:()
+IChimpBackend.waitForConnection	core/IChimpBackend.java	/^    IChimpDevice waitForConnection(long timeoutMs, String deviceIdRegex);$/;"	m	interface:IChimpBackend	access:public	signature:(long timeoutMs, String deviceIdRegex)
+IChimpDevice	core/IChimpDevice.java	/^public interface IChimpDevice {$/;"	i
+IChimpDevice.broadcastIntent	core/IChimpDevice.java	/^    void broadcastIntent(@Nullable String uri, @Nullable String action,$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String uri, @Nullable String action, @Nullable String data, @Nullable String mimeType, Collection<String> categories, Map<String, Object> extras, @Nullable String component, int flags)
+IChimpDevice.dispose	core/IChimpDevice.java	/^    void dispose();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpDevice.drag	core/IChimpDevice.java	/^    void drag(int startx, int starty, int endx, int endy, int steps, long ms);$/;"	m	interface:IChimpDevice	access:public	signature:(int startx, int starty, int endx, int endy, int steps, long ms)
+IChimpDevice.getHierarchyViewer	core/IChimpDevice.java	/^    HierarchyViewer getHierarchyViewer();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpDevice.getManager	core/IChimpDevice.java	/^    ChimpManager getManager();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpDevice.getProperty	core/IChimpDevice.java	/^    String getProperty(String key);$/;"	m	interface:IChimpDevice	access:public	signature:(String key)
+IChimpDevice.getPropertyList	core/IChimpDevice.java	/^    Collection<String> getPropertyList();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpDevice.getSystemProperty	core/IChimpDevice.java	/^    String getSystemProperty(String key);$/;"	m	interface:IChimpDevice	access:public	signature:(String key)
+IChimpDevice.installPackage	core/IChimpDevice.java	/^    boolean installPackage(String path);$/;"	m	interface:IChimpDevice	access:public	signature:(String path)
+IChimpDevice.instrument	core/IChimpDevice.java	/^    Map<String, Object> instrument(String packageName,$/;"	m	interface:IChimpDevice	access:public	signature:(String packageName, Map<String, Object> args)
+IChimpDevice.press	core/IChimpDevice.java	/^    void press(String keyName, TouchPressType type);$/;"	m	interface:IChimpDevice	access:public	signature:(String keyName, TouchPressType type)
+IChimpDevice.reboot	core/IChimpDevice.java	/^    void reboot(@Nullable String into);$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String into)
+IChimpDevice.removePackage	core/IChimpDevice.java	/^    boolean removePackage(String packageName);$/;"	m	interface:IChimpDevice	access:public	signature:(String packageName)
+IChimpDevice.shell	core/IChimpDevice.java	/^    String shell(String cmd);$/;"	m	interface:IChimpDevice	access:public	signature:(String cmd)
+IChimpDevice.startActivity	core/IChimpDevice.java	/^    void startActivity(@Nullable String uri, @Nullable String action,$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String uri, @Nullable String action, @Nullable String data, @Nullable String mimeType, Collection<String> categories, Map<String, Object> extras, @Nullable String component, int flags)
+IChimpDevice.takeSnapshot	core/IChimpDevice.java	/^    IChimpImage takeSnapshot();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpDevice.touch	core/IChimpDevice.java	/^    void touch(int x, int y, TouchPressType type);$/;"	m	interface:IChimpDevice	access:public	signature:(int x, int y, TouchPressType type)
+IChimpDevice.type	core/IChimpDevice.java	/^    void type(String string);$/;"	m	interface:IChimpDevice	access:public	signature:(String string)
+IChimpDevice.wake	core/IChimpDevice.java	/^    void wake();$/;"	m	interface:IChimpDevice	access:public	signature:()
+IChimpImage	core/IChimpImage.java	/^public interface IChimpImage {$/;"	i
+IChimpImage.convertToBytes	core/IChimpImage.java	/^    byte[] convertToBytes(String format);$/;"	m	interface:IChimpImage	access:public	signature:(String format)
+IChimpImage.createBufferedImage	core/IChimpImage.java	/^    BufferedImage createBufferedImage();$/;"	m	interface:IChimpImage	access:public	signature:()
+IChimpImage.getBufferedImage	core/IChimpImage.java	/^    BufferedImage getBufferedImage();$/;"	m	interface:IChimpImage	access:public	signature:()
+IChimpImage.getPixel	core/IChimpImage.java	/^    int getPixel(int x, int y);$/;"	m	interface:IChimpImage	access:public	signature:(int x, int y)
+IChimpImage.getSubImage	core/IChimpImage.java	/^    IChimpImage getSubImage(int x, int y, int w, int h);$/;"	m	interface:IChimpImage	access:public	signature:(int x, int y, int w, int h)
+IChimpImage.sameAs	core/IChimpImage.java	/^    boolean sameAs(IChimpImage other, double percent);$/;"	m	interface:IChimpImage	access:public	signature:(IChimpImage other, double percent)
+IChimpImage.writeToFile	core/IChimpImage.java	/^    boolean writeToFile(String path, String format);$/;"	m	interface:IChimpImage	access:public	signature:(String path, String format)
+ImageUtils	adb/image/ImageUtils.java	/^    private ImageUtils() { }$/;"	m	class:ImageUtils	file:	access:private	signature:()
+ImageUtils	adb/image/ImageUtils.java	/^public class ImageUtils {$/;"	c
+ImageUtils.BAND_OFFSETS_16	adb/image/ImageUtils.java	/^    private static int[] BAND_OFFSETS_16 = { 0, 1 };$/;"	f	class:ImageUtils	file:	access:private
+ImageUtils.BAND_OFFSETS_32	adb/image/ImageUtils.java	/^    private static int[] BAND_OFFSETS_32 = { 0, 1, 2, 3 };$/;"	f	class:ImageUtils	file:	access:private
+ImageUtils.EMPTY_HASH	adb/image/ImageUtils.java	/^    private static Hashtable<?,?> EMPTY_HASH = new Hashtable();$/;"	f	class:ImageUtils	file:	access:private
+ImageUtils.ImageUtils	adb/image/ImageUtils.java	/^    private ImageUtils() { }$/;"	m	class:ImageUtils	file:	access:private	signature:()
+ImageUtils.convertImage	adb/image/ImageUtils.java	/^    public static BufferedImage convertImage(RawImage rawImage) {$/;"	m	class:ImageUtils	access:public	signature:(RawImage rawImage)
+ImageUtils.convertImage	adb/image/ImageUtils.java	/^    public static BufferedImage convertImage(RawImage rawImage, BufferedImage image) {$/;"	m	class:ImageUtils	access:public	signature:(RawImage rawImage, BufferedImage image)
+ImageUtils.getMask	adb/image/ImageUtils.java	/^    static int getMask(int length) {$/;"	m	class:ImageUtils	access:default	signature:(int length)
+ImageUtils.rawImage16toARGB	adb/image/ImageUtils.java	/^    private static BufferedImage rawImage16toARGB(BufferedImage image, RawImage rawImage) {$/;"	m	class:ImageUtils	file:	access:private	signature:(BufferedImage image, RawImage rawImage)
+ImageUtils.rawImage32toARGB	adb/image/ImageUtils.java	/^    private static BufferedImage rawImage32toARGB(RawImage rawImage) {$/;"	m	class:ImageUtils	file:	access:private	signature:(RawImage rawImage)
+LOG	ChimpManager.java	/^    private static Logger LOG = Logger.getLogger(ChimpManager.class.getName());$/;"	f	class:ChimpManager	file:	access:private
+LOG	adb/AdbBackend.java	/^    private static Logger LOG = Logger.getLogger(AdbBackend.class.getCanonicalName());$/;"	f	class:AdbBackend	file:	access:private
+LOG	adb/AdbChimpDevice.java	/^    private static final Logger LOG = Logger.getLogger(AdbChimpDevice.class.getName());$/;"	f	class:AdbChimpDevice	file:	access:private
+LOG	core/ChimpImageBase.java	/^    private static Logger LOG = Logger.getLogger(ChimpImageBase.class.getCanonicalName());$/;"	f	class:ChimpImageBase	file:	access:private
+LinearInterpolator	adb/LinearInterpolator.java	/^    public LinearInterpolator(int steps) {$/;"	m	class:LinearInterpolator	access:public	signature:(int steps)
+LinearInterpolator	adb/LinearInterpolator.java	/^public class LinearInterpolator {$/;"	c
+LinearInterpolator.Callback	adb/LinearInterpolator.java	/^    public interface Callback {$/;"	i	class:LinearInterpolator	access:public
+LinearInterpolator.Callback.end	adb/LinearInterpolator.java	/^        void end(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+LinearInterpolator.Callback.start	adb/LinearInterpolator.java	/^        void start(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+LinearInterpolator.Callback.step	adb/LinearInterpolator.java	/^        void step(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+LinearInterpolator.LinearInterpolator	adb/LinearInterpolator.java	/^    public LinearInterpolator(int steps) {$/;"	m	class:LinearInterpolator	access:public	signature:(int steps)
+LinearInterpolator.Point	adb/LinearInterpolator.java	/^    public static class Point {$/;"	c	class:LinearInterpolator	access:public
+LinearInterpolator.Point.Point	adb/LinearInterpolator.java	/^        public Point(int x, int y) {$/;"	m	class:LinearInterpolator.Point	access:public	signature:(int x, int y)
+LinearInterpolator.Point.equals	adb/LinearInterpolator.java	/^        public boolean equals(Object obj) {$/;"	m	class:LinearInterpolator.Point	access:public	signature:(Object obj)
+LinearInterpolator.Point.getX	adb/LinearInterpolator.java	/^        public int getX() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+LinearInterpolator.Point.getY	adb/LinearInterpolator.java	/^        public int getY() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+LinearInterpolator.Point.hashCode	adb/LinearInterpolator.java	/^        public int hashCode() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+LinearInterpolator.Point.toString	adb/LinearInterpolator.java	/^        public String toString() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+LinearInterpolator.Point.x	adb/LinearInterpolator.java	/^        private final int x;$/;"	f	class:LinearInterpolator.Point	file:	access:private
+LinearInterpolator.Point.y	adb/LinearInterpolator.java	/^        private final int y;$/;"	f	class:LinearInterpolator.Point	file:	access:private
+LinearInterpolator.interpolate	adb/LinearInterpolator.java	/^    public void interpolate(Point start, Point end, Callback callback) {$/;"	m	class:LinearInterpolator	access:public	signature:(Point start, Point end, Callback callback)
+LinearInterpolator.lerp	adb/LinearInterpolator.java	/^    private static float lerp(float start, float stop, float amount) {$/;"	m	class:LinearInterpolator	file:	access:private	signature:(float start, float stop, float amount)
+LinearInterpolator.steps	adb/LinearInterpolator.java	/^    private final int steps;$/;"	f	class:LinearInterpolator	file:	access:private
+LoggingOutputReceiver	adb/LoggingOutputReceiver.java	/^    public LoggingOutputReceiver(Logger log, Level level) {$/;"	m	class:LoggingOutputReceiver	access:public	signature:(Logger log, Level level)
+LoggingOutputReceiver	adb/LoggingOutputReceiver.java	/^public class LoggingOutputReceiver implements IShellOutputReceiver {$/;"	c	inherits:IShellOutputReceiver
+LoggingOutputReceiver.LoggingOutputReceiver	adb/LoggingOutputReceiver.java	/^    public LoggingOutputReceiver(Logger log, Level level) {$/;"	m	class:LoggingOutputReceiver	access:public	signature:(Logger log, Level level)
+LoggingOutputReceiver.addOutput	adb/LoggingOutputReceiver.java	/^    public void addOutput(byte[] data, int offset, int length) {$/;"	m	class:LoggingOutputReceiver	access:public	signature:(byte[] data, int offset, int length)
+LoggingOutputReceiver.flush	adb/LoggingOutputReceiver.java	/^    public void flush() { }$/;"	m	class:LoggingOutputReceiver	access:public	signature:()
+LoggingOutputReceiver.isCancelled	adb/LoggingOutputReceiver.java	/^    public boolean isCancelled() {$/;"	m	class:LoggingOutputReceiver	access:public	signature:()
+LoggingOutputReceiver.level	adb/LoggingOutputReceiver.java	/^    private final Level level;$/;"	f	class:LoggingOutputReceiver	file:	access:private
+LoggingOutputReceiver.log	adb/LoggingOutputReceiver.java	/^    private final Logger log;$/;"	f	class:LoggingOutputReceiver	file:	access:private
+MANAGER_CREATE_TIMEOUT_MS	adb/AdbChimpDevice.java	/^    private static final long MANAGER_CREATE_TIMEOUT_MS = 30 * 1000; \/\/ 30 seconds$/;"	f	class:AdbChimpDevice	file:	access:private
+MANAGER_CREATE_WAIT_TIME_MS	adb/AdbChimpDevice.java	/^    private static final long MANAGER_CREATE_WAIT_TIME_MS = 1000; \/\/ wait 1 second$/;"	f	class:AdbChimpDevice	file:	access:private
+MENU	core/PhysicalButton.java	/^    MENU("menu"),$/;"	e	enum:PhysicalButton	file:	access:public
+PhysicalButton	core/PhysicalButton.java	/^    private PhysicalButton(String keyName) {$/;"	m	class:PhysicalButton	file:	access:private	signature:(String keyName)
+PhysicalButton	core/PhysicalButton.java	/^public enum PhysicalButton {$/;"	g
+PhysicalButton.PhysicalButton	core/PhysicalButton.java	/^    private PhysicalButton(String keyName) {$/;"	m	class:PhysicalButton	file:	access:private	signature:(String keyName)
+PhysicalButton.getKeyName	core/PhysicalButton.java	/^    public String getKeyName() {$/;"	m	class:PhysicalButton	access:public	signature:()
+PhysicalButton.keyName	core/PhysicalButton.java	/^    private String keyName;$/;"	f	class:PhysicalButton	file:	access:private
+Point	adb/LinearInterpolator.java	/^        public Point(int x, int y) {$/;"	m	class:LinearInterpolator.Point	access:public	signature:(int x, int y)
+Point	adb/LinearInterpolator.java	/^    public static class Point {$/;"	c	class:LinearInterpolator	access:public
+SEARCH	core/PhysicalButton.java	/^    SEARCH("search"),$/;"	e	enum:PhysicalButton	file:	access:public
+SixteenBitColorModel	adb/image/SixteenBitColorModel.java	/^    public SixteenBitColorModel(RawImage rawImage) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(RawImage rawImage)
+SixteenBitColorModel	adb/image/SixteenBitColorModel.java	/^class SixteenBitColorModel extends ColorModel {$/;"	c	inherits:ColorModel
+SixteenBitColorModel.BITS	adb/image/SixteenBitColorModel.java	/^    private static final int[] BITS = {$/;"	f	class:SixteenBitColorModel	file:	access:private
+SixteenBitColorModel.SixteenBitColorModel	adb/image/SixteenBitColorModel.java	/^    public SixteenBitColorModel(RawImage rawImage) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(RawImage rawImage)
+SixteenBitColorModel.getAlpha	adb/image/SixteenBitColorModel.java	/^    public int getAlpha(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+SixteenBitColorModel.getAlpha	adb/image/SixteenBitColorModel.java	/^    public int getAlpha(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+SixteenBitColorModel.getBlue	adb/image/SixteenBitColorModel.java	/^    public int getBlue(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+SixteenBitColorModel.getBlue	adb/image/SixteenBitColorModel.java	/^    public int getBlue(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+SixteenBitColorModel.getGreen	adb/image/SixteenBitColorModel.java	/^    public int getGreen(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+SixteenBitColorModel.getGreen	adb/image/SixteenBitColorModel.java	/^    public int getGreen(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+SixteenBitColorModel.getPixel	adb/image/SixteenBitColorModel.java	/^    private int getPixel(Object inData) {$/;"	m	class:SixteenBitColorModel	file:	access:private	signature:(Object inData)
+SixteenBitColorModel.getRed	adb/image/SixteenBitColorModel.java	/^    public int getRed(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+SixteenBitColorModel.getRed	adb/image/SixteenBitColorModel.java	/^    public int getRed(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+SixteenBitColorModel.isCompatibleRaster	adb/image/SixteenBitColorModel.java	/^    public boolean isCompatibleRaster(Raster raster) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Raster raster)
+TAG	hierarchyviewer/HierarchyViewer.java	/^    public static final String TAG = "hierarchyviewer";$/;"	f	class:HierarchyViewer	access:public
+ThirtyTwoBitColorModel	adb/image/ThirtyTwoBitColorModel.java	/^    public ThirtyTwoBitColorModel(RawImage rawImage) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(RawImage rawImage)
+ThirtyTwoBitColorModel	adb/image/ThirtyTwoBitColorModel.java	/^class ThirtyTwoBitColorModel extends ColorModel {$/;"	c	inherits:ColorModel
+ThirtyTwoBitColorModel.BITS	adb/image/ThirtyTwoBitColorModel.java	/^    private static final int[] BITS = {$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.ThirtyTwoBitColorModel	adb/image/ThirtyTwoBitColorModel.java	/^    public ThirtyTwoBitColorModel(RawImage rawImage) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(RawImage rawImage)
+ThirtyTwoBitColorModel.alphaLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.alphaMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.alphaOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.blueLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.blueMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.blueOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.getAlpha	adb/image/ThirtyTwoBitColorModel.java	/^    public int getAlpha(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+ThirtyTwoBitColorModel.getAlpha	adb/image/ThirtyTwoBitColorModel.java	/^    public int getAlpha(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+ThirtyTwoBitColorModel.getBlue	adb/image/ThirtyTwoBitColorModel.java	/^    public int getBlue(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+ThirtyTwoBitColorModel.getBlue	adb/image/ThirtyTwoBitColorModel.java	/^    public int getBlue(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+ThirtyTwoBitColorModel.getGreen	adb/image/ThirtyTwoBitColorModel.java	/^    public int getGreen(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+ThirtyTwoBitColorModel.getGreen	adb/image/ThirtyTwoBitColorModel.java	/^    public int getGreen(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+ThirtyTwoBitColorModel.getPixel	adb/image/ThirtyTwoBitColorModel.java	/^    private int getPixel(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	file:	access:private	signature:(Object inData)
+ThirtyTwoBitColorModel.getRed	adb/image/ThirtyTwoBitColorModel.java	/^    public int getRed(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+ThirtyTwoBitColorModel.getRed	adb/image/ThirtyTwoBitColorModel.java	/^    public int getRed(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+ThirtyTwoBitColorModel.greenLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.greenMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.greenOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.isCompatibleRaster	adb/image/ThirtyTwoBitColorModel.java	/^    public boolean isCompatibleRaster(Raster raster) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Raster raster)
+ThirtyTwoBitColorModel.redLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.redMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+ThirtyTwoBitColorModel.redOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+TouchPressType	core/TouchPressType.java	/^    TouchPressType(String identifier) {$/;"	m	class:TouchPressType	access:public	signature:(String identifier)
+TouchPressType	core/TouchPressType.java	/^public enum TouchPressType {$/;"	g
+TouchPressType.TouchPressType	core/TouchPressType.java	/^    TouchPressType(String identifier) {$/;"	m	class:TouchPressType	access:public	signature:(String identifier)
+TouchPressType.fromIdentifier	core/TouchPressType.java	/^    public static TouchPressType fromIdentifier(String name) {$/;"	m	class:TouchPressType	access:public	signature:(String name)
+TouchPressType.getIdentifier	core/TouchPressType.java	/^    public String getIdentifier() {$/;"	m	class:TouchPressType	access:public	signature:()
+TouchPressType.identifier	core/TouchPressType.java	/^    private String identifier;$/;"	f	class:TouchPressType	file:	access:private
+TouchPressType.identifierToEnum	core/TouchPressType.java	/^    private static final Map<String,TouchPressType> identifierToEnum =$/;"	f	class:TouchPressType	file:	access:private
+UP	core/TouchPressType.java	/^    DOWN("down"), UP("up"), DOWN_AND_UP("downAndUp");$/;"	e	enum:TouchPressType	file:	access:public
+ZERO_LENGTH_STRING_ARRAY	adb/AdbChimpDevice.java	/^    private static final String[] ZERO_LENGTH_STRING_ARRAY = new String[0];$/;"	f	class:AdbChimpDevice	file:	access:private
+addOutput	adb/CommandOutputCapture.java	/^    public void addOutput(byte[] data, int offset, int length) {$/;"	m	class:CommandOutputCapture	access:public	signature:(byte[] data, int offset, int length)
+addOutput	adb/LoggingOutputReceiver.java	/^    public void addOutput(byte[] data, int offset, int length) {$/;"	m	class:LoggingOutputReceiver	access:public	signature:(byte[] data, int offset, int length)
+alphaLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+alphaMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+alphaOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int alphaOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+alpha_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int alpha_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+alpha_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int alpha_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+blueLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+blueMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+blueOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int blueOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+blue_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int blue_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+blue_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int blue_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+bpp	adb/image/CaptureRawAndConvertedImage.java	/^        public int bpp;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+bridge	adb/AdbBackend.java	/^    private final AndroidDebugBridge bridge;$/;"	f	class:AdbBackend	file:	access:private
+broadcastIntent	adb/AdbChimpDevice.java	/^    public void broadcastIntent(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	access:public	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+broadcastIntent	core/IChimpDevice.java	/^    void broadcastIntent(@Nullable String uri, @Nullable String action,$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String uri, @Nullable String action, @Nullable String data, @Nullable String mimeType, Collection<String> categories, Map<String, Object> extras, @Nullable String component, int flags)
+buildIntentArgString	adb/AdbChimpDevice.java	/^    private List<String> buildIntentArgString(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+builder	adb/CommandOutputCapture.java	/^    private final StringBuilder builder = new StringBuilder();$/;"	f	class:CommandOutputCapture	file:	access:private
+cachedBufferedImage	core/ChimpImageBase.java	/^    private WeakReference<BufferedImage> cachedBufferedImage = null;$/;"	f	class:ChimpImageBase	file:	access:private
+close	ChimpManager.java	/^    public void close() {$/;"	m	class:ChimpManager	access:public	signature:()
+com.android.chimpchat	ChimpChat.java	/^package com.android.chimpchat;$/;"	p
+com.android.chimpchat	ChimpManager.java	/^package com.android.chimpchat;$/;"	p
+com.android.chimpchat.adb	adb/AdbBackend.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb	adb/AdbChimpDevice.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb	adb/AdbChimpImage.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb	adb/CommandOutputCapture.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb	adb/LinearInterpolator.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb	adb/LoggingOutputReceiver.java	/^package com.android.chimpchat.adb;$/;"	p
+com.android.chimpchat.adb.image	adb/image/CaptureRawAndConvertedImage.java	/^package com.android.chimpchat.adb.image;$/;"	p
+com.android.chimpchat.adb.image	adb/image/ImageUtils.java	/^package com.android.chimpchat.adb.image;$/;"	p
+com.android.chimpchat.adb.image	adb/image/SixteenBitColorModel.java	/^package com.android.chimpchat.adb.image;$/;"	p
+com.android.chimpchat.adb.image	adb/image/ThirtyTwoBitColorModel.java	/^package com.android.chimpchat.adb.image;$/;"	p
+com.android.chimpchat.core	core/ChimpImageBase.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.core	core/IChimpBackend.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.core	core/IChimpDevice.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.core	core/IChimpImage.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.core	core/PhysicalButton.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.core	core/TouchPressType.java	/^package com.android.chimpchat.core;$/;"	p
+com.android.chimpchat.hierarchyviewer	hierarchyviewer/HierarchyViewer.java	/^package com.android.chimpchat.hierarchyviewer;$/;"	p
+convertImage	adb/image/ImageUtils.java	/^    public static BufferedImage convertImage(RawImage rawImage) {$/;"	m	class:ImageUtils	access:public	signature:(RawImage rawImage)
+convertImage	adb/image/ImageUtils.java	/^    public static BufferedImage convertImage(RawImage rawImage, BufferedImage image) {$/;"	m	class:ImageUtils	access:public	signature:(RawImage rawImage, BufferedImage image)
+convertInstrumentResult	adb/AdbChimpDevice.java	/^    \/* package *\/ static Map<String, Object> convertInstrumentResult(String result) {$/;"	m	class:AdbChimpDevice	access:default	signature:(String result)
+convertSnapshot	core/ChimpImageBase.java	/^    private BufferedImage convertSnapshot() {$/;"	m	class:ChimpImageBase	file:	access:private	signature:()
+convertToBytes	core/ChimpImageBase.java	/^    public byte[] convertToBytes(String format) {$/;"	m	class:ChimpImageBase	access:public	signature:(String format)
+convertToBytes	core/IChimpImage.java	/^    byte[] convertToBytes(String format);$/;"	m	interface:IChimpImage	access:public	signature:(String format)
+createBackendByName	ChimpChat.java	/^    private static IChimpBackend createBackendByName(String backendName) {$/;"	m	class:ChimpChat	file:	access:private	signature:(String backendName)
+createBufferedImage	adb/AdbChimpImage.java	/^    public BufferedImage createBufferedImage() {$/;"	m	class:AdbChimpImage	access:public	signature:()
+createBufferedImage	core/ChimpImageBase.java	/^        public BufferedImage createBufferedImage() {$/;"	m	class:ChimpImageBase.BufferedImageChimpImage	access:public	signature:()
+createBufferedImage	core/ChimpImageBase.java	/^    public abstract BufferedImage createBufferedImage();$/;"	m	class:ChimpImageBase	access:public	signature:()
+createBufferedImage	core/IChimpImage.java	/^    BufferedImage createBufferedImage();$/;"	m	interface:IChimpImage	access:public	signature:()
+createManager	adb/AdbChimpDevice.java	/^    private ChimpManager createManager(String address, int port) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String address, int port)
+data	adb/image/CaptureRawAndConvertedImage.java	/^        public byte[] data;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+device	adb/AdbChimpDevice.java	/^    private final IDevice device;$/;"	f	class:AdbChimpDevice	file:	access:private
+devices	adb/AdbBackend.java	/^    private final List<IChimpDevice> devices = Lists.newArrayList();$/;"	f	class:AdbBackend	file:	access:private
+dispose	adb/AdbChimpDevice.java	/^    public void dispose() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+dispose	core/IChimpDevice.java	/^    void dispose();$/;"	m	interface:IChimpDevice	access:public	signature:()
+done	ChimpManager.java	/^    public void done() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+drag	adb/AdbChimpDevice.java	/^    public void drag(int startx, int starty, int endx, int endy, int steps, long ms) {$/;"	m	class:AdbChimpDevice	access:public	signature:(int startx, int starty, int endx, int endy, int steps, long ms)
+drag	core/IChimpDevice.java	/^    void drag(int startx, int starty, int endx, int endy, int steps, long ms);$/;"	m	interface:IChimpDevice	access:public	signature:(int startx, int starty, int endx, int endy, int steps, long ms)
+end	adb/LinearInterpolator.java	/^        void end(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+equals	adb/LinearInterpolator.java	/^        public boolean equals(Object obj) {$/;"	m	class:LinearInterpolator.Point	access:public	signature:(Object obj)
+executeAsyncCommand	adb/AdbChimpDevice.java	/^    private void executeAsyncCommand(final String command,$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(final String command, final LoggingOutputReceiver logger)
+executor	adb/AdbChimpDevice.java	/^    private final ExecutorService executor = Executors.newSingleThreadExecutor();$/;"	f	class:AdbChimpDevice	file:	access:private
+findAdb	adb/AdbBackend.java	/^    private String findAdb() {$/;"	m	class:AdbBackend	file:	access:private	signature:()
+findAttachedDevice	adb/AdbBackend.java	/^    private IDevice findAttachedDevice(String deviceIdRegex) {$/;"	m	class:AdbBackend	file:	access:private	signature:(String deviceIdRegex)
+findViewById	hierarchyviewer/HierarchyViewer.java	/^    public ViewNode findViewById(String id) {$/;"	m	class:HierarchyViewer	access:public	signature:(String id)
+findViewById	hierarchyviewer/HierarchyViewer.java	/^    public ViewNode findViewById(String id, ViewNode rootNode) {$/;"	m	class:HierarchyViewer	access:public	signature:(String id, ViewNode rootNode)
+flush	adb/CommandOutputCapture.java	/^    public void flush() { }$/;"	m	class:CommandOutputCapture	access:public	signature:()
+flush	adb/LoggingOutputReceiver.java	/^    public void flush() { }$/;"	m	class:LoggingOutputReceiver	access:public	signature:()
+fromIdentifier	core/TouchPressType.java	/^    public static TouchPressType fromIdentifier(String name) {$/;"	m	class:TouchPressType	access:public	signature:(String name)
+getAbsoluteCenterOfView	hierarchyviewer/HierarchyViewer.java	/^    public static Point getAbsoluteCenterOfView(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+getAbsolutePositionOfView	hierarchyviewer/HierarchyViewer.java	/^    public static Point getAbsolutePositionOfView(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+getAlpha	adb/image/SixteenBitColorModel.java	/^    public int getAlpha(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+getAlpha	adb/image/SixteenBitColorModel.java	/^    public int getAlpha(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+getAlpha	adb/image/ThirtyTwoBitColorModel.java	/^    public int getAlpha(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+getAlpha	adb/image/ThirtyTwoBitColorModel.java	/^    public int getAlpha(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+getBlue	adb/image/SixteenBitColorModel.java	/^    public int getBlue(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+getBlue	adb/image/SixteenBitColorModel.java	/^    public int getBlue(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+getBlue	adb/image/ThirtyTwoBitColorModel.java	/^    public int getBlue(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+getBlue	adb/image/ThirtyTwoBitColorModel.java	/^    public int getBlue(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+getBufferedImage	core/ChimpImageBase.java	/^    public BufferedImage getBufferedImage() {$/;"	m	class:ChimpImageBase	access:public	signature:()
+getBufferedImage	core/IChimpImage.java	/^    BufferedImage getBufferedImage();$/;"	m	interface:IChimpImage	access:public	signature:()
+getFocusedWindowName	hierarchyviewer/HierarchyViewer.java	/^    public String getFocusedWindowName() {$/;"	m	class:HierarchyViewer	access:public	signature:()
+getGreen	adb/image/SixteenBitColorModel.java	/^    public int getGreen(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+getGreen	adb/image/SixteenBitColorModel.java	/^    public int getGreen(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+getGreen	adb/image/ThirtyTwoBitColorModel.java	/^    public int getGreen(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+getGreen	adb/image/ThirtyTwoBitColorModel.java	/^    public int getGreen(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+getHierarchyViewer	adb/AdbChimpDevice.java	/^    public HierarchyViewer getHierarchyViewer() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+getHierarchyViewer	core/IChimpDevice.java	/^    HierarchyViewer getHierarchyViewer();$/;"	m	interface:IChimpDevice	access:public	signature:()
+getIdentifier	core/TouchPressType.java	/^    public String getIdentifier() {$/;"	m	class:TouchPressType	access:public	signature:()
+getInstance	ChimpChat.java	/^    public static ChimpChat getInstance() {$/;"	m	class:ChimpChat	access:public	signature:()
+getInstance	ChimpChat.java	/^    public static ChimpChat getInstance(Map<String, String> options) {$/;"	m	class:ChimpChat	access:public	signature:(Map<String, String> options)
+getKeyName	core/PhysicalButton.java	/^    public String getKeyName() {$/;"	m	class:PhysicalButton	access:public	signature:()
+getManager	adb/AdbChimpDevice.java	/^    public ChimpManager getManager() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+getManager	core/IChimpDevice.java	/^    ChimpManager getManager();$/;"	m	interface:IChimpDevice	access:public	signature:()
+getMask	adb/image/ImageUtils.java	/^    static int getMask(int length) {$/;"	m	class:ImageUtils	access:default	signature:(int length)
+getPixel	adb/image/SixteenBitColorModel.java	/^    private int getPixel(Object inData) {$/;"	m	class:SixteenBitColorModel	file:	access:private	signature:(Object inData)
+getPixel	adb/image/ThirtyTwoBitColorModel.java	/^    private int getPixel(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	file:	access:private	signature:(Object inData)
+getPixel	core/ChimpImageBase.java	/^    public int getPixel(int x, int y) {$/;"	m	class:ChimpImageBase	access:public	signature:(int x, int y)
+getPixel	core/IChimpImage.java	/^    int getPixel(int x, int y);$/;"	m	interface:IChimpImage	access:public	signature:(int x, int y)
+getProperty	adb/AdbChimpDevice.java	/^    public String getProperty(String key) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String key)
+getProperty	core/IChimpDevice.java	/^    String getProperty(String key);$/;"	m	interface:IChimpDevice	access:public	signature:(String key)
+getPropertyList	adb/AdbChimpDevice.java	/^    public Collection<String> getPropertyList() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+getPropertyList	core/IChimpDevice.java	/^    Collection<String> getPropertyList();$/;"	m	interface:IChimpDevice	access:public	signature:()
+getRawImage	adb/AdbChimpImage.java	/^    public RawImage getRawImage() {$/;"	m	class:AdbChimpImage	access:public	signature:()
+getRed	adb/image/SixteenBitColorModel.java	/^    public int getRed(Object inData) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Object inData)
+getRed	adb/image/SixteenBitColorModel.java	/^    public int getRed(int pixel) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(int pixel)
+getRed	adb/image/ThirtyTwoBitColorModel.java	/^    public int getRed(Object inData) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Object inData)
+getRed	adb/image/ThirtyTwoBitColorModel.java	/^    public int getRed(int pixel) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(int pixel)
+getSubImage	core/ChimpImageBase.java	/^    public IChimpImage getSubImage(int x, int y, int w, int h) {$/;"	m	class:ChimpImageBase	access:public	signature:(int x, int y, int w, int h)
+getSubImage	core/IChimpImage.java	/^    IChimpImage getSubImage(int x, int y, int w, int h);$/;"	m	interface:IChimpImage	access:public	signature:(int x, int y, int w, int h)
+getSystemProperty	adb/AdbChimpDevice.java	/^    public String getSystemProperty(String key) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String key)
+getSystemProperty	core/IChimpDevice.java	/^    String getSystemProperty(String key);$/;"	m	interface:IChimpDevice	access:public	signature:(String key)
+getText	hierarchyviewer/HierarchyViewer.java	/^    public String getText(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+getVariable	ChimpManager.java	/^    public String getVariable(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+getX	adb/LinearInterpolator.java	/^        public int getX() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+getY	adb/LinearInterpolator.java	/^        public int getY() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+greenLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+greenMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+greenOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int greenOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+green_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int green_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+green_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int green_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+hashCode	adb/LinearInterpolator.java	/^        public int hashCode() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+height	adb/image/CaptureRawAndConvertedImage.java	/^        public int height;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+identifier	core/TouchPressType.java	/^    private String identifier;$/;"	f	class:TouchPressType	file:	access:private
+identifierToEnum	core/TouchPressType.java	/^    private static final Map<String,TouchPressType> identifierToEnum =$/;"	f	class:TouchPressType	file:	access:private
+image	adb/AdbChimpImage.java	/^    private final RawImage image;$/;"	f	class:AdbChimpImage	file:	access:private
+image	core/ChimpImageBase.java	/^        private final BufferedImage image;$/;"	f	class:ChimpImageBase.BufferedImageChimpImage	file:	access:private
+installPackage	adb/AdbChimpDevice.java	/^    public boolean installPackage(String path) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String path)
+installPackage	core/IChimpDevice.java	/^    boolean installPackage(String path);$/;"	m	interface:IChimpDevice	access:public	signature:(String path)
+instrument	adb/AdbChimpDevice.java	/^    public Map<String, Object> instrument(String packageName, Map<String, Object> args) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String packageName, Map<String, Object> args)
+instrument	core/IChimpDevice.java	/^    Map<String, Object> instrument(String packageName,$/;"	m	interface:IChimpDevice	access:public	signature:(String packageName, Map<String, Object> args)
+interpolate	adb/LinearInterpolator.java	/^    public void interpolate(Point start, Point end, Callback callback) {$/;"	m	class:LinearInterpolator	access:public	signature:(Point start, Point end, Callback callback)
+isCancelled	adb/CommandOutputCapture.java	/^    public boolean isCancelled() {$/;"	m	class:CommandOutputCapture	access:public	signature:()
+isCancelled	adb/LoggingOutputReceiver.java	/^    public boolean isCancelled() {$/;"	m	class:LoggingOutputReceiver	access:public	signature:()
+isCompatibleRaster	adb/image/SixteenBitColorModel.java	/^    public boolean isCompatibleRaster(Raster raster) {$/;"	m	class:SixteenBitColorModel	access:public	signature:(Raster raster)
+isCompatibleRaster	adb/image/ThirtyTwoBitColorModel.java	/^    public boolean isCompatibleRaster(Raster raster) {$/;"	m	class:ThirtyTwoBitColorModel	access:public	signature:(Raster raster)
+isNullOrEmpty	adb/AdbChimpDevice.java	/^    private static boolean isNullOrEmpty(@Nullable String string) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(@ullable String string)
+keyDown	ChimpManager.java	/^    public boolean keyDown(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+keyName	core/PhysicalButton.java	/^    private String keyName;$/;"	f	class:PhysicalButton	file:	access:private
+keyUp	ChimpManager.java	/^    public boolean keyUp(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+lerp	adb/LinearInterpolator.java	/^    private static float lerp(float start, float stop, float amount) {$/;"	m	class:LinearInterpolator	file:	access:private	signature:(float start, float stop, float amount)
+level	adb/LoggingOutputReceiver.java	/^    private final Level level;$/;"	f	class:LoggingOutputReceiver	file:	access:private
+listVariable	ChimpManager.java	/^    public Collection<String> listVariable() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+loadImageFromFile	core/ChimpImageBase.java	/^    public static IChimpImage loadImageFromFile(String path) {$/;"	m	class:ChimpImageBase	access:public	signature:(String path)
+log	adb/LoggingOutputReceiver.java	/^    private final Logger log;$/;"	f	class:LoggingOutputReceiver	file:	access:private
+mBackend	ChimpChat.java	/^    private final IChimpBackend mBackend;$/;"	f	class:ChimpChat	file:	access:private
+mDevice	hierarchyviewer/HierarchyViewer.java	/^    private IDevice mDevice;$/;"	f	class:HierarchyViewer	file:	access:private
+main	adb/image/CaptureRawAndConvertedImage.java	/^    public static void main(String[] args) throws IOException {$/;"	m	class:CaptureRawAndConvertedImage	access:public	signature:(String[] args)
+manager	adb/AdbChimpDevice.java	/^    private ChimpManager manager;$/;"	f	class:AdbChimpDevice	file:	access:private
+monkeyReader	ChimpManager.java	/^    private BufferedReader monkeyReader;$/;"	f	class:ChimpManager	file:	access:private
+monkeySocket	ChimpManager.java	/^    private Socket monkeySocket;$/;"	f	class:ChimpManager	file:	access:private
+monkeyWriter	ChimpManager.java	/^    private BufferedWriter monkeyWriter;$/;"	f	class:ChimpManager	file:	access:private
+parseResponseForExtra	ChimpManager.java	/^    private String parseResponseForExtra(String monkeyResponse) {$/;"	m	class:ChimpManager	file:	access:private	signature:(String monkeyResponse)
+parseResponseForSuccess	ChimpManager.java	/^    private boolean parseResponseForSuccess(String monkeyResponse) {$/;"	m	class:ChimpManager	file:	access:private	signature:(String monkeyResponse)
+press	ChimpManager.java	/^    public boolean press(PhysicalButton button) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(PhysicalButton button)
+press	ChimpManager.java	/^    public boolean press(String name) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String name)
+press	adb/AdbChimpDevice.java	/^    public void press(String keyName, TouchPressType type) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String keyName, TouchPressType type)
+press	core/IChimpDevice.java	/^    void press(String keyName, TouchPressType type);$/;"	m	interface:IChimpDevice	access:public	signature:(String keyName, TouchPressType type)
+quit	ChimpManager.java	/^    public void quit() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+rawImage16toARGB	adb/image/ImageUtils.java	/^    private static BufferedImage rawImage16toARGB(BufferedImage image, RawImage rawImage) {$/;"	m	class:ImageUtils	file:	access:private	signature:(BufferedImage image, RawImage rawImage)
+rawImage32toARGB	adb/image/ImageUtils.java	/^    private static BufferedImage rawImage32toARGB(RawImage rawImage) {$/;"	m	class:ImageUtils	file:	access:private	signature:(RawImage rawImage)
+reboot	adb/AdbChimpDevice.java	/^    public void reboot(String into) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String into)
+reboot	core/IChimpDevice.java	/^    void reboot(@Nullable String into);$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String into)
+redLength	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redLength;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+redMask	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redMask;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+redOffset	adb/image/ThirtyTwoBitColorModel.java	/^    private final int redOffset;$/;"	f	class:ThirtyTwoBitColorModel	file:	access:private
+red_length	adb/image/CaptureRawAndConvertedImage.java	/^        public int red_length;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+red_offset	adb/image/CaptureRawAndConvertedImage.java	/^        public int red_offset;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+removePackage	adb/AdbChimpDevice.java	/^    public boolean removePackage(String packageName) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String packageName)
+removePackage	core/IChimpDevice.java	/^    boolean removePackage(String packageName);$/;"	m	interface:IChimpDevice	access:public	signature:(String packageName)
+sAdbLocation	ChimpChat.java	/^    private static String sAdbLocation;$/;"	f	class:ChimpChat	file:	access:private
+sameAs	core/ChimpImageBase.java	/^    public boolean sameAs(IChimpImage other, double percent) {$/;"	m	class:ChimpImageBase	access:public	signature:(IChimpImage other, double percent)
+sameAs	core/IChimpImage.java	/^    boolean sameAs(IChimpImage other, double percent);$/;"	m	interface:IChimpImage	access:public	signature:(IChimpImage other, double percent)
+sendMonkeyEvent	ChimpManager.java	/^    private boolean sendMonkeyEvent(String command) throws IOException {$/;"	m	class:ChimpManager	file:	access:private	signature:(String command)
+sendMonkeyEventAndGetResponse	ChimpManager.java	/^    private String sendMonkeyEventAndGetResponse(String command) throws IOException {$/;"	m	class:ChimpManager	file:	access:private	signature:(String command)
+setupViewServer	hierarchyviewer/HierarchyViewer.java	/^    private void setupViewServer() {$/;"	m	class:HierarchyViewer	file:	access:private	signature:()
+shell	adb/AdbChimpDevice.java	/^    private String shell(String... args) {$/;"	m	class:AdbChimpDevice	file:	access:private	signature:(String... args)
+shell	adb/AdbChimpDevice.java	/^    public String shell(String cmd) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String cmd)
+shell	core/IChimpDevice.java	/^    String shell(String cmd);$/;"	m	interface:IChimpDevice	access:public	signature:(String cmd)
+shutdown	ChimpChat.java	/^    public void shutdown(){$/;"	m	class:ChimpChat	access:public	signature:()
+shutdown	adb/AdbBackend.java	/^    public void shutdown() {$/;"	m	class:AdbBackend	access:public	signature:()
+shutdown	core/IChimpBackend.java	/^    void shutdown();$/;"	m	interface:IChimpBackend	access:public	signature:()
+size	adb/image/CaptureRawAndConvertedImage.java	/^        public int size;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+start	adb/LinearInterpolator.java	/^        void start(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+startActivity	adb/AdbChimpDevice.java	/^    public void startActivity(String uri, String action, String data, String mimetype,$/;"	m	class:AdbChimpDevice	access:public	signature:(String uri, String action, String data, String mimetype, Collection<String> categories, Map<String, Object> extras, String component, int flags)
+startActivity	core/IChimpDevice.java	/^    void startActivity(@Nullable String uri, @Nullable String action,$/;"	m	interface:IChimpDevice	access:public	signature:(@ullable String uri, @Nullable String action, @Nullable String data, @Nullable String mimeType, Collection<String> categories, Map<String, Object> extras, @Nullable String component, int flags)
+step	adb/LinearInterpolator.java	/^        void step(Point point);$/;"	m	interface:LinearInterpolator.Callback	access:public	signature:(Point point)
+steps	adb/LinearInterpolator.java	/^    private final int steps;$/;"	f	class:LinearInterpolator	file:	access:private
+takeSnapshot	adb/AdbChimpDevice.java	/^    public IChimpImage takeSnapshot() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+takeSnapshot	core/IChimpDevice.java	/^    IChimpImage takeSnapshot();$/;"	m	interface:IChimpDevice	access:public	signature:()
+tap	ChimpManager.java	/^    public boolean tap(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+toRawImage	adb/image/CaptureRawAndConvertedImage.java	/^        public RawImage toRawImage() {$/;"	m	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public	signature:()
+toString	adb/CommandOutputCapture.java	/^    public String toString() {$/;"	m	class:CommandOutputCapture	access:public	signature:()
+toString	adb/LinearInterpolator.java	/^        public String toString() {$/;"	m	class:LinearInterpolator.Point	access:public	signature:()
+touch	ChimpManager.java	/^    public boolean touch(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+touch	adb/AdbChimpDevice.java	/^    public void touch(int x, int y, TouchPressType type) {$/;"	m	class:AdbChimpDevice	access:public	signature:(int x, int y, TouchPressType type)
+touch	core/IChimpDevice.java	/^    void touch(int x, int y, TouchPressType type);$/;"	m	interface:IChimpDevice	access:public	signature:(int x, int y, TouchPressType type)
+touchDown	ChimpManager.java	/^    public boolean touchDown(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+touchMove	ChimpManager.java	/^    public boolean touchMove(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+touchUp	ChimpManager.java	/^    public boolean touchUp(int x, int y) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(int x, int y)
+type	ChimpManager.java	/^    public boolean type(String text) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(String text)
+type	ChimpManager.java	/^    public boolean type(char keyChar) throws IOException {$/;"	m	class:ChimpManager	access:public	signature:(char keyChar)
+type	adb/AdbChimpDevice.java	/^    public void type(String string) {$/;"	m	class:AdbChimpDevice	access:public	signature:(String string)
+type	core/IChimpDevice.java	/^    void type(String string);$/;"	m	interface:IChimpDevice	access:public	signature:(String string)
+version	adb/image/CaptureRawAndConvertedImage.java	/^        public int version;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+visible	hierarchyviewer/HierarchyViewer.java	/^    public boolean visible(ViewNode node) {$/;"	m	class:HierarchyViewer	access:public	signature:(ViewNode node)
+waitForConnection	ChimpChat.java	/^    public IChimpDevice waitForConnection(){$/;"	m	class:ChimpChat	access:public	signature:()
+waitForConnection	ChimpChat.java	/^    public IChimpDevice waitForConnection(long timeoutMs, String deviceId){$/;"	m	class:ChimpChat	access:public	signature:(long timeoutMs, String deviceId)
+waitForConnection	adb/AdbBackend.java	/^    public IChimpDevice waitForConnection() {$/;"	m	class:AdbBackend	access:public	signature:()
+waitForConnection	adb/AdbBackend.java	/^    public IChimpDevice waitForConnection(long timeoutMs, String deviceIdRegex) {$/;"	m	class:AdbBackend	access:public	signature:(long timeoutMs, String deviceIdRegex)
+waitForConnection	core/IChimpBackend.java	/^    IChimpDevice waitForConnection();$/;"	m	interface:IChimpBackend	access:public	signature:()
+waitForConnection	core/IChimpBackend.java	/^    IChimpDevice waitForConnection(long timeoutMs, String deviceIdRegex);$/;"	m	interface:IChimpBackend	access:public	signature:(long timeoutMs, String deviceIdRegex)
+wake	ChimpManager.java	/^    public void wake() throws IOException {$/;"	m	class:ChimpManager	access:public	signature:()
+wake	adb/AdbChimpDevice.java	/^    public void wake() {$/;"	m	class:AdbChimpDevice	access:public	signature:()
+wake	core/IChimpDevice.java	/^    void wake();$/;"	m	interface:IChimpDevice	access:public	signature:()
+width	adb/image/CaptureRawAndConvertedImage.java	/^        public int width;$/;"	f	class:CaptureRawAndConvertedImage.ChimpRawImage	access:public
+writeOutImage	adb/image/CaptureRawAndConvertedImage.java	/^    private static void writeOutImage(RawImage screenshot, String name) throws IOException {$/;"	m	class:CaptureRawAndConvertedImage	file:	access:private	signature:(RawImage screenshot, String name)
+writeToFile	core/ChimpImageBase.java	/^    public boolean writeToFile(String path, String format) {$/;"	m	class:ChimpImageBase	access:public	signature:(String path, String format)
+writeToFile	core/IChimpImage.java	/^    boolean writeToFile(String path, String format);$/;"	m	interface:IChimpImage	access:public	signature:(String path, String format)
+writeToFileHelper	core/ChimpImageBase.java	/^    private boolean writeToFileHelper(String path, String format) {$/;"	m	class:ChimpImageBase	file:	access:private	signature:(String path, String format)
+x	adb/LinearInterpolator.java	/^        private final int x;$/;"	f	class:LinearInterpolator.Point	file:	access:private
+y	adb/LinearInterpolator.java	/^        private final int y;$/;"	f	class:LinearInterpolator.Point	file:	access:private
