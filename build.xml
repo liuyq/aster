@@ -34,6 +34,42 @@
     </target>
 
     <!--
+         ddmlib
+    -->
+    <target name="-compile-ddmlib" depends="init">
+        <javac includeantruntime="false"
+               srcdir="src/com/android/ddmlib"
+               destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-ddmlib" depends="-compile-ddmlib">
+        <jar destfile="${dist.dir}/ddmlib.jar"
+             basedir="${build.classes.dir}"
+             includes="com/android/ddmlib/**/*.class"/>
+    </target>
+
+    <!--
+         ChimpChat
+    -->
+    <target name="-compile-chimpchat" depends="init">
+        <javac includeantruntime="false"
+               srcdir="src/com/android/chimpchat"
+               destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-chimpchat" depends="-compile-chimpchat">
+        <jar destfile="${dist.dir}/chimpchat.jar"
+             basedir="${build.classes.dir}"
+             includes="com/android/chimpchat/**/*.class"/>
+    </target>
+
+    <!--
          Owl
     -->
     <target name="-compile-owl" depends="init">
@@ -94,9 +130,9 @@
     <!--
          Targets
     -->
-    <target name="compile" depends="init,-compile-javacv,-compile-owl,-compile-wookieerunner,-compile-aster"/>
+    <target name="compile" depends="init,-compile-javacv,-compile-ddmlib,-compile-chimpchat,-compile-owl,-compile-wookieerunner,-compile-aster"/>
 
-    <target name="jar" depends="init,-jar-javacv,-jar-owl,-jar-wookieerunner,-jar-aster"/>
+    <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
         <copy file="etc/aster/aster" todir="${dist.dir}"/>
