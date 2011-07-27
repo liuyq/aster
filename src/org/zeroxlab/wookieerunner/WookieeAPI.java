@@ -40,10 +40,14 @@ import java.util.Map;
 public class WookieeAPI {
     private IChimpDevice impl;
     private IMatcher matcher;
+    private int width;
+    private int height;
 
     public WookieeAPI(IChimpDevice impl) {
         this.impl = impl;
         this.matcher = new PyramidTemplateMatcher();
+        this.width = Integer.parseInt(getProperty("display.width"));
+        this.height = Integer.parseInt(getProperty("display.height"));
     }
 
     private String getCurrentSnapshot() {
@@ -68,12 +72,25 @@ public class WookieeAPI {
         return impl.getProperty(key);
     }
 
-    public void touch(String name, String typestr, double timeout)
-        throws FileNotFoundException, TemplateNotFoundException {
+    public boolean isLandScape() {
+        // To be implement
+        return false;
+    }
+
+    public void touch(int x, int y, String typestr) {
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
             type = TouchPressType.DOWN_AND_UP;
+        if (isLandScape()) {
+            int tmp = height - x;
+            x = y;
+            y = tmp;
+        }
+        impl.touch(x, y, type);
+    }
 
+    public void touch(String name, String typestr, double timeout)
+        throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();
         while (true) {
@@ -86,7 +103,21 @@ public class WookieeAPI {
             }
             break;
         }
-        impl.touch(r.cx(), r.cy(), type);
+        touch(r.cx(), r.cy(), typestr);
+    }
+
+    public void drag(int x0, int y0, int x1, int y1, int steps, double sec) {
+        long ms = (long) (sec * 1000.0);
+        if (isLandScape()) {
+            int tmp = height - x0;
+            x0 = y0;
+            y0 = tmp;
+
+            tmp = height - x1;
+            x1 = y1;
+            y1 = x1;
+        }
+        impl.drag(x0, y0, x1, y1, steps, ms);
     }
 
     public void drag(String start_img, String end_img, int steps, double sec,
@@ -96,7 +127,6 @@ public class WookieeAPI {
         MatchResult re = new MatchResult();
         String current;
         long st = System.nanoTime();
-        long ms = (long) (sec * 1000.0);
 
         while (true) {
             try {
@@ -110,7 +140,7 @@ public class WookieeAPI {
             }
             break;
         }
-        impl.drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, ms);
+        drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, sec);
     }
 
     public void press(String name, String typestr) {
