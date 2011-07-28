@@ -266,6 +266,32 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         impl.reboot(into);
     }
 
+    @MonkeyRunnerExported(doc = "Push a local file to remote device.",
+            args = { "local", "remote" },
+            argDocs = { "Push a local file to remote device."})
+    public void push(PyObject[] args, String[] kws) {
+        ArgParser ap = JythonUtils.createArgParser(args, kws);
+        Preconditions.checkNotNull(ap);
+
+        String local = ap.getString(0);
+        String remote = ap.getString(1);
+
+        impl.pushFile(local, remote);
+    }
+
+    @MonkeyRunnerExported(doc = "Pull a file from remote device.",
+            args = { "remote", "local" },
+            argDocs = { "Pull a file from remote device."})
+    public void pull(PyObject[] args, String[] kws) {
+        ArgParser ap = JythonUtils.createArgParser(args, kws);
+        Preconditions.checkNotNull(ap);
+
+        String remote = ap.getString(0);
+        String local = ap.getString(1);
+
+        impl.pullFile(remote, local);
+    }
+
     @MonkeyRunnerExported(doc = "Installs the specified Android package (.apk file) " +
             "onto the device. If the package already exists on the device, it is replaced.",
             args = { "path" },

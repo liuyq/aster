@@ -330,8 +330,7 @@ public interface IDevice {
 
     /**
      * Pulls a single file.
-     * <p/>Because this method just deals with a String for the remote file instead of a
-     * {@link FileEntry}, the size of the file being pulled is unknown and the
+     *
      * @param remote the full path to the remote file
      * @param local The local destination.
      * @param monitor The progress monitor. Allow null.

@@ -162,6 +162,14 @@ public class WookieeAPI {
         impl.reboot(into);
     }
 
+    public void push(String local, String remote) {
+        impl.pushFile(local, remote);
+    }
+
+    public void pull(String remote, String local) {
+        impl.pullFile(remote, local);
+    }
+
     public boolean installPackage(String path) {
         return impl.installPackage(path);
     }
