@@ -142,6 +142,7 @@
 
     <target name="clean" depends="init,-clean-javacv">
         <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}" />
     </target>
 </project>
 <!-- vim: set ts=4 sts=4 sw=4 expandtab: -->
