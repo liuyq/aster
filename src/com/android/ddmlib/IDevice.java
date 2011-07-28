@@ -316,6 +316,37 @@ public interface IDevice {
     public String getClientName(int pid);
 
     /**
+     * Push a single file.
+     * @param local the local filepath.
+     * @param remote The remote filepath.
+     *
+     * @throws IOException in case of I/O error on the connection.
+     * @throws AdbCommandRejectedException if adb rejects the command
+     * @throws TimeoutException in case of a timeout reading responses from the device.
+     * @throws SyncException if file could not be pushed
+     */
+    public void pushFile(String local, String remote)
+            throws IOException, AdbCommandRejectedException, TimeoutException, SyncException;
+
+    /**
+     * Pulls a single file.
+     * <p/>Because this method just deals with a String for the remote file instead of a
+     * {@link FileEntry}, the size of the file being pulled is unknown and the
+     * @param remoteFilepath the full path to the remote file
+     * @param localFilename The local destination.
+     * @param monitor The progress monitor. Allow null.
+     *
+     * @throws IOException in case of an IO exception.
+     * @throws AdbCommandRejectedException if adb rejects the command
+     * @throws TimeoutException in case of a timeout reading responses from the device.
+     * @throws SyncException in case of a sync exception.
+     *
+     * @see #getNullProgressMonitor()
+     */
+    public void pullFile(String remoteFilepath, String localFilename)
+            throws IOException, AdbCommandRejectedException, TimeoutException, SyncException;
+
+    /**
      * Installs an Android application on device.
      * This is a helper method that combines the syncPackageToDevice, installRemotePackage,
      * and removePackage steps
