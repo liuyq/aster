@@ -438,10 +438,10 @@ final class Device implements IDevice {
         }
     }
 
-    public void pullFile(String remoteFilepath, String localFilename)
+    public void pullFile(String remote, String local)
             throws IOException, AdbCommandRejectedException, TimeoutException, SyncException {
         try {
-            String targetFileName = getFileName(remoteFilepath);
+            String targetFileName = getFileName(remote);
 
             Log.d(targetFileName, String.format("Downloading %1$s from device '%2$s'",
                     targetFileName, getSerialNumber()));
@@ -451,7 +451,7 @@ final class Device implements IDevice {
                 String message = String.format("Downloding file from device '%1$s'",
                         getSerialNumber());
                 Log.d(LOG_TAG, message);
-                sync.pullFile(remoteFilepath, localFilename, SyncService.getNullProgressMonitor());
+                sync.pullFile(remote, local, SyncService.getNullProgressMonitor());
             } else {
                 throw new IOException("Unable to open sync connection!");
             }

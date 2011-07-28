@@ -332,8 +332,8 @@ public interface IDevice {
      * Pulls a single file.
      * <p/>Because this method just deals with a String for the remote file instead of a
      * {@link FileEntry}, the size of the file being pulled is unknown and the
-     * @param remoteFilepath the full path to the remote file
-     * @param localFilename The local destination.
+     * @param remote the full path to the remote file
+     * @param local The local destination.
      * @param monitor The progress monitor. Allow null.
      *
      * @throws IOException in case of an IO exception.
@@ -343,7 +343,7 @@ public interface IDevice {
      *
      * @see #getNullProgressMonitor()
      */
-    public void pullFile(String remoteFilepath, String localFilename)
+    public void pullFile(String remote, String local)
             throws IOException, AdbCommandRejectedException, TimeoutException, SyncException;
 
     /**
