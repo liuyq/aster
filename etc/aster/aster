@@ -1,5 +1,8 @@
 #!/bin/bash
 
-jarpath=aster.jar
-framework=$PWD:../`grep framework ../*.properties | cut -d '=' -f 2`
+absolute_dir="$( cd "$( dirname "$0" )" && pwd )"
+jarpath="$absolute_dir/aster.jar"
+android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
+framework=$absolute_dir:$android_framework_dir
+
 exec java -Xmx128M -Djava.ext.dirs="$framework" -jar "$jarpath" "$@"
