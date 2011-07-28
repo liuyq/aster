@@ -24,6 +24,7 @@ import com.android.ddmlib.AdbCommandRejectedException;
 import com.android.ddmlib.IDevice;
 import com.android.ddmlib.InstallException;
 import com.android.ddmlib.ShellCommandUnresponsiveException;
+import com.android.ddmlib.SyncException;
 import com.android.ddmlib.TimeoutException;
 import com.android.chimpchat.ChimpManager;
 import com.android.chimpchat.adb.LinearInterpolator.Point;
@@ -275,6 +276,46 @@ public class AdbChimpDevice implements IChimpDevice {
             return null;
         }
         return capture.toString();
+    }
+
+    @Override
+    public boolean pushFile(String localFilePath, String remoteFilePath) {
+        try {
+            device.pushFile(localFilePath, remoteFilePath);
+        } catch (SyncException e) {
+            LOG.log(Level.SEVERE, "Error pushing file: " + localFilePath, e);
+            return false;
+        } catch (AdbCommandRejectedException e) {
+            LOG.log(Level.SEVERE, "Error pushing file: " + localFilePath, e);
+            return false;
+        } catch (TimeoutException e) {
+            LOG.log(Level.SEVERE, "Error pushing file: " + localFilePath, e);
+            return false;
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Error pushing file: " + localFilePath, e);
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean pullFile(String remoteFilePath, String localFilePath) {
+        try {
+            device.pullFile(remoteFilePath, localFilePath);
+        } catch (SyncException e) {
+            LOG.log(Level.SEVERE, "Error pulling file: " + remoteFilePath, e);
+            return false;
+        } catch (AdbCommandRejectedException e) {
+            LOG.log(Level.SEVERE, "Error pulling file: " + remoteFilePath, e);
+            return false;
+        } catch (TimeoutException e) {
+            LOG.log(Level.SEVERE, "Error pulling file: " + remoteFilePath, e);
+            return false;
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Error pulling file: " + remoteFilePath, e);
+            return false;
+        }
+        return true;
     }
 
     @Override

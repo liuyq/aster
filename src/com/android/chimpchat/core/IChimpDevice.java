@@ -129,6 +129,24 @@ public interface IChimpDevice {
     String shell(String cmd);
 
     /**
+     * Push a file to device.
+     *
+     * @param localFilePath the local filepath
+     * @param remoteFilePath the remote filepath
+     * @return true if success
+     */
+    boolean pushFile(String localFilePath, String remoteFilePath);
+
+    /**
+     * Pull a file from device.
+     *
+     * @param remoteFilePath the remote filepath
+     * @param localFilePath the local filepath
+     * @return true if success
+     */
+    boolean pullFile(String remoteFilePath, String localFilePath);
+
+    /**
      * Install a given package.
      *
      * @param path the path to the installation package
