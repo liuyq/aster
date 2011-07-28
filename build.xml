@@ -3,6 +3,7 @@
     <!--
          Initialization
     -->
+    <property file="local.properties"/>
     <target name="init">
         <property file="build.properties"/>
         <mkdir dir="${build.dir}"/>

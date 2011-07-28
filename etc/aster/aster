@@ -1,5 +1,5 @@
 #!/bin/bash
 
 jarpath=aster.jar
-framework=$PWD:../`grep framework ../build.properties | cut -d '=' -f 2`
+framework=$PWD:../`grep framework ../*.properties | cut -d '=' -f 2`
 exec java -Xmx128M -Djava.ext.dirs="$framework" -jar "$jarpath" "$@"
