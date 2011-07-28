@@ -43,6 +43,7 @@ import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.Py;
 import org.python.core.PyDictionary;
+import org.python.core.PyException;
 import org.python.core.PyFloat;
 import org.python.core.PyInteger;
 import org.python.core.PyObject;
@@ -142,8 +143,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             args = { "name", "type" },
             argDocs = { "name name of the image",
                         "touch event type as returned by TouchPressType()"})
-    public void touch(PyObject[] args, String[] kws)
-        throws FileNotFoundException, TemplateNotFoundException {
+    public void touch(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
@@ -155,15 +155,21 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             TouchPressType type = TouchPressType.fromIdentifier(typestr);
             if (type == null) {
                 LOG.warning(String.format("Invalid TouchPressType specified (%s) default used instead",
-                        typestr));
+                            typestr));
                 type = TouchPressType.DOWN_AND_UP;
             }
             impl.touch(((PyInteger) arg1).asInt(), ((PyInteger) arg2).asInt(),
-                        type);
+                       type);
         } else {
-            wookiee.touch(((PyString) arg1).asString(),
-                          ((PyString) arg2).asString(),
-                          JythonUtils.getFloat(ap, 2, default_timeout));
+            try {
+                wookiee.touch(((PyString) arg1).asString(),
+                              ((PyString) arg2).asString(),
+                              JythonUtils.getFloat(ap, 2, default_timeout));
+            } catch (FileNotFoundException e) {
+                throw new PyException(Py.IOError, e.toString());
+            } catch (TemplateNotFoundException e) {
+                throw new PyException(Py.KeyError, "Template not found");
+            }
         }
     }
 
@@ -173,8 +179,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             "The end point for the drag (a tuple (x,y) in pixels",
             "Duration of the drag in seconds (default is 1.0 seconds)",
             "The number of steps to take when interpolating points. (default is 10)"})
-    public void drag(PyObject[] args, String[] kws)
-        throws FileNotFoundException, TemplateNotFoundException {
+    public void drag(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
@@ -196,10 +201,16 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
             impl.drag(startx, starty, endx, endy, steps, ms);
         } else {
-            wookiee.drag(((PyString) startObject).asString(),
-                         ((PyString) endObject).asString(),
-                         steps, seconds,
-                         JythonUtils.getFloat(ap, 4, default_timeout));
+            try {
+                wookiee.drag(((PyString) startObject).asString(),
+                             ((PyString) endObject).asString(),
+                             steps, seconds,
+                             JythonUtils.getFloat(ap, 4, default_timeout));
+            } catch (FileNotFoundException e) {
+                throw new PyException(Py.IOError, e.toString());
+            } catch (TemplateNotFoundException e) {
+                throw new PyException(Py.KeyError, "Template not found");
+            }
         }
     }
 
