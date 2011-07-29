@@ -336,14 +336,11 @@ public interface IDevice {
      *
      * @param remote the full path to the remote file
      * @param local The local destination.
-     * @param monitor The progress monitor. Allow null.
      *
      * @throws IOException in case of an IO exception.
      * @throws AdbCommandRejectedException if adb rejects the command
      * @throws TimeoutException in case of a timeout reading responses from the device.
      * @throws SyncException in case of a sync exception.
-     *
-     * @see #getNullProgressMonitor()
      */
     public void pullFile(String remote, String local)
             throws IOException, AdbCommandRejectedException, TimeoutException, SyncException;
