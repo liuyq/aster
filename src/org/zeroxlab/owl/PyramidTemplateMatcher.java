@@ -26,6 +26,7 @@ import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
 import java.lang.Math;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 class PyramidTemplateMatcherLayer {
     public IplImage source;
@@ -98,7 +99,6 @@ public class PyramidTemplateMatcher implements IMatcher {
          * levels equals zero and we still can't find the image, an exception
          * is thrown.  */
         while (true) {
-            System.out.println("levels: " + levels);
             try {
                 result = findImpl();
             } catch (TemplateNotFoundException e) {

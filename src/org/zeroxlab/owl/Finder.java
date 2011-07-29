@@ -24,8 +24,10 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
 import java.io.FileNotFoundException;
+import java.util.logging.Logger;
 
 public class Finder {
+    private static final Logger LOG = Logger.getLogger(Finder.class.getName());
     public static MatchResult dispatch(IMatcher matcher,
                                        String haystack,
                                        String needle)
@@ -37,10 +39,8 @@ public class Finder {
             throw new FileNotFoundException("can't open `" + haystack +"'");
         else if (tmpl == null)
             throw new FileNotFoundException("can't open `" + needle +"'");
-        long start = System.nanoTime();
         MatchResult result = matcher.find(img, tmpl);
-        System.out.printf("In: %f\n", (System.nanoTime() - start) / 1000000.0);
-        System.out.println(result);
+        LOG.info(String.format("MatchResut: %s", result));
         return result;
     }
 };
