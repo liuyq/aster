@@ -19,10 +19,10 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.cmds.*;
+import org.zeroxlab.wookieerunner.WookieeAPI;
 
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpImage;
-import com.android.chimpchat.core.IChimpDevice;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -83,13 +83,13 @@ public class AsterMainPanel extends JPanel {
 	Map<String, String> options = new TreeMap<String, String>();
 	options.put("backend", "adb");
 	mChimpChat = ChimpChat.getInstance(options);
-	mDevice = mChimpChat.waitForConnection();
+        mImpl = new WookieeAPI(mChimpChat.waitForConnection());
 	updateScreen();
 	timer.start();
     }
 
     ChimpChat mChimpChat;
-    IChimpDevice mDevice;
+    WookieeAPI mImpl;
 
     private final javax.swing.Timer timer =
 	new javax.swing.Timer(100, new ActionListener() {
@@ -99,7 +99,7 @@ public class AsterMainPanel extends JPanel {
     });
 
     private void updateScreen() {
-        IChimpImage snapshot = mDevice.takeSnapshot();
+        IChimpImage snapshot = mImpl.takeSnapshot();
         mImageView.setImage(snapshot.createBufferedImage());
 	mImageView.repaint(mImageView.getBounds());
     }

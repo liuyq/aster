@@ -60,6 +60,10 @@ public class WookieeAPI {
         return impl;
     }
 
+    public IChimpImage takeSnapshot() {
+        return impl.takeSnapshot();
+    }
+
     public HierarchyViewer getHierarchyViewer() {
         return impl.getHierarchyViewer();
     }
