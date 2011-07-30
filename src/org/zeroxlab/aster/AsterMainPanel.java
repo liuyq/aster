@@ -37,6 +37,8 @@ public class AsterMainPanel extends JPanel {
     private IChimpDevice mDevice;
     private AsterCommand[] mCmds;
 
+    private UpdateScreen mUpdateScreen;
+
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
@@ -75,8 +77,10 @@ public class AsterMainPanel extends JPanel {
 	options.put("backend", "adb");
 	mChimpChat = ChimpChat.getInstance(options);
 	mDevice = mChimpChat.waitForConnection();
-	updateScreen();
-	timer.start();
+
+        mUpdateScreen = new UpdateScreen();
+        Thread thread = new Thread(mUpdateScreen);
+        thread.start();
     }
 
     private void generateCmds(AsterCommand cmds[]) {
@@ -85,16 +89,30 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    private final javax.swing.Timer timer =
-	new javax.swing.Timer(100, new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            updateScreen();
-        }
-    });
+    class UpdateScreen implements Runnable {
 
-    private void updateScreen() {
-        IChimpImage snapshot = mDevice.takeSnapshot();
-        mImageView.setImage(snapshot.createBufferedImage());
-	mImageView.repaint(mImageView.getBounds());
+        private boolean mKeepWalking = true;
+
+        public void finish() {
+            mKeepWalking = false;
+        }
+
+        public void run() {
+            while(mKeepWalking) {
+                updateScreen();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    System.err.println("Update Screen thread is interrupted");
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void updateScreen() {
+            IChimpImage snapshot = mDevice.takeSnapshot();
+            mImageView.setImage(snapshot.createBufferedImage());
+            mImageView.repaint(mImageView.getBounds());
+        }
     }
 }
