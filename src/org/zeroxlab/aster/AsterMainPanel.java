@@ -72,6 +72,7 @@ public class AsterMainPanel extends JPanel {
         c.weighty = 0;
         add(scrollPane, c);
 
+        setPreferredSize(new Dimension(800, 600));
 
 	Map<String, String> options = new TreeMap<String, String>();
 	options.put("backend", "adb");
