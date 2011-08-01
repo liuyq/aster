@@ -1,5 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 
-jarpath=wookieerunner.jar
-framework=../../android/aosp/out/host/linux-x86/framework:$PWD
+absolute_dir="$( cd "$( dirname "$0" )" && pwd )"
+jarpath="$absolute_dir/wookieerunner.jar"
+android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
+framework=$absolute_dir:$android_framework_dir
+
 exec java -Xmx128M -Djava.ext.dirs="$framework" -Dcom.android.wookieerunner.bindir="$progdir" -jar "$jarpath" "$@"
