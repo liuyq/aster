@@ -4,6 +4,7 @@
          Initialization
     -->
     <target name="init">
+        <property file="local.properties"/>
         <property file="build.properties"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.classes.dir}"/>
@@ -142,6 +143,7 @@
 
     <target name="clean" depends="init,-clean-javacv">
         <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}" />
     </target>
 </project>
 <!-- vim: set ts=4 sts=4 sw=4 expandtab: -->

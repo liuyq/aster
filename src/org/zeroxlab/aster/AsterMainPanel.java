@@ -31,7 +31,13 @@ import javax.swing.*;
 
 public class AsterMainPanel extends JPanel {
 
-    ImageView mImageView;
+    private ImageView mImageView;
+
+    private ChimpChat mChimpChat;
+    private WookieeAPI mImpl;
+    private AsterCommand[] mCmds;
+
+    private UpdateScreen mUpdateScreen;
 
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
@@ -48,59 +54,66 @@ public class AsterMainPanel extends JPanel {
 	mImageView = new ImageView();
 	add(mImageView, c);
 
-	c.gridx = 4;
-	c.gridy = 0;
-	c.gridwidth = 1;
-	c.gridheight = 3;
-	c.weightx = 0;
-	c.weighty = 0;
-
-	AsterCommand[] cmds = {new Click(new Point(1, 2)),
-			       new Click(new Point(2, 2)),
-			       new Click(new Point(3, 2)),
-			       new Click(new Point(4, 2)),
-			       new Click(new Point(5, 2)),
-			       new Click(new Point(6, 2)),
-			       new Click(new Point(7, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2)),
-			       new Click(new Point(1, 2))};
-	JList myList = new JList(cmds);
+        mCmds = new AsterCommand[14];
+        generateCmds(mCmds);
+        JList myList = new JList(mCmds);
 	myList.setCellRenderer(new AsterCommandCellRenderer());
 	myList.setFixedCellHeight(50);
 	myList.setFixedCellWidth(200);
 	JScrollPane scrollPane = new JScrollPane();
 	scrollPane.getViewport().setView(myList);
 	scrollPane.setMinimumSize(new Dimension(250, 100));
-	add(scrollPane, c);
 
+        c.gridx = 4;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 3;
+        c.weightx = 0;
+        c.weighty = 0;
+        add(scrollPane, c);
+
+        setPreferredSize(new Dimension(800, 600));
 
 	Map<String, String> options = new TreeMap<String, String>();
 	options.put("backend", "adb");
 	mChimpChat = ChimpChat.getInstance(options);
         mImpl = new WookieeAPI(mChimpChat.waitForConnection());
-	updateScreen();
-	timer.start();
+
+        mUpdateScreen = new UpdateScreen();
+        Thread thread = new Thread(mUpdateScreen);
+        thread.start();
     }
 
-    ChimpChat mChimpChat;
-    WookieeAPI mImpl;
-
-    private final javax.swing.Timer timer =
-	new javax.swing.Timer(100, new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            updateScreen();
+    private void generateCmds(AsterCommand cmds[]) {
+        for (int i = 0; i < cmds.length; i++) {
+	    cmds[i] = new Click(new Point(i, 2));
         }
-    });
+    }
 
-    private void updateScreen() {
-        IChimpImage snapshot = mImpl.takeSnapshot();
-        mImageView.setImage(snapshot.createBufferedImage());
-	mImageView.repaint(mImageView.getBounds());
+    class UpdateScreen implements Runnable {
+
+        private boolean mKeepWalking = true;
+
+        public void finish() {
+            mKeepWalking = false;
+        }
+
+        public void run() {
+            while(mKeepWalking) {
+                updateScreen();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    System.err.println("Update Screen thread is interrupted");
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        private void updateScreen() {
+            IChimpImage snapshot = mImpl.takeSnapshot();
+            mImageView.setImage(snapshot.createBufferedImage());
+            mImageView.repaint(mImageView.getBounds());
+        }
     }
 }

@@ -19,39 +19,98 @@
 package org.zeroxlab.aster;
 
 import java.awt.*;
-import java.awt.image.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
 
-public class ImageView extends JComponent {
+public class ImageView extends JComponent implements ComponentListener {
 
-    private BufferedImage image;
+    public final static int LANDSCAPE_WIDTH  = 400;
+    public final static int LANDSCAPE_HEIGHT = 240;
+    public final static int PORTRAIT_WIDTH  = 240;
+    public final static int PORTRAIT_HEIGHT = 400;
+
+    private BufferedImage mSourceImage;
+    private BufferedImage mDrawingBuffer;
+
+    private int mImgPosX;
+    private int mImgPosY;
+    private int mWidth;
+    private int mHeight;
 
     public ImageView() {
+        this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
     public ImageView(BufferedImage img) {
-	setImage(img);
+        mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        addComponentListener(this);
+        setImage(img);
+        generateDrawingBuffer();
     }
 
     public void setImage(BufferedImage img) {
-	this.image = img;
+        mSourceImage = img;
+        if (mSourceImage != null) {
+            updateDrawingBuffer(mSourceImage);
+        }
     }
 
     public void paintComponent(Graphics g) {
-	g.setColor(Color.BLACK);
-	g.fillRect(0, 0, 2000, 2000);
-        g.drawImage(image, 0, 0, null);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, mWidth, mHeight);
+        g.drawImage(mDrawingBuffer, mImgPosX, mImgPosY, null);
     }
 
-    public Dimension getMinimumSize() {
-	return new Dimension(1067, 600);
+    public void componentHidden(ComponentEvent e) {
     }
 
-    public Dimension getPreferredSize() {
-	return new Dimension(1067, 600);
+    public void componentMoved(ComponentEvent e) {
     }
 
-    public Dimension getMaximumSize() {
-	return new Dimension(1067, 600);
+    public void componentResized(ComponentEvent e) {
+        mWidth  = getWidth();
+        mHeight = getHeight();
+        generateDrawingBuffer();
+        updateDrawingBuffer(mSourceImage);
+        repaint();
+    }
+
+    public void componentShown(ComponentEvent e) {
+    }
+
+    private void generateDrawingBuffer() {
+        int expectedW, expectedH;
+        boolean isLandscape = (mSourceImage.getWidth() > mSourceImage.getHeight());
+
+        if (isLandscape) {
+            expectedW = LANDSCAPE_WIDTH;
+            expectedH = LANDSCAPE_HEIGHT;
+        } else {
+            expectedW = PORTRAIT_WIDTH;
+            expectedH = PORTRAIT_HEIGHT;
+        }
+        mImgPosX = (mWidth  - expectedW) / 2;
+        mImgPosY = (mHeight - expectedH) / 2;
+        mImgPosX = Math.max(mImgPosX, 0);
+        mImgPosY = Math.max(mImgPosY, 0);
+
+        if (mDrawingBuffer == null
+                || mDrawingBuffer.getWidth() != expectedW
+                || mDrawingBuffer.getHeight() != expectedH) {
+            mDrawingBuffer = new BufferedImage(expectedW, expectedH, BufferedImage.TYPE_INT_ARGB);
+        }
+    }
+
+    private void updateDrawingBuffer(BufferedImage source) {
+        mDrawingBuffer.getGraphics().drawImage(
+                source, 0, 0,
+                mDrawingBuffer.getWidth(),
+                mDrawingBuffer.getHeight(),
+                null
+                );
     }
 }
