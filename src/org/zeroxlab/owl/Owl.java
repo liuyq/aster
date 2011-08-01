@@ -40,26 +40,6 @@ class TestResult {
 public class Owl {
     public static void main(String [] args) {
         doTest();
-
-        //IplImage img = cvLoadImage("Haystack.png");
-        //IplImage tmpl = cvLoadImage("Needle.png");
-
-        //IplImage imgp = IplImage.create(img.width(), img.height(),
-        //                                IPL_DEPTH_8U, 1);
-        //IplImage tmplp = IplImage.create(tmpl.width(), tmpl.height(),
-        //                                IPL_DEPTH_8U, 1);
-        //cvCvtColor(img, imgp, CV_RGB2GRAY);
-        //cvCvtColor(tmpl, tmplp, CV_RGB2GRAY);
-
-        //try {
-        //    ObjectFinder matcher = new ObjectFinder(imgp);
-        //    double[] results = matcher.find(tmplp);
-        //    for (int i = 0; i < results.length; ++i)
-        //        System.out.println(results[i]);
-        //} catch (Exception e) {
-        //    System.out.println(e);
-        //    System.exit(1);
-        //}
     }
 
     private static void doTest() {

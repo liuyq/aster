@@ -20,6 +20,7 @@ package org.zeroxlab.owl;
 
 import com.googlecode.javacpp.Loader;
 import com.googlecode.javacv.*;
+import com.googlecode.javacv.ObjectFinder;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
@@ -28,20 +29,24 @@ import static java.lang.Math.abs;
 
 public class SURFMatcher implements IMatcher {
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle) {
-        CvSize rsize = cvSize(abs(haystack.width() - needle.width()) + 1,
-                              abs(haystack.height() - needle.height()) + 1);
+    public MatchResult find(IplImage haystack, IplImage needle)
+        throws TemplateNotFoundException {
+        IplImage img = IplImage.create(haystack.width(), haystack.height(),
+                                        IPL_DEPTH_8U, 1);
+        IplImage tmpl = IplImage.create(needle.width(), needle.height(),
+                                        IPL_DEPTH_8U, 1);
+        cvCvtColor(haystack, img, CV_RGB2GRAY);
+        cvCvtColor(needle, tmpl, CV_RGB2GRAY);
 
-        IplImage result = cvCreateImage(rsize, IPL_DEPTH_32F, 1);
-        cvMatchTemplate(haystack, needle, result, CV_TM_SQDIFF_NORMED);
-
-        double[] min = new double[1];
-        double[] max = new double[1];
-        CvPoint min_pos = new CvPoint();
-        CvPoint max_pos = new CvPoint();
-        cvMinMaxLoc(result, min, max, min_pos, max_pos, null);
-
-        return new MatchResult(min_pos.x(), min_pos.y(),
-                               needle.width(), needle.height(), 1.0 - min[0]);
+        try {
+            ObjectFinder finder = new ObjectFinder(tmpl);
+            double[] results = finder.find(img);
+            return new MatchResult((int)results[0],
+                                   (int)results[1],
+                                   (int)(results[2] - results[0]),
+                                   (int)(results[3] - results[1]), 1.0);
+        } catch(Exception e) {
+            throw new TemplateNotFoundException();
+        }
     }
 }
