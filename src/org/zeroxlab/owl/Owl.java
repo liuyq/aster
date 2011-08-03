@@ -33,7 +33,7 @@ class TestResult {
 
     @Override
     public String toString() {
-        return String.format("%s:\n%fms, %s", name, duration, result);
+        return String.format("%fms, %s", duration, result);
     }
 }
 
@@ -45,6 +45,7 @@ public class Owl {
     private static void doTest() {
         performTest(new PlainTemplateMatcher());
         performTest(new PyramidTemplateMatcher());
+        performTest(new SURFMatcher());
     }
 
     private static void performTest(IMatcher matcher) {
@@ -65,7 +66,7 @@ public class Owl {
             result.duration = (int)(end - start) / 1000000.0;
         }
 
-        System.out.println("-------------------------------------------");
         System.out.println(result);
+        System.out.println("-------------------------------------------");
     }
 }

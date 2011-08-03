@@ -19,5 +19,9 @@
 package org.zeroxlab.aster;
 
 public abstract class AsterCommand {
+    /* Dump command to script text */
+    protected abstract String toScript();
 
+    /* Get regex for matching command from script */
+    protected abstract String[] getRegex();
 }

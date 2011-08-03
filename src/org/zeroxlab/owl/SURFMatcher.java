@@ -25,8 +25,6 @@ import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_imgproc.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
-import static java.lang.Math.abs;
-
 public class SURFMatcher implements IMatcher {
     @Override
     public MatchResult find(IplImage haystack, IplImage needle)

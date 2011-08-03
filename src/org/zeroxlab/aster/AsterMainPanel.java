@@ -86,7 +86,7 @@ public class AsterMainPanel extends JPanel {
 
     private void generateCmds(AsterCommand cmds[]) {
         for (int i = 0; i < cmds.length; i++) {
-	    cmds[i] = new Click(new Point(i, 2));
+	    cmds[i] = new Touch(new Point(i, 2));
         }
     }
 

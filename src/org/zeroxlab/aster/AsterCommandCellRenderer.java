@@ -37,17 +37,20 @@ public class AsterCommandCellRenderer
 	 boolean isSelected,
 	 boolean cellHasFocus)
     {
-	if (val instanceof Click) {
-	    return getClickRenderer(list,
-				    (Click)val, idx, isSelected, cellHasFocus);
+	if (val instanceof Touch) {
+	    return getTouchRenderer(list, (Touch)val, idx, isSelected,
+                                    cellHasFocus);
+	} else if (val instanceof Drag) {
+	    return getDragRenderer(list, (Drag)val, idx, isSelected,
+                                   cellHasFocus);
 	}
 
 	return null;
     }
 
-    private Component getClickRenderer
+    private Component getTouchRenderer
 	(JList list,
-	 Click val,
+	 Touch val,
 	 int idx,
 	 boolean isSelected,
 	 boolean cellHasFocus)
@@ -65,6 +68,32 @@ public class AsterCommandCellRenderer
 	    c.setText("CLICK [pos]");
 	} else if (val.isAuto()) {
 	    c.setText("CLICK [pic]");
+	}
+	p.add(c);
+	return p;
+    }
+
+    private Component getDragRenderer
+	(JList list,
+	 Drag val,
+	 int idx,
+	 boolean isSelected,
+	 boolean cellHasFocus)
+    {
+	Font f = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+	JPanel p = new JPanel();
+	p.setForeground(Color.white);
+	p.setBackground(isSelected ?
+			UIManager.getColor("Table.focusCellBackground") :
+			Color.white);
+	JLabel c = new JLabel();
+	c.setFont(f);
+	if (val.isFixed()) {
+	    Point start = val.getStartPos();
+	    Point end = val.getStartPos();
+	    c.setText("DRAG [start] [end]");
+	} else if (val.isAuto()) {
+	    c.setText("DRAG [start_img] [end_img]");
 	}
 	p.add(c);
 	return p;
