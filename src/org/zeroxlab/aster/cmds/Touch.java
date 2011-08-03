@@ -99,13 +99,29 @@ public class Touch extends AsterCommand {
         }
     }
 
+    public BufferedImage getImage() {
+	return mImage;
+    }
+
+    public Point getPos() {
+	return mPosition;
+    }
+
+    public boolean isAuto() {
+	return mCoordType == CoordType.AUTO;
+    }
+
+    public boolean isFixed() {
+	return mCoordType == CoordType.FIXED;
+    }
+
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("touch(%d.jpg, %s, %d)", 0,
+            return String.format("touch(%d.jpg, \"%s\", %d)", 0,
                                  mTouchType.getTypeStr(), mTimeout);
         } else {
-            return String.format("touch(%d, %d, %s, %d)",
+            return String.format("touch(%d, %d, \"%s\", %d)",
                                  mPosition.getX(), mPosition.getY(),
                                  mTouchType.getTypeStr(), mTimeout);
         }
@@ -118,21 +134,5 @@ public class Touch extends AsterCommand {
             "touch\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)"
         };
         return regexs;
-    }
-
-    public boolean isAuto() {
-	return mCoordType == CoordType.AUTO;
-    }
-
-    public boolean isFixed() {
-	return mCoordType == CoordType.FIXED;
-    }
-
-    public BufferedImage getImage() {
-	return mImage;
-    }
-
-    public Point getPos() {
-	return mPosition;
     }
 }

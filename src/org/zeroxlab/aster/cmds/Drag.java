@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
 package org.zeroxlab.aster.cmds;
@@ -92,6 +94,30 @@ public class Drag extends AsterCommand {
         }
     }
 
+    public BufferedImage getStartImage() {
+	return mStartImage;
+    }
+
+    public BufferedImage getEndImage() {
+	return mEndImage;
+    }
+
+    public Point getStartPos() {
+	return mStartPosition;
+    }
+
+    public Point getEndPos() {
+	return mEndPosition;
+    }
+
+    public boolean isAuto() {
+	return mCoordType == CoordType.AUTO;
+    }
+
+    public boolean isFixed() {
+	return mCoordType == CoordType.FIXED;
+    }
+
     @Override
     protected String toScript() {
         if (isAuto()) {
@@ -112,29 +138,5 @@ public class Drag extends AsterCommand {
             "drag\\s*\\(\\s\"*(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
         };
         return regexs;
-    }
-
-    public boolean isAuto() {
-	return mCoordType == CoordType.AUTO;
-    }
-
-    public boolean isFixed() {
-	return mCoordType == CoordType.FIXED;
-    }
-
-    public BufferedImage getStartImage() {
-	return mStartImage;
-    }
-
-    public BufferedImage getEndImage() {
-	return mEndImage;
-    }
-
-    public Point getStartPos() {
-	return mStartPosition;
-    }
-
-    public Point getEndPos() {
-	return mEndPosition;
     }
 }
