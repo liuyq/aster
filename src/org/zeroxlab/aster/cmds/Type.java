@@ -16,7 +16,7 @@
  * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster.cmds;
+package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
 

@@ -13,15 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authored by Kan-Ru Chen <kanru@0xlab.org>
+ * Authored by Julian Chu <walkingice@0xlab.org>
+ *             Kan-Ru Chen <kanru@0xlab.org>
+ *             Wei-Ning Huang <azhuang@0xlab.org>
  */
 
 package org.zeroxlab.aster;
 
-public abstract class AsterCommand {
-    /* Dump command to script text */
-    protected abstract String toScript();
+import java.awt.Point;
 
-    /* Get regex for matching command from script */
-    protected abstract String[] getRegex();
+public class CmdSelector {
+
+
+    public void addCmd(AsterCommand cmd) {
+    }
+
+    public AsterCommand selectCmd() {
+        return new Touch(new Point(0, 0));
+    }
 }

@@ -18,7 +18,7 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.cmds.*;
+import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.wookieerunner.WookieeAPI;
 
 import com.android.chimpchat.ChimpChat;

@@ -18,7 +18,10 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.cmds.*;
+import org.zeroxlab.aster.Drag;
+import org.zeroxlab.aster.Press;
+import org.zeroxlab.aster.Touch;
+import org.zeroxlab.aster.Type;
 
 import java.awt.*;
 import javax.swing.*;
