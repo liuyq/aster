@@ -20,8 +20,6 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.Point;
-
 public abstract class OpSelectKey implements AsterOperation {
 
     protected String mKey;
