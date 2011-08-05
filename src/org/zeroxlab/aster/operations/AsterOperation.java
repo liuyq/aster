@@ -20,29 +20,21 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.Point;
+/**
+ * In general, AsterOperation describe an operation to GUI, such as
+ * Drag or Click.
+ */
+public interface AsterOperation{
 
-public abstract class OpTouch implements AsterOperation {
+    /**
+     * To get the Name of this Operation
+     *
+     * @return The name of this Operation
+     */
+    public String getName();
 
-    protected Point mPoint;
-
-    public OpTouch() {
-        mPoint = new Point();
-    }
-
-    public Point getPoint() {
-        return mPoint;
-    }
-
-    public int getX() {
-        return (int)mPoint.getX();
-    }
-
-    public int getY() {
-        return (int)mPoint.getY();
-    }
-
-    public void set(int x, int y) {
-        mPoint.setLocation(x, y);
-    }
+    /**
+     * To record necessary information to AsterCommand
+     */
+    public void record();
 }

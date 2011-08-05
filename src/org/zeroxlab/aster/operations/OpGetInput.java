@@ -22,27 +22,19 @@ package org.zeroxlab.aster;
 
 import java.awt.Point;
 
-public abstract class OpTouch implements AsterOperation {
+public abstract class OpGetInput implements AsterOperation {
 
-    protected Point mPoint;
+    protected String mInput;
 
-    public OpTouch() {
-        mPoint = new Point();
+    public OpGetInput() {
+        mInput = new String();
     }
 
-    public Point getPoint() {
-        return mPoint;
+    public String getInput() {
+        return mInput;
     }
 
-    public int getX() {
-        return (int)mPoint.getX();
-    }
-
-    public int getY() {
-        return (int)mPoint.getY();
-    }
-
-    public void set(int x, int y) {
-        mPoint.setLocation(x, y);
+    public void set(String input) {
+        mInput = input;
     }
 }

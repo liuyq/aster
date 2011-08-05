@@ -21,7 +21,6 @@
 package org.zeroxlab.aster;
 
 import java.awt.Point;
-import org.zeroxlab.aster.AsterOperation;
 
 public abstract class OpDrag implements AsterOperation {
 
