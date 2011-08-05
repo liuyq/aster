@@ -99,6 +99,18 @@ public class Touch extends AsterCommand {
         }
     }
 
+    @Override
+    public String getName() {
+        return "Touch";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Touch operation");
+        AsterOperation[] ops = new OpTouch[1];
+        return ops;
+    }
+
     public BufferedImage getImage() {
 	return mImage;
     }

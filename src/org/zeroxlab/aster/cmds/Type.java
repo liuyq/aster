@@ -51,6 +51,18 @@ public class Type extends AsterCommand {
         }
     }
 
+    @Override
+    public String getName() {
+        return "Type";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Type operation");
+        AsterOperation[] ops = new OpGetInput[1];
+        return ops;
+    }
+
     public String getText() {
 	return mText;
     }

@@ -24,6 +24,8 @@ import org.zeroxlab.aster.AsterOperation;
 
 public abstract class AsterCommand {
 
+    public abstract String getName();
+
     /* Return operations that stored in this Command */
     public AsterOperation[] getOperations() {
         System.out.println("Get Operation");
@@ -35,7 +37,6 @@ public abstract class AsterCommand {
     }
 
     /* uncomment these abstract methods and implement them
-    public abstract String getName();
     public abstract void drawHint(Graphics g);
     public abstract void execute();
     public abstract Map getSettings();

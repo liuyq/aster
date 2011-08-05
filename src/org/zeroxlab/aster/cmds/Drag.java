@@ -57,6 +57,18 @@ public class Drag extends AsterCommand {
         mEndPosition = pos2;
     }
 
+    @Override
+    public String getName() {
+        return "Drag";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Drag operation");
+        AsterOperation[] ops = new OpDrag[1];
+        return ops;
+    }
+
     /*
      * Format:
      * 1. start_img, end_img, duration, step, timeout

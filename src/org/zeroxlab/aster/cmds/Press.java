@@ -76,6 +76,18 @@ public class Press extends AsterCommand {
         }
     }
 
+    @Override
+    public String getName() {
+        return "Press";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Press operation");
+        AsterOperation[] ops = new OpSelectKey[1];
+        return ops;
+    }
+
     public String getKeyCode() {
 	return mKeyCode;
     }
