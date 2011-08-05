@@ -279,7 +279,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     @MonkeyRunnerExported(doc = "Push a local file to remote device.",
             args = { "local", "remote" },
-            argDocs = { "Push a local file to remote device."})
+            argDocs = { "the local filepath",
+                        "the remote filepath"})
     public void push(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
@@ -292,7 +293,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
     @MonkeyRunnerExported(doc = "Pull a file from remote device.",
             args = { "remote", "local" },
-            argDocs = { "Pull a file from remote device."})
+            argDocs = { "the remote filepath",
+                        "the local filepath"})
     public void pull(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
