@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Owl intergration for Aster by Wei-Ning Huang <azhuang@0xlab.org>
+ * Owl integration for Aster by Wei-Ning Huang <azhuang@0xlab.org>
  */
 package org.zeroxlab.wookieerunner;
 
@@ -26,8 +26,9 @@ import com.android.chimpchat.ChimpChat;
 
 import com.android.monkeyrunner.MonkeyFormatter;
 import com.android.monkeyrunner.MonkeyRunnerOptions;
-import com.android.monkeyrunner.ScriptRunner;
 import com.android.monkeyrunner.doc.MonkeyRunnerExported;
+
+import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import org.python.util.PythonInterpreter;
 
@@ -60,6 +61,7 @@ public class WookieeRunnerStarter {
 
     private final ChimpChat chimp;
     private final MonkeyRunnerOptions options;
+    private final ScriptRunner scriptrunner;
 
     public WookieeRunnerStarter(MonkeyRunnerOptions options) {
         Map<String, String> chimp_options = new TreeMap<String, String>();
@@ -67,22 +69,29 @@ public class WookieeRunnerStarter {
         this.options = options;
         this.chimp = ChimpChat.getInstance(chimp_options);
         WookieeRunner.setChimpChat(chimp);
+
+        String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
+                File.separator + "wookieerunner";
+        Map<String, Predicate<PythonInterpreter>> plugins = handlePlugins();
+        scriptrunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
     }
 
-
+    public void runString(String source) {
+        scriptrunner.runStringLocal(source);
+    }
 
     private int run() {
         // This system property gets set by the included starter script
-        String monkeyRunnerPath = System.getProperty("com.android.monkeyrunner.bindir") +
-                File.separator + "monkeyrunner";
+        String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
+                File.separator + "wookieerunner";
 
         Map<String, Predicate<PythonInterpreter>> plugins = handlePlugins();
         if (options.getScriptFile() == null) {
-            ScriptRunner.console(monkeyRunnerPath);
+            ScriptRunner.console(wookieeRunnerPath);
             chimp.shutdown();
             return 0;
         } else {
-            int error = ScriptRunner.run(monkeyRunnerPath, options.getScriptFile().getAbsolutePath(),
+            int error = ScriptRunner.run(wookieeRunnerPath, options.getScriptFile().getAbsolutePath(),
                     options.getArguments(), plugins);
             chimp.shutdown();
             return error;

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="aster" default="-compile-aster">
+<project name="aster" default="dist">
     <!--
          Initialization
     -->

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Owl intergration for Aster by Wei-Ning Huang <azhuang@0xlab.org>
+ * Owl integration for Aster by Wei-Ning Huang <azhuang@0xlab.org>
  */
 package org.zeroxlab.wookieerunner;
 
