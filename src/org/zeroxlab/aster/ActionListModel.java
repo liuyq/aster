@@ -38,11 +38,8 @@ public interface ActionListModel {
 
     /**
      * Pop command from the command list
-     *
-     * @param cmd
-     *            the AsterCommand to pop
      */
-    public void popCmd(AsterCommand cmd);
+    public void popCmd();
 
     /**
      * Adds a ChangeListener to the model's listener list.
