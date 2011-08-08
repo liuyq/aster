@@ -37,7 +37,7 @@ public class JActionList extends JComponent {
      *           New UI delegate.
      */
     public void setUI(ActionListUI ui) {
-	super.setUI(ui);
+        super.setUI(ui);
     }
 
     /**
@@ -46,11 +46,11 @@ public class JActionList extends JComponent {
      * @see JComponent#updateUI
      */
     public void updateUI() {
-	if (UIManager.get(getUIClassID()) != null) {
-	    setUI((ActionListUI) UIManager.getUI(this));
-	} else {
-	    setUI(new BasicActionListUI());
-	}
+        if (UIManager.get(getUIClassID()) != null) {
+            setUI((ActionListUI) UIManager.getUI(this));
+        } else {
+            setUI(new BasicActionListUI());
+        }
     }
 
     /**
@@ -60,7 +60,7 @@ public class JActionList extends JComponent {
      * @see #setUI
      */
     public ActionListUI getUI() {
-	return (ActionListUI) ui;
+        return (ActionListUI) ui;
     }
 
     /**
@@ -73,16 +73,16 @@ public class JActionList extends JComponent {
      * @see UIDefaults#getUI
      */
     public String getUIClassID() {
-	return uiClassID;
+        return uiClassID;
     }
 
     protected ActionListModel model;
 
     public JActionList() {
-	this.updateUI();
+        this.updateUI();
     }
 
     public ActionListModel getModel() {
-	return this.model;
+        return this.model;
     }
 }

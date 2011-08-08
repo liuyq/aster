@@ -48,31 +48,31 @@ public class BasicActionListUI extends ActionListUI {
      * @see javax.swing.plaf.ComponentUI#createUI(javax.swing.JComponent)
      */
     public static ComponentUI createUI(JComponent c) {
-	return new BasicActionListUI();
+        return new BasicActionListUI();
     }
 
     /*
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)
      */
     public void installUI(JComponent c) {
-	this.actionList = (JActionList) c;
-	installDefaults();
-	installComponents();
-	installListeners();
+        this.actionList = (JActionList) c;
+        installDefaults();
+        installComponents();
+        installListeners();
 
-	c.setLayout(createLayoutManager());
+        c.setLayout(createLayoutManager());
     }
 
     /*
      * @see javax.swing.plaf.ComponentUI#uninstallUI(javax.swing.JComponent)
      */
     public void uninstallUI(JComponent c) {
-	c.setLayout(null);
-	uninstallListeners();
-	uninstallComponents();
-	uninstallDefaults();
+        c.setLayout(null);
+        uninstallListeners();
+        uninstallComponents();
+        uninstallDefaults();
 
-	this.actionList = null;
+        this.actionList = null;
     }
 
     public void installDefaults() {
@@ -82,35 +82,35 @@ public class BasicActionListUI extends ActionListUI {
     }
 
     public void installListeners() {
-	this.mouseListener = new MouseAdapter() {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		}
+        this.mouseListener = new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                }
 
-		@Override
-		public void mouseReleased(MouseEvent e) {
-		}
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                }
 
-		@Override
-		public void mousePressed(MouseEvent e) {
-		}
-	    };
-	this.actionList.addMouseListener(this.mouseListener);
+                @Override
+                public void mousePressed(MouseEvent e) {
+                }
+            };
+        this.actionList.addMouseListener(this.mouseListener);
 
-	this.mouseMotionListener = new MouseMotionAdapter() {
-		@Override
-		public void mouseDragged(MouseEvent e) {
-		}
-	    };
-	this.actionList.addMouseMotionListener(this.mouseMotionListener);
+        this.mouseMotionListener = new MouseMotionAdapter() {
+                @Override
+                public void mouseDragged(MouseEvent e) {
+                }
+            };
+        this.actionList.addMouseMotionListener(this.mouseMotionListener);
 
-	this.actionListChangeListener = new ChangeListener() {
-		public void stateChanged(ChangeEvent e) {
-		    actionList.repaint();
-		}
-	    };
-	this.actionList.getModel().addChangeListener(
-	    this.actionListChangeListener);
+        this.actionListChangeListener = new ChangeListener() {
+                public void stateChanged(ChangeEvent e) {
+                    actionList.repaint();
+                }
+            };
+        this.actionList.getModel().addChangeListener(
+            this.actionListChangeListener);
     }
 
     public void uninstallDefaults() {
@@ -120,20 +120,20 @@ public class BasicActionListUI extends ActionListUI {
     }
 
     public void uninstallListeners() {
-	this.actionList.removeMouseListener(this.mouseListener);
-	this.mouseListener = null;
+        this.actionList.removeMouseListener(this.mouseListener);
+        this.mouseListener = null;
 
-	this.actionList.removeMouseMotionListener(this.mouseMotionListener);
-	this.mouseMotionListener = null;
+        this.actionList.removeMouseMotionListener(this.mouseMotionListener);
+        this.mouseMotionListener = null;
 
-	this.actionList.getModel().removeChangeListener(
-	    this.actionListChangeListener);
-	this.actionListChangeListener = null;
+        this.actionList.getModel().removeChangeListener(
+            this.actionListChangeListener);
+        this.actionListChangeListener = null;
     }
 
     @Override
     public void paint(Graphics g, JComponent c) {
-	super.paint(g, c);
+        super.paint(g, c);
     }
 
     /**
@@ -143,28 +143,28 @@ public class BasicActionListUI extends ActionListUI {
      * @return a layout manager object
      */
     protected LayoutManager createLayoutManager() {
-	return new ActionListLayout();
+        return new ActionListLayout();
     }
 
     /**
      * Layout for the action list.
      */
     protected class ActionListLayout implements LayoutManager {
-	public void addLayoutComponent(String name, Component c) {
-	}
+        public void addLayoutComponent(String name, Component c) {
+        }
 
-	public void removeLayoutComponent(Component c) {
-	}
+        public void removeLayoutComponent(Component c) {
+        }
 
-	public Dimension preferredLayoutSize(Container c) {
-	    return new Dimension(0, 0);
-	}
+        public Dimension preferredLayoutSize(Container c) {
+            return new Dimension(0, 0);
+        }
 
-	public Dimension minimumLayoutSize(Container c) {
-	    return this.preferredLayoutSize(c);
-	}
+        public Dimension minimumLayoutSize(Container c) {
+            return this.preferredLayoutSize(c);
+        }
 
-	public void layoutContainer(Container c) {
-	}
+        public void layoutContainer(Container c) {
+        }
     }
 }
