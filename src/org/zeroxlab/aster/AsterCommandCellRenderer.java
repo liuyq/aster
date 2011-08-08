@@ -18,6 +18,7 @@
 
 package org.zeroxlab.aster;
 
+import org.zeroxlab.aster.Recall;
 import org.zeroxlab.aster.Drag;
 import org.zeroxlab.aster.Press;
 import org.zeroxlab.aster.Touch;
@@ -40,15 +41,44 @@ public class AsterCommandCellRenderer
 	 boolean isSelected,
 	 boolean cellHasFocus)
     {
-	if (val instanceof Touch) {
+        if (val instanceof Recall) {
+	    return getRecallRenderer(list, (Recall)val, idx, isSelected,
+                                    cellHasFocus);
+        } else if (val instanceof Touch) {
 	    return getTouchRenderer(list, (Touch)val, idx, isSelected,
                                     cellHasFocus);
 	} else if (val instanceof Drag) {
 	    return getDragRenderer(list, (Drag)val, idx, isSelected,
                                    cellHasFocus);
+	} else if (val instanceof Press) {
+	    return getPressRenderer(list, (Press)val, idx, isSelected,
+                                   cellHasFocus);
+	} else if (val instanceof Type) {
+	    return getTypeRenderer(list, (Type)val, idx, isSelected,
+                                   cellHasFocus);
 	}
 
 	return null;
+    }
+
+    private Component getRecallRenderer
+	(JList list,
+	 Recall val,
+	 int idx,
+	 boolean isSelected,
+	 boolean cellHasFocus)
+    {
+	Font f = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+	JPanel p = new JPanel();
+	p.setForeground(Color.white);
+	p.setBackground(isSelected ?
+			UIManager.getColor("Table.focusCellBackground") :
+			Color.white);
+	JLabel c = new JLabel();
+	c.setFont(f);
+        c.setText("RECALL");
+	p.add(c);
+	return p;
     }
 
     private Component getTouchRenderer
@@ -98,6 +128,46 @@ public class AsterCommandCellRenderer
 	} else if (val.isAuto()) {
 	    c.setText("DRAG [start_img] [end_img]");
 	}
+	p.add(c);
+	return p;
+    }
+
+    private Component getPressRenderer
+	(JList list,
+	 Press val,
+	 int idx,
+	 boolean isSelected,
+	 boolean cellHasFocus)
+    {
+	Font f = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+	JPanel p = new JPanel();
+	p.setForeground(Color.white);
+	p.setBackground(isSelected ?
+			UIManager.getColor("Table.focusCellBackground") :
+			Color.white);
+	JLabel c = new JLabel();
+	c.setFont(f);
+	c.setText(String.format("PRESS %s", val.getKeyCode()));
+	p.add(c);
+	return p;
+    }
+
+    private Component getTypeRenderer
+	(JList list,
+	 Type val,
+	 int idx,
+	 boolean isSelected,
+	 boolean cellHasFocus)
+    {
+	Font f = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+	JPanel p = new JPanel();
+	p.setForeground(Color.white);
+	p.setBackground(isSelected ?
+			UIManager.getColor("Table.focusCellBackground") :
+			Color.white);
+	JLabel c = new JLabel();
+	c.setFont(f);
+	c.setText(String.format("TYPE %s", val.getText()));
 	p.add(c);
 	return p;
     }
