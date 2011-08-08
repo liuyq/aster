@@ -79,6 +79,7 @@ public class JActionList extends JComponent {
     protected ActionListModel model;
 
     public JActionList() {
+        this.model = new DefaultActionListModel();
         this.updateUI();
     }
 
