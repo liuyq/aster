@@ -57,10 +57,7 @@ public class BasicActionListUI extends ActionListUI {
     public void installUI(JComponent c) {
         this.actionList = (JActionList) c;
         installDefaults();
-        installComponents();
         installListeners();
-
-        c.setLayout(createLayoutManager());
     }
 
     /*
@@ -69,16 +66,12 @@ public class BasicActionListUI extends ActionListUI {
     public void uninstallUI(JComponent c) {
         c.setLayout(null);
         uninstallListeners();
-        uninstallComponents();
         uninstallDefaults();
 
         this.actionList = null;
     }
 
     public void installDefaults() {
-    }
-
-    public void installComponents() {
     }
 
     public void installListeners() {
@@ -116,9 +109,6 @@ public class BasicActionListUI extends ActionListUI {
     public void uninstallDefaults() {
     }
 
-    public void uninstallComponents() {
-    }
-
     public void uninstallListeners() {
         this.actionList.removeMouseListener(this.mouseListener);
         this.mouseListener = null;
@@ -134,37 +124,5 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
-    }
-
-    /**
-     * Invoked by <code>installUI</code> to create a layout manager object to
-     * manage the {@link JActionList}.
-     *
-     * @return a layout manager object
-     */
-    protected LayoutManager createLayoutManager() {
-        return new ActionListLayout();
-    }
-
-    /**
-     * Layout for the action list.
-     */
-    protected class ActionListLayout implements LayoutManager {
-        public void addLayoutComponent(String name, Component c) {
-        }
-
-        public void removeLayoutComponent(Component c) {
-        }
-
-        public Dimension preferredLayoutSize(Container c) {
-            return new Dimension(0, 0);
-        }
-
-        public Dimension minimumLayoutSize(Container c) {
-            return this.preferredLayoutSize(c);
-        }
-
-        public void layoutContainer(Container c) {
-        }
     }
 }
