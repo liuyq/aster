@@ -18,14 +18,16 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
+import java.awt.Graphics;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.Vector;
 import javax.swing.*;
 
 public class ImageView extends JComponent implements ComponentListener, MouseListener{
@@ -38,16 +40,25 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
 
+    private Vector<SnapshotListener> mSnapListeners;
+
     private int mImgPosX;
     private int mImgPosY;
     private int mWidth;
     private int mHeight;
+
+    private int mPressX;
+    private int mPressY;
 
     public ImageView() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
     public ImageView(BufferedImage img) {
+        if (mSnapListeners == null) {
+            mSnapListeners = new Vector<SnapshotListener>();
+        }
+
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
         addMouseListener(this);
@@ -60,6 +71,14 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
         if (mSourceImage != null) {
             updateDrawingBuffer(mSourceImage);
         }
+    }
+
+    public void addSnapshotListener(SnapshotListener listener) {
+        mSnapListeners.add(listener);
+    }
+
+    public void removeSnapshotListener(SnapshotListener listener) {
+        mSnapListeners.remove(listener);
     }
 
     public void paintComponent(Graphics g) {
@@ -86,6 +105,11 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     }
 
     public void mouseClicked(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        for (SnapshotListener listener: mSnapListeners){
+            listener.clicked(x, y);
+        }
     }
 
     public void mouseEntered(MouseEvent e) {
@@ -95,9 +119,22 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     }
 
     public void mousePressed(MouseEvent e) {
+        mPressX = e.getX();
+        mPressY = e.getY();
     }
 
     public void mouseReleased(MouseEvent e) {
+        double distance;
+        int rX = e.getX();
+        int rY = e.getY();
+        distance = Math.pow(rX - mPressX, 2);
+        distance += Math.pow(rY - mPressY, 2);
+        if (distance < 16) {
+            return;
+        }
+        for (SnapshotListener listener: mSnapListeners){
+            listener.dragged(mPressX, mPressY, rX, rY);
+        }
     }
 
     private void generateDrawingBuffer() {
@@ -130,5 +167,10 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
                 mDrawingBuffer.getHeight(),
                 null
                 );
+    }
+
+    public interface SnapshotListener {
+        public void clicked(int x, int y);
+        public void dragged(int startX, int startY, int endX, int endY);
     }
 }
