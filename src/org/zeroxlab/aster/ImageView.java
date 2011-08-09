@@ -21,12 +21,14 @@ package org.zeroxlab.aster;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 
-public class ImageView extends JComponent implements ComponentListener {
+public class ImageView extends JComponent implements ComponentListener, MouseListener{
 
     public final static int LANDSCAPE_WIDTH  = 400;
     public final static int LANDSCAPE_HEIGHT = 240;
@@ -48,6 +50,7 @@ public class ImageView extends JComponent implements ComponentListener {
     public ImageView(BufferedImage img) {
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
+        addMouseListener(this);
         setImage(img);
         generateDrawingBuffer();
     }
@@ -80,6 +83,21 @@ public class ImageView extends JComponent implements ComponentListener {
     }
 
     public void componentShown(ComponentEvent e) {
+    }
+
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    public void mouseExited(MouseEvent e) {
+    }
+
+    public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
     }
 
     private void generateDrawingBuffer() {
