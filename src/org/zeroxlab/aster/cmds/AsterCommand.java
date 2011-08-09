@@ -18,7 +18,7 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.wookieerunner.WookieeRunnerStarter;
+import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import com.android.monkeyrunner.MonkeyRunnerOptions;
 
@@ -27,12 +27,7 @@ import java.awt.Graphics;
 import org.zeroxlab.aster.AsterOperation;
 
 public abstract class AsterCommand {
-    final private WookieeRunnerStarter mRunner;
-
-    AsterCommand() {
-        MonkeyRunnerOptions options = MonkeyRunnerOptions.processOptions(null);
-        mRunner = new WookieeRunnerStarter(options);
-    }
+    private static ScriptRunner mRunner;
 
     public abstract String getName();
 
@@ -47,9 +42,13 @@ public abstract class AsterCommand {
     public abstract Map getSettings();
     */
 
+    static public void setScriptRunner(ScriptRunner runner) {
+        mRunner = runner;
+    }
+
     /* Execute command */
     public void execute() {
-        mRunner.runString(toScript());
+        mRunner.runStringLocal(toScript());
     }
 
     /* Dump command to script text */

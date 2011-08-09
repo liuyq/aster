@@ -24,6 +24,7 @@ import org.zeroxlab.owl.MatchResult;
 import org.zeroxlab.owl.PyramidTemplateMatcher;
 import org.zeroxlab.owl.TemplateNotFoundException;
 
+import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
 import com.android.chimpchat.core.ChimpImageBase;
@@ -54,6 +55,10 @@ public class WookieeAPI {
         IChimpImage image = impl.takeSnapshot();
         image.writeToFile("/tmp/owl.png", "png");
         return "/tmp/owl.png";
+    }
+
+    static public void setRunnerChimpChat(ChimpChat chimpchat) {
+        WookieeRunner.setChimpChat(chimpchat);
     }
 
     public IChimpDevice getImpl() {

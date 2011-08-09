@@ -20,6 +20,8 @@ package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.wookieerunner.WookieeAPI;
+import org.zeroxlab.wookieerunner.WookieeRunner;
+import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpImage;
@@ -27,6 +29,7 @@ import com.android.chimpchat.core.IChimpImage;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import java.io.File;
 import javax.swing.*;
 
 public class AsterMainPanel extends JPanel {
@@ -36,6 +39,7 @@ public class AsterMainPanel extends JPanel {
     private ChimpChat mChimpChat;
     private WookieeAPI mImpl;
     private AsterCommand[] mCmds;
+    private ScriptRunner mScriptRunner;
 
     private UpdateScreen mUpdateScreen;
 
@@ -78,6 +82,12 @@ public class AsterMainPanel extends JPanel {
 	options.put("backend", "adb");
 	mChimpChat = ChimpChat.getInstance(options);
         mImpl = new WookieeAPI(mChimpChat.waitForConnection());
+
+        mImpl.setRunnerChimpChat(mChimpChat);
+        String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
+                File.separator + "wookieerunner";
+        mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
+        AsterCommand.setScriptRunner(mScriptRunner);
 
         mUpdateScreen = new UpdateScreen();
         Thread thread = new Thread(mUpdateScreen);

@@ -5,4 +5,4 @@ jarpath="$absolute_dir/aster.jar"
 android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
 framework=$absolute_dir:$android_framework_dir
 
-exec java -Xmx128M -Djava.ext.dirs="$framework" -jar "$jarpath" "$@"
+exec java -Xmx128M -Djava.ext.dirs="$framework" -Dcom.android.wookieerunner.bindir="$progdir" -jar "$jarpath" "$@"
