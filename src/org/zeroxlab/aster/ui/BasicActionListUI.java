@@ -18,6 +18,11 @@
 
 package org.zeroxlab.aster.ui;
 
+import com.android.ninepatch.NinePatch;
+import com.android.ninepatch.NinePatchChunk;
+
+import java.io.*;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -124,5 +129,55 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
+        paintRootButton(g);
+    }
+
+    // ******************
+    //   Layout Methods
+    // ******************
+    protected static int textMargin = 10;
+    protected static int buttonMargin = 10;
+    protected static String ROOT_LABEL = "RECALL";
+
+    protected void paintRootButton(Graphics g) {
+        FontMetrics fm = actionList.getFontMetrics(getFont());
+        Rectangle bbox = fm.getStringBounds(ROOT_LABEL, g).getBounds();
+        try {
+            InputStream stream = this.getClass().getResourceAsStream("/border.9.png");
+            NinePatch mPatch = NinePatch.load(stream, true, false);
+            mPatch.draw((Graphics2D)g,
+                        buttonMargin,
+                        buttonMargin,
+                        bbox.width + textMargin*2,
+                        bbox.height + textMargin*2);
+        } catch (IOException e) {
+        }
+        g.setFont(getFont());
+        g.drawString(ROOT_LABEL,
+                     buttonMargin + textMargin,
+                     buttonMargin + textMargin + fm.getAscent());
+        g.drawLine(buttonMargin + textMargin + bbox.width/2,
+                   buttonMargin + bbox.height + textMargin*2 + buttonMargin,
+                   buttonMargin + textMargin + bbox.width/2,
+                   buttonMargin + bbox.height + textMargin*2 + buttonMargin + 10);
+    }
+
+    protected Font getFont() {
+        return new Font(Font.SANS_SERIF, Font.BOLD, 20);
+    }
+
+    protected void layout(Graphics g) {
+    }
+
+    public Dimension getMinimumSize(JComponent c) {
+        return getPreferredSize(c);
+    }
+    public Dimension getPreferredSize(JComponent c) {
+        FontMetrics fm = actionList.getFontMetrics(getFont());
+        int width = fm.stringWidth(ROOT_LABEL) + textMargin*2 + buttonMargin*2;
+        return new Dimension(width, 400);
+    }
+    public Dimension getMaximumSize(JComponent c) {
+        return getPreferredSize(c);
     }
 }
