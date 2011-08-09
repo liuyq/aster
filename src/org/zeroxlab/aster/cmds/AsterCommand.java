@@ -18,33 +18,46 @@
 
 package org.zeroxlab.aster;
 
+import org.zeroxlab.wookieerunner.WookieeRunnerStarter;
+
+import com.android.monkeyrunner.MonkeyRunnerOptions;
+
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import org.zeroxlab.aster.AsterOperation;
 
 public abstract class AsterCommand {
+    final private WookieeRunnerStarter mRunner;
+
+    AsterCommand() {
+        MonkeyRunnerOptions options = MonkeyRunnerOptions.processOptions(null);
+        mRunner = new WookieeRunnerStarter(options);
+    }
 
     public abstract String getName();
 
     /* Return operations that stored in this Command */
-    public AsterOperation[] getOperations() {
-        System.out.println("Get Operation");
-        AsterOperation[] foo = new AsterOperation[1];
-        return foo;
-    }
+    public abstract AsterOperation[] getOperations();
 
     public void setImg(BufferedImage img) {
     }
 
     /* uncomment these abstract methods and implement them
     public abstract void drawHint(Graphics g);
-    public abstract void execute();
     public abstract Map getSettings();
     */
+
+    /* Execute command */
+    public void execute() {
+        mRunner.runString(toScript());
+    }
 
     /* Dump command to script text */
     protected abstract String toScript();
 
     /* Get regex for matching command from script */
     protected abstract String[] getRegex();
+
+    /* Get command prefix in script */
+    protected abstract String getPrefix();
 }

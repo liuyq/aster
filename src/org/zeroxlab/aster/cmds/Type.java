@@ -18,18 +18,8 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-
-import java.awt.image.BufferedImage;
-import java.awt.Point;
-
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class Type extends AsterCommand {
 
@@ -51,6 +41,10 @@ public class Type extends AsterCommand {
         }
     }
 
+    public String getText() {
+	return mText;
+    }
+
     @Override
     public String getName() {
         return "Type";
@@ -61,10 +55,6 @@ public class Type extends AsterCommand {
         System.out.println("Type operation");
         AsterOperation[] ops = new OpGetInput[1];
         return ops;
-    }
-
-    public String getText() {
-	return mText;
     }
 
     @Override
@@ -78,5 +68,10 @@ public class Type extends AsterCommand {
             "type\\s*\\(\\s*\"(\\w+)\"\\s*\\)",
         };
         return regexs;
+    }
+
+    @Override
+    protected String getPrefix() {
+        return "type";
     }
 }

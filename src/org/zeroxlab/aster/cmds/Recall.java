@@ -20,8 +20,6 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-
 import java.awt.image.BufferedImage;
 
 public abstract class Recall extends AsterCommand {
@@ -31,21 +29,31 @@ public abstract class Recall extends AsterCommand {
         mScript = script;
     }
 
+    @Override
+    public String getName() {
+        return "Recall";
+    }
+
+    @Override
     public AsterOperation[] getOperations() {
         System.out.println("Get Operation");
         AsterOperation[] foo = new AsterOperation[1];
         return foo;
     }
 
-    public void setImg(BufferedImage img) {
-    }
-
+    @Override
     protected String toScript() {
         return new String();
     }
 
+    @Override
     protected String[] getRegex() {
         String[] regexs = { "" };
         return regexs;
+    }
+
+    @Override
+    protected String getPrefix() {
+        return "recall";
     }
 }

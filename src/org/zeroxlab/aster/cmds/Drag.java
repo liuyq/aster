@@ -18,8 +18,6 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-
 import java.awt.image.BufferedImage;
 import java.awt.Point;
 
@@ -55,18 +53,6 @@ public class Drag extends AsterCommand {
 	mCoordType = CoordType.FIXED;
 	mStartPosition = pos1;
         mEndPosition = pos2;
-    }
-
-    @Override
-    public String getName() {
-        return "Drag";
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Drag operation");
-        AsterOperation[] ops = new OpDrag[1];
-        return ops;
     }
 
     /*
@@ -131,6 +117,19 @@ public class Drag extends AsterCommand {
     }
 
     @Override
+    public String getName() {
+        return "Drag";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Drag operation");
+        AsterOperation[] ops = new OpDrag[1];
+        return ops;
+    }
+
+
+    @Override
     protected String toScript() {
         if (isAuto()) {
             return String.format("drag(\"%d.jpg\", \"%d.jpg\", %f, %d, %d)",
@@ -150,5 +149,10 @@ public class Drag extends AsterCommand {
             "drag\\s*\\(\\s\"*(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
         };
         return regexs;
+    }
+
+    @Override
+    protected String getPrefix() {
+        return "drag";
     }
 }

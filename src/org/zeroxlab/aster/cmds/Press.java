@@ -18,18 +18,8 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-
-import java.awt.image.BufferedImage;
-import java.awt.Point;
-
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
-
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 public class Press extends AsterCommand {
 
@@ -76,6 +66,10 @@ public class Press extends AsterCommand {
         }
     }
 
+    public String getKeyCode() {
+	return mKeyCode;
+    }
+
     @Override
     public String getName() {
         return "Press";
@@ -86,10 +80,6 @@ public class Press extends AsterCommand {
         System.out.println("Press operation");
         AsterOperation[] ops = new OpSelectKey[1];
         return ops;
-    }
-
-    public String getKeyCode() {
-	return mKeyCode;
     }
 
     @Override
@@ -104,5 +94,10 @@ public class Press extends AsterCommand {
             "press\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*\\)",
         };
         return regexs;
+    }
+
+    @Override
+    protected String getPrefix() {
+        return "press";
     }
 }

@@ -18,8 +18,6 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-
 import java.awt.image.BufferedImage;
 import java.awt.Point;
 
@@ -99,18 +97,6 @@ public class Touch extends AsterCommand {
         }
     }
 
-    @Override
-    public String getName() {
-        return "Touch";
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Touch operation");
-        AsterOperation[] ops = new OpTouch[1];
-        return ops;
-    }
-
     public BufferedImage getImage() {
 	return mImage;
     }
@@ -125,6 +111,18 @@ public class Touch extends AsterCommand {
 
     public boolean isFixed() {
 	return mCoordType == CoordType.FIXED;
+    }
+
+    @Override
+    public String getName() {
+        return "Touch";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Touch operation");
+        AsterOperation[] ops = new OpTouch[1];
+        return ops;
     }
 
     @Override
@@ -146,5 +144,10 @@ public class Touch extends AsterCommand {
             "touch\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)"
         };
         return regexs;
+    }
+
+    @Override
+    protected String getPrefix() {
+        return "touch";
     }
 }
