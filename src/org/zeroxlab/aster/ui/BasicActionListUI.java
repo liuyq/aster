@@ -106,6 +106,7 @@ public class BasicActionListUI extends ActionListUI {
 
         this.actionListChangeListener = new ChangeListener() {
                 public void stateChanged(ChangeEvent e) {
+                    updateButtonList();
                     actionList.repaint();
                 }
             };
@@ -131,70 +132,104 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
-        paintRootButton(g);
+        for (ActionButton btn : buttonList) {
+            btn.paint(g);
+        }
     }
 
     // ******************
     //   Layout Methods
     // ******************
-    protected static int textMargin = 10;
-    protected static int buttonMargin = 10;
+    protected static int BUTTON_MARGIN = 10;
     protected static String ROOT_LABEL = "RECALL";
     protected java.util.List<ActionButton> buttonList;
 
     protected void updateButtonList() {
         buttonList = new Vector<ActionButton>();
+        buttonList.add(new ActionButton(this.actionList.getModel().getRecall()));
         for (AsterCommand cmd : this.actionList.getModel().getCommands()) {
             buttonList.add(new ActionButton(cmd));
         }
+        updateLayout();
     }
 
-    protected void paintRootButton(Graphics g) {
-        FontMetrics fm = actionList.getFontMetrics(getFont());
-        Rectangle bbox = fm.getStringBounds(ROOT_LABEL, g).getBounds();
-        try {
-            InputStream stream = this.getClass().getResourceAsStream("/border.9.png");
-            NinePatch mPatch = NinePatch.load(stream, true, false);
-            mPatch.draw((Graphics2D)g,
-                        buttonMargin,
-                        buttonMargin,
-                        bbox.width + textMargin*2,
-                        bbox.height + textMargin*2);
-        } catch (IOException e) {
+    protected void updateLayout() {
+        int i = BUTTON_MARGIN;
+        for (ActionButton btn : buttonList) {
+            btn.setSize(btn.getPreferredSize());
+            btn.setLocation(BUTTON_MARGIN, i);
+            i += btn.getHeight() + BUTTON_MARGIN;
         }
-        g.setFont(getFont());
-        g.drawString(ROOT_LABEL,
-                     buttonMargin + textMargin,
-                     buttonMargin + textMargin + fm.getAscent());
-        g.drawLine(buttonMargin + textMargin + bbox.width/2,
-                   buttonMargin + bbox.height + textMargin*2 + buttonMargin,
-                   buttonMargin + textMargin + bbox.width/2,
-                   buttonMargin + bbox.height + textMargin*2 + buttonMargin + 10);
-    }
-
-    protected Font getFont() {
-        return new Font(Font.SANS_SERIF, Font.BOLD, 20);
-    }
-
-    protected void layout(Graphics g) {
     }
 
     public Dimension getMinimumSize(JComponent c) {
         return getPreferredSize(c);
     }
+
     public Dimension getPreferredSize(JComponent c) {
-        FontMetrics fm = actionList.getFontMetrics(getFont());
-        int width = fm.stringWidth(ROOT_LABEL) + textMargin*2 + buttonMargin*2;
-        return new Dimension(width, 400);
+        Dimension max = new Dimension(0, 0);
+        for (ActionButton btn : buttonList) {
+            Dimension d = btn.getPreferredSize();
+            if (d.width > max.width) {
+                max.width = d.width;
+            }
+            max.height += d.height;
+        }
+        max.width += BUTTON_MARGIN*2;
+        return max;
     }
+
     public Dimension getMaximumSize(JComponent c) {
         return getPreferredSize(c);
     }
 
-    class ActionButton {
+    static class ActionButton extends JComponent {
+        static int TEXT_MARGIN = 10;
         AsterCommand mCommand;
+        Font mFont;
+        Rectangle mFontBox;
+        static NinePatch mPatch;
+
+        static {
+            try {
+                InputStream stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
+                mPatch = NinePatch.load(stream, true, false);
+                stream.close();
+            } catch (IOException e) {
+            }
+        }
+
 	public ActionButton(AsterCommand cmd) {
             mCommand = cmd;
+            mFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
+            mFontBox = new Rectangle();
+        }
+
+        public Dimension getPreferredSize() {
+            FontMetrics fm = getFontMetrics(mFont);
+            return new Dimension(fm.stringWidth("Name" /* mCommand.getName() */) + TEXT_MARGIN*2,
+                                 fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2);
+        }
+
+        public void setLocation(int x, int y) {
+            super.setLocation(x, y);
+            mFontBox.setLocation(getBounds().getLocation());
+            FontMetrics fm = getFontMetrics(mFont);
+            mFontBox.translate(TEXT_MARGIN, TEXT_MARGIN + fm.getAscent());
+        }
+
+        public void paint(Graphics g) {
+            Rectangle bbox = getBounds();
+            if (mPatch != null) {
+                mPatch.draw((Graphics2D)g,
+                            bbox.x,
+                            bbox.y,
+                            bbox.width,
+                            bbox.height);
+            }
+            g.setFont(mFont);
+            g.drawString("Name" /* mCommand.getName() */,
+                         mFontBox.x, mFontBox.y);
         }
     }
 }
