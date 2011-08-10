@@ -114,6 +114,7 @@
     -->
     <target name="-compile-aster" depends="init">
         <javac includeantruntime="false"
+            debug="true"
             srcdir="src/org/zeroxlab/aster"
             destdir="${build.classes.dir}">
             <!-- <compilerarg value="-Xlint"/> -->
