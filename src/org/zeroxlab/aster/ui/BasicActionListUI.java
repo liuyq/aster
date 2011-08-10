@@ -236,10 +236,18 @@ public class BasicActionListUI extends ActionListUI {
             mFontBox = new Rectangle();
         }
 
+        public Dimension getMinimumSize() {
+            return getPreferredSize();
+        }
+
         public Dimension getPreferredSize() {
             FontMetrics fm = getFontMetrics(mFont);
             return new Dimension(fm.stringWidth("Name" /* mCommand.getName() */) + TEXT_MARGIN*2,
                                  fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2);
+        }
+
+        public Dimension getMaximumSize() {
+            return getPreferredSize();
         }
 
         public void setBounds(int x, int y, int width, int height) {
@@ -250,6 +258,7 @@ public class BasicActionListUI extends ActionListUI {
         }
 
         public void paint(Graphics g) {
+            super.paint(g);
             Rectangle bbox = getBounds();
             if (mPatch != null) {
                 mPatch.draw((Graphics2D)g,
@@ -268,6 +277,7 @@ public class BasicActionListUI extends ActionListUI {
         public LittleArrow() {
         }
         public void paint(Graphics g) {
+            super.paint(g);
             Rectangle bbox = getBounds();
             Line2D.Double line = new Line2D.Double(bbox.x + bbox.width / 2.0,
                                                    bbox.y,
@@ -308,6 +318,7 @@ public class BasicActionListUI extends ActionListUI {
             return new Dimension(inactiveImage.getWidth(), inactiveImage.getHeight());
         }
         public void paint(Graphics g) {
+            super.paint(g);
             Rectangle bbox = getBounds();
             if (mActiveP)
                 g.drawImage(activeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
