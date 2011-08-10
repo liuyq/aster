@@ -151,6 +151,7 @@ public class BasicActionListUI extends ActionListUI {
             buttonList.add(new ActionButton(cmd));
         }
         updateLayout();
+        actionList.revalidate();
     }
 
     protected void updateLayout() {

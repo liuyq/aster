@@ -18,13 +18,14 @@
 
 package org.zeroxlab.aster;
 
+import java.awt.*;
 import javax.swing.*;
 
 import org.zeroxlab.aster.ActionListModel;
 import org.zeroxlab.aster.ui.BasicActionListUI;
 import org.zeroxlab.aster.ui.ActionListUI;
 
-public class JActionList extends JComponent {
+public class JActionList extends JComponent implements Scrollable {
     /**
      * The UI class ID string.
      */
@@ -85,5 +86,48 @@ public class JActionList extends JComponent {
 
     public ActionListModel getModel() {
         return this.model;
+    }
+
+    /**
+     * @see Scrollable#getPreferredScrollableViewportSize()
+     */
+    public Dimension getPreferredScrollableViewportSize() {
+        Dimension d = getPreferredSize();
+        d.height = 100; // TODO: How to calculate the minimum size?
+        return d;
+    }
+
+    /**
+     * @see Scrollable#getScrollableBlockIncrement(java.awt.Rectangle, int, int)
+     */
+    public int getScrollableBlockIncrement(Rectangle visibleRect,
+                                           int orientation, int direction) {
+        return 10;
+    }
+
+    /**
+     * @see Scrollable#getScrollableTracksViewportHeight()
+     */
+    public boolean getScrollableTracksViewportHeight() {
+        if (getParent() instanceof  JViewport) {
+            return (((JViewport) getParent()).getHeight() > getPreferredSize().height);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @see Scrollable#getScrollableTracksViewportWidth()
+     */
+    public boolean getScrollableTracksViewportWidth() {
+        return true;
+    }
+
+    /**
+     * @see Scrollable#getScrollableUnitIncrement(java.awt.Rectangle, int, int)
+     */
+    public int getScrollableUnitIncrement(Rectangle visibleRect,
+                                          int orientation, int direction) {
+        return 10;
     }
 }
