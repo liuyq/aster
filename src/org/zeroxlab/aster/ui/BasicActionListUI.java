@@ -22,6 +22,7 @@ import com.android.ninepatch.NinePatch;
 import com.android.ninepatch.NinePatchChunk;
 
 import java.io.*;
+import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -33,6 +34,7 @@ import javax.swing.plaf.ComponentUI;
 
 import org.zeroxlab.aster.ActionListModel;
 import org.zeroxlab.aster.JActionList;
+import org.zeroxlab.aster.AsterCommand;
 
 /**
  * Basic UI for {@link JActionList}.
@@ -138,6 +140,14 @@ public class BasicActionListUI extends ActionListUI {
     protected static int textMargin = 10;
     protected static int buttonMargin = 10;
     protected static String ROOT_LABEL = "RECALL";
+    protected java.util.List<ActionButton> buttonList;
+
+    protected void updateButtonList() {
+        buttonList = new Vector<ActionButton>();
+        for (AsterCommand cmd : this.actionList.getModel().getCommands()) {
+            buttonList.add(new ActionButton(cmd));
+        }
+    }
 
     protected void paintRootButton(Graphics g) {
         FontMetrics fm = actionList.getFontMetrics(getFont());
@@ -179,5 +189,12 @@ public class BasicActionListUI extends ActionListUI {
     }
     public Dimension getMaximumSize(JComponent c) {
         return getPreferredSize(c);
+    }
+
+    class ActionButton {
+        AsterCommand mCommand;
+	public ActionButton(AsterCommand cmd) {
+            mCommand = cmd;
+        }
     }
 }
