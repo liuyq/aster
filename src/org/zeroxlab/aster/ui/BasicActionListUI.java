@@ -68,6 +68,7 @@ public class BasicActionListUI extends ActionListUI {
         this.actionList = (JActionList) c;
         installDefaults();
         installListeners();
+        c.setLayout(null);
     }
 
     /*

@@ -88,6 +88,9 @@ public class JActionList extends JComponent implements Scrollable {
         return this.model;
     }
 
+    public void paintChildren(Graphics g) {
+    }
+
     /**
      * @see Scrollable#getPreferredScrollableViewportSize()
      */
