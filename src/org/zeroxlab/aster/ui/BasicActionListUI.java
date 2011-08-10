@@ -133,7 +133,7 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
-        for (JComponent child: displayList) {
+        for (Component child: c.getComponents()) {
             child.paint(g);
         }
     }
@@ -143,11 +143,10 @@ public class BasicActionListUI extends ActionListUI {
     // ******************
     protected static int BUTTON_MARGIN = 10;
     protected static String ROOT_LABEL = "RECALL";
-    protected java.util.List<ActionButton> buttonList;
-    protected java.util.List<JComponent> displayList;
+    protected java.util.List<JComponent> buttonList;
 
     protected void updateButtonList() {
-        buttonList = new Vector<ActionButton>();
+        buttonList = new Vector<JComponent>();
         buttonList.add(new ActionButton(this.actionList.getModel().getRecall()));
         for (AsterCommand cmd : this.actionList.getModel().getCommands()) {
             buttonList.add(new ActionButton(cmd));
@@ -157,17 +156,17 @@ public class BasicActionListUI extends ActionListUI {
     }
 
     protected void updateLayout() {
-        displayList = new Vector<JComponent>();
+        actionList.removeAll();
         int i = BUTTON_MARGIN;
-        for (ActionButton btn : buttonList) {
+        for (JComponent btn : buttonList) {
             btn.setSize(btn.getPreferredSize());
             btn.setLocation(BUTTON_MARGIN, i);
             i += btn.getHeight() + BUTTON_MARGIN;
-            displayList.add(btn);
+            actionList.add(btn);
             LittleArrow arrow = new LittleArrow();
             arrow.setLocation(btn.getX(), btn.getY() + btn.getHeight() - 3); // TODO: How to calculate?
             arrow.setSize(btn.getWidth(), BUTTON_MARGIN);
-            displayList.add(arrow);
+            actionList.add(arrow);
         }
     }
 
@@ -177,14 +176,16 @@ public class BasicActionListUI extends ActionListUI {
 
     public Dimension getPreferredSize(JComponent c) {
         Dimension max = new Dimension(0, 0);
-        for (ActionButton btn : buttonList) {
-            Dimension d = btn.getPreferredSize();
-            if (d.width > max.width) {
-                max.width = d.width;
+        for (Component child: c.getComponents()) {
+            Rectangle r = child.getBounds();
+            if (r.x + r.width > max.width) {
+                max.width = r.x + r.width;
             }
-            max.height += d.height;
+            if (r.y + r.height > max.height) {
+                max.height = r.y + r.height;
+            }
         }
-        max.width += BUTTON_MARGIN*2;
+        max.width += BUTTON_MARGIN;
         return max;
     }
 
