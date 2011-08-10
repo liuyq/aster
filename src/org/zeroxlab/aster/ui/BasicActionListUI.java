@@ -26,6 +26,7 @@ import java.util.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -132,8 +133,8 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
-        for (ActionButton btn : buttonList) {
-            btn.paint(g);
+        for (JComponent child: displayList) {
+            child.paint(g);
         }
     }
 
@@ -143,6 +144,7 @@ public class BasicActionListUI extends ActionListUI {
     protected static int BUTTON_MARGIN = 10;
     protected static String ROOT_LABEL = "RECALL";
     protected java.util.List<ActionButton> buttonList;
+    protected java.util.List<JComponent> displayList;
 
     protected void updateButtonList() {
         buttonList = new Vector<ActionButton>();
@@ -155,11 +157,17 @@ public class BasicActionListUI extends ActionListUI {
     }
 
     protected void updateLayout() {
+        displayList = new Vector<JComponent>();
         int i = BUTTON_MARGIN;
         for (ActionButton btn : buttonList) {
             btn.setSize(btn.getPreferredSize());
             btn.setLocation(BUTTON_MARGIN, i);
             i += btn.getHeight() + BUTTON_MARGIN;
+            displayList.add(btn);
+            LittleArrow arrow = new LittleArrow();
+            arrow.setLocation(btn.getX(), btn.getY() + btn.getHeight() - 3); // TODO: How to calculate?
+            arrow.setSize(btn.getWidth(), BUTTON_MARGIN);
+            displayList.add(arrow);
         }
     }
 
@@ -231,6 +239,27 @@ public class BasicActionListUI extends ActionListUI {
             g.setFont(mFont);
             g.drawString("Name" /* mCommand.getName() */,
                          mFontBox.x, mFontBox.y);
+        }
+    }
+
+    static class LittleArrow extends JComponent {
+        public LittleArrow() {
+        }
+        public void paint(Graphics g) {
+            Rectangle bbox = getBounds();
+            Line2D.Double line = new Line2D.Double(bbox.x + bbox.width / 2.0,
+                                                   bbox.y,
+                                                   bbox.x + bbox.width / 2.0,
+                                                   bbox.y + bbox.height);
+            Polygon arrowHead = new Polygon();
+            arrowHead.addPoint( 0,3);
+            arrowHead.addPoint( -3, -3);
+            arrowHead.addPoint( 3,-3);
+            Graphics2D g2d = (Graphics2D) g.create();
+            g2d.draw(line);
+            g2d.translate(line.x2, line.y2);
+            g2d.fill(arrowHead);
+            g2d.dispose();
         }
     }
 }
