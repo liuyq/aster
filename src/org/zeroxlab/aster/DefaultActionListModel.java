@@ -77,6 +77,10 @@ public class DefaultActionListModel implements ActionListModel {
         fireStateChanged();
     }
 
+    public AsterCommand getRecall() {
+        return recall;
+    }
+
     public void pushCmd(AsterCommand cmd) {
         actionList.addFirst(cmd);
         fireStateChanged();
@@ -89,5 +93,9 @@ public class DefaultActionListModel implements ActionListModel {
         } catch (NoSuchElementException e) {
             // log.w("try to pop empty command list");
         }
+    }
+
+    public Iterable<AsterCommand> getCommands() {
+        return actionList;
     }
 }

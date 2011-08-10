@@ -28,6 +28,8 @@ public interface ActionListModel {
      */
     public void setRecall(AsterCommand cmd);
 
+    public AsterCommand getRecall();
+
     /**
      * Push command to the command list
      *
@@ -40,6 +42,11 @@ public interface ActionListModel {
      * Pop command from the command list
      */
     public void popCmd();
+
+    /**
+     * Get command list
+     */
+    public Iterable<AsterCommand> getCommands();
 
     /**
      * Adds a ChangeListener to the model's listener list.
