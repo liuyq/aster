@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.util.Vector;
 import javax.swing.*;
 
@@ -42,11 +43,13 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
 
     private Vector<SnapshotListener> mSnapListeners;
 
-    private int mImgPosX;
-    private int mImgPosY;
+    private Rectangle mImgRect;
+    private int mSourceWidth;
+    private int mSourceHeight;
     private int mWidth;
     private int mHeight;
 
+    private boolean mValid;
     private int mPressX;
     private int mPressY;
 
@@ -84,7 +87,7 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     public void paintComponent(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, mWidth, mHeight);
-        g.drawImage(mDrawingBuffer, mImgPosX, mImgPosY, null);
+        g.drawImage(mDrawingBuffer, mImgRect.x, mImgRect.y, null);
     }
 
     public void componentHidden(ComponentEvent e) {
@@ -107,6 +110,13 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+
+        if (!mImgRect.contains(x, y)) {
+            return;
+        }
+
+        x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
+        y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
         for (SnapshotListener listener: mSnapListeners){
             listener.clicked(x, y);
         }
@@ -127,40 +137,55 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
         double distance;
         int rX = e.getX();
         int rY = e.getY();
-        distance = Math.pow(rX - mPressX, 2);
-        distance += Math.pow(rY - mPressY, 2);
+        int pX = mPressX;
+        int pY = mPressY;
+
+        if (!mImgRect.contains(pX, pY) || !mImgRect.contains(rX, rY)) {
+            return;
+        }
+
+        /* if the drag distance too short, ignore it */
+        distance = Math.pow(rX - pX, 2);
+        distance += Math.pow(rY - pY, 2);
         if (distance < 16) {
             return;
         }
+
+        pX = (int)((mSourceWidth * (pX - mImgRect.x)) / mImgRect.width);
+        pY = (int)((mSourceHeight * (pY - mImgRect.y)) / mImgRect.height);
+        rX = (int)((mSourceWidth * (rX - mImgRect.x)) / mImgRect.width);
+        rY = (int)((mSourceHeight * (rY - mImgRect.y)) / mImgRect.height);
         for (SnapshotListener listener: mSnapListeners){
-            listener.dragged(mPressX, mPressY, rX, rY);
+            listener.dragged(pX, pY, rX, rY);
         }
     }
 
     private void generateDrawingBuffer() {
-        int expectedW, expectedH;
         boolean isLandscape = (mSourceImage.getWidth() > mSourceImage.getHeight());
 
         if (isLandscape) {
-            expectedW = LANDSCAPE_WIDTH;
-            expectedH = LANDSCAPE_HEIGHT;
+            mImgRect.width  = LANDSCAPE_WIDTH;
+            mImgRect.height = LANDSCAPE_HEIGHT;
         } else {
-            expectedW = PORTRAIT_WIDTH;
-            expectedH = PORTRAIT_HEIGHT;
+            mImgRect.width  = PORTRAIT_WIDTH;
+            mImgRect.height = PORTRAIT_HEIGHT;
         }
-        mImgPosX = (mWidth  - expectedW) / 2;
-        mImgPosY = (mHeight - expectedH) / 2;
-        mImgPosX = Math.max(mImgPosX, 0);
-        mImgPosY = Math.max(mImgPosY, 0);
+
+        mImgRect.x = (mWidth  - mImgRect.width) / 2;
+        mImgRect.y = (mHeight - mImgRect.height) / 2;
+        mImgRect.x = Math.max(mImgRect.x, 0);
+        mImgRect.y = Math.max(mImgRect.y, 0);
 
         if (mDrawingBuffer == null
-                || mDrawingBuffer.getWidth() != expectedW
-                || mDrawingBuffer.getHeight() != expectedH) {
-            mDrawingBuffer = new BufferedImage(expectedW, expectedH, BufferedImage.TYPE_INT_ARGB);
+                || mDrawingBuffer.getWidth() != mImgRect.width
+                || mDrawingBuffer.getHeight() != mImgRect.height) {
+            mDrawingBuffer = new BufferedImage(mImgRect.width, mImgRect.height, BufferedImage.TYPE_INT_ARGB);
         }
     }
 
     private void updateDrawingBuffer(BufferedImage source) {
+        mSourceWidth  = source.getWidth();
+        mSourceHeight = source.getHeight();
         mDrawingBuffer.getGraphics().drawImage(
                 source, 0, 0,
                 mDrawingBuffer.getWidth(),
