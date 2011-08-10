@@ -163,8 +163,8 @@ public class BasicActionListUI extends ActionListUI {
         int i = BUTTON_MARGIN;
         int mid = 0;
         for (JComponent btn : buttonList) {
-            btn.setSize(btn.getPreferredSize());
-            btn.setLocation(BUTTON_MARGIN, i);
+            Dimension size = btn.getPreferredSize();
+            btn.setBounds(BUTTON_MARGIN, i, size.width, size.height);
             i += btn.getHeight() + BUTTON_MARGIN;
             actionList.add(btn);
             LittleArrow arrow = new LittleArrow();
@@ -242,8 +242,8 @@ public class BasicActionListUI extends ActionListUI {
                                  fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2);
         }
 
-        public void setLocation(int x, int y) {
-            super.setLocation(x, y);
+        public void setBounds(int x, int y, int width, int height) {
+            super.setBounds(x, y, width, height);
             mFontBox.setLocation(getBounds().getLocation());
             FontMetrics fm = getFontMetrics(mFont);
             mFontBox.translate(TEXT_MARGIN, TEXT_MARGIN + fm.getAscent());
