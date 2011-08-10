@@ -27,7 +27,9 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.awt.image.*;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -158,6 +160,7 @@ public class BasicActionListUI extends ActionListUI {
     protected void updateLayout() {
         actionList.removeAll();
         int i = BUTTON_MARGIN;
+        int mid = 0;
         for (JComponent btn : buttonList) {
             btn.setSize(btn.getPreferredSize());
             btn.setLocation(BUTTON_MARGIN, i);
@@ -167,7 +170,24 @@ public class BasicActionListUI extends ActionListUI {
             arrow.setLocation(btn.getX(), btn.getY() + btn.getHeight() - 3); // TODO: How to calculate?
             arrow.setSize(btn.getWidth(), BUTTON_MARGIN);
             actionList.add(arrow);
+            mid = btn.getX() + btn.getWidth() / 2;
         }
+        NewActionButton newbtn = new NewActionButton();
+        newbtn.setSize(newbtn.getPreferredSize());
+        newbtn.setLocation(mid - newbtn.getWidth() / 2, i);
+        newbtn.addMouseListener(new MouseAdapter() {
+                public void mouseEntered(MouseEvent e) {
+                    Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+                    ((NewActionButton)e.getSource()).setActive(true);
+                    ((NewActionButton)e.getSource()).setCursor(handCursor);
+                    actionList.repaint();
+                }
+                public void mouseExited(MouseEvent e) {
+                    ((NewActionButton)e.getSource()).setActive(false);
+                    actionList.repaint();
+                }
+            });
+        actionList.add(newbtn);
     }
 
     public Dimension getMinimumSize(JComponent c) {
@@ -261,6 +281,40 @@ public class BasicActionListUI extends ActionListUI {
             g2d.translate(line.x2, line.y2);
             g2d.fill(arrowHead);
             g2d.dispose();
+        }
+    }
+
+    static class NewActionButton extends JComponent {
+        static BufferedImage inactiveImage;
+        static BufferedImage activeImage;
+        static {
+            try {
+                InputStream stream = NewActionButton.class.getResourceAsStream("/add_button_inactive.png");
+                inactiveImage = ImageIO.read(stream);
+                stream.close();
+                stream = NewActionButton.class.getResourceAsStream("/add_button_active.png");
+                activeImage = ImageIO.read(stream);
+                stream.close();
+            } catch (IOException e) {
+            }
+        }
+
+        boolean mActiveP = false;
+
+        public NewActionButton() {
+        }
+        public Dimension getPreferredSize() {
+            return new Dimension(inactiveImage.getWidth(), inactiveImage.getHeight());
+        }
+        public void paint(Graphics g) {
+            Rectangle bbox = getBounds();
+            if (mActiveP)
+                g.drawImage(activeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+            else
+                g.drawImage(inactiveImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+        }
+        public void setActive(boolean activep) {
+            this.mActiveP = activep;
         }
     }
 }
