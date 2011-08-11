@@ -36,8 +36,6 @@ public class Drag extends AsterCommand {
     private enum CoordType { FIXED, AUTO }
 
     CoordType mCoordType;
-    BufferedImage mStartImage;
-    BufferedImage mEndImage;
     Point mStartPosition;
     Point mEndPosition;
 
@@ -45,10 +43,10 @@ public class Drag extends AsterCommand {
     int mSteps = 10;
     double mTimeout = 3;
 
-    public Drag(BufferedImage img1, BufferedImage img2) {
+    public Drag(Point pos2) {
 	mCoordType = CoordType.AUTO;
-	mStartImage = img1;
-	mEndImage = img2;
+	mStartPosition = new Point();
+        mEndPosition = pos2;
     }
 
     public Drag(Point pos1, Point pos2) {
@@ -59,21 +57,22 @@ public class Drag extends AsterCommand {
 
     /*
      * Format:
-     * 1. start_img, end_img, duration, step, timeout
+     * 1. start_img, end_x1, end_y1, duration, step, timeout
      * 2. start_x1, start_y1, end_x1, end_y1, duration, step, timeout
      */
     public Drag(String[] strs) throws IllegalArgumentException {
-        if (strs.length == 5) {
+        if (strs.length == 6) {
             try {
-                mStartImage = ImageIO.read(new File(strs[0]));
-                mEndImage = ImageIO.read(new File(strs[1]));
+                mImage = ImageIO.read(new File(strs[0]));
+                mEndPosition.setLocation(Integer.parseInt(strs[1]),
+                                         Integer.parseInt(strs[2]));
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             }
             try {
-                mDuration = Double.parseDouble(strs[2]);
-                mSteps = Integer.parseInt(strs[3]);
-                mTimeout = Double.parseDouble(strs[4]);
+                mDuration = Double.parseDouble(strs[3]);
+                mSteps = Integer.parseInt(strs[4]);
+                mTimeout = Double.parseDouble(strs[5]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -94,14 +93,6 @@ public class Drag extends AsterCommand {
         }
     }
 
-    public BufferedImage getStartImage() {
-	return mStartImage;
-    }
-
-    public BufferedImage getEndImage() {
-	return mEndImage;
-    }
-
     public Point getStartPos() {
 	return mStartPosition;
     }
@@ -120,7 +111,34 @@ public class Drag extends AsterCommand {
 
     @Override
     public SimpleBindings getSettings() {
-        return new SimpleBindings();
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("CoordType", mCoordType);
+        if (isFixed()) {
+            settings.put("StartPos", mStartPosition);
+            settings.put("EndPos", mEndPosition);
+        } else {
+            settings.put("Image", mImage);
+            settings.put("Offset", mEndPosition);
+        }
+        settings.put("Duration", mDuration);
+        settings.put("Steps", mSteps);
+        settings.put("Timeout", mTimeout);
+        return settings;
+    }
+
+    @Override
+    public void fill(SimpleBindings settings) {
+        mCoordType = (CoordType)settings.get("CoordType");
+        if (mCoordType == CoordType.AUTO) {
+            mImage = (BufferedImage)settings.get("Image");
+            mEndPosition = (Point)settings.get("Offset");
+        } else {
+            mStartPosition = (Point)settings.get("StartPos");
+            mEndPosition = (Point)settings.get("EndPos");
+        }
+        mDuration = (Double)settings.get("Duration");
+        mSteps = (Integer)settings.get("Steps");
+        mTimeout = (Double)settings.get("Timeout");
     }
 
     @Override

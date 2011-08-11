@@ -49,7 +49,14 @@ public class Type extends AsterCommand {
 
     @Override
     public SimpleBindings getSettings() {
-        return new SimpleBindings();
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("Text", mText);
+        return settings;
+    }
+
+    @Override
+    public void fill(SimpleBindings settings) {
+        mText = (String)settings.get("Text");
     }
 
     @Override

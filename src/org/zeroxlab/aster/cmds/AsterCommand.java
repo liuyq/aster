@@ -31,7 +31,7 @@ import javax.script.SimpleBindings;
 
 public abstract class AsterCommand {
     private static ScriptRunner mRunner;
-    private BufferedImage mImage;
+    protected BufferedImage mImage;
 
     static public void setScriptRunner(ScriptRunner runner) {
         mRunner = runner;
@@ -58,6 +58,9 @@ public abstract class AsterCommand {
 
     /* Get settings of a command */
     public abstract SimpleBindings getSettings();
+
+    /* Set settings of a command */
+    public abstract void fill(SimpleBindings settings);
 
     /* Execute command */
     public void execute() {

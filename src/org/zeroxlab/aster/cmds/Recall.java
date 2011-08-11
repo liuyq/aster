@@ -33,7 +33,14 @@ public abstract class Recall extends AsterCommand {
 
     @Override
     public SimpleBindings getSettings() {
-        return new SimpleBindings();
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("Script", mScript);
+        return settings;
+    }
+
+    @Override
+    public void fill(SimpleBindings settings) {
+        mScript = (String)settings.get("Script");
     }
 
     @Override

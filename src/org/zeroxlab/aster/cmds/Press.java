@@ -74,7 +74,16 @@ public class Press extends AsterCommand {
 
     @Override
     public SimpleBindings getSettings() {
-        return new SimpleBindings();
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("KeyCode", mKeyCode);
+        settings.put("Type", mPressType.getTypeStr());
+        return settings;
+    }
+
+    @Override
+    public void fill(SimpleBindings settings) {
+        mKeyCode = (String)settings.get("KeyCode");
+        mPressType = PressType.parse((String)settings.get("Type"));
     }
 
     @Override

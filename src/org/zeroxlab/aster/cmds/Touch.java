@@ -117,8 +117,30 @@ public class Touch extends AsterCommand {
 
     @Override
     public SimpleBindings getSettings() {
-        return new SimpleBindings();
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("CoordType", mCoordType);
+        if (isFixed()) {
+            settings.put("Pos", mPosition);
+        } else {
+            settings.put("Image", mImage);
+        }
+        settings.put("Timeout", mTimeout);
+        settings.put("Type", mTouchType.getTypeStr());
+        return settings;
     }
+
+    @Override
+    public void fill(SimpleBindings settings) {
+        mCoordType = (CoordType)settings.get("CoordType");
+        if (mCoordType == CoordType.AUTO) {
+            mImage = (BufferedImage)settings.get("Image");
+        } else {
+            mPosition = (Point)settings.get("Pos");
+        }
+        mTouchType = (TouchType)settings.get("Type");
+        mTimeout = (Double)settings.get("Timeout");
+    }
+
 
     @Override
     public String getName() {
