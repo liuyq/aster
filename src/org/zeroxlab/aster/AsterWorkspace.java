@@ -14,6 +14,8 @@
  * limitations under the License.
  *
  * Authored by Kan-Ru Chen <kanru@0xlab.org>
+ *             Wei-Ning Huang <azhuang@0xlab.org>
+ *             Julian Chu <walkingice@0xlab.org>
  */
 
 package org.zeroxlab.aster;
@@ -29,9 +31,9 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.Rectangle;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JComponent;
 
-public class ImageView extends JComponent implements ComponentListener, MouseListener{
+public class AsterWorkspace extends JComponent implements ComponentListener, MouseListener{
 
     public final static int LANDSCAPE_WIDTH  = 400;
     public final static int LANDSCAPE_HEIGHT = 240;
@@ -53,11 +55,11 @@ public class ImageView extends JComponent implements ComponentListener, MouseLis
     private int mPressX;
     private int mPressY;
 
-    public ImageView() {
+    public AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
-    public ImageView(BufferedImage img) {
+    public AsterWorkspace(BufferedImage img) {
         if (mSnapListeners == null) {
             mSnapListeners = new Vector<SnapshotListener>();
         }

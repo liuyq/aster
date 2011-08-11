@@ -34,7 +34,7 @@ import javax.swing.*;
 
 public class AsterMainPanel extends JPanel {
 
-    private ImageView mImageView;
+    private AsterWorkspace mWorkspace;
     private JActionList mActionList;
 
     private ChimpChat mChimpChat;
@@ -48,8 +48,8 @@ public class AsterMainPanel extends JPanel {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
 
-	setLayout(gridbag);
-	c.fill = GridBagConstraints.BOTH;
+        setLayout(gridbag);
+        c.fill = GridBagConstraints.BOTH;
 
         c.gridx = 0;
         c.gridy = 0;
@@ -94,19 +94,19 @@ public class AsterMainPanel extends JPanel {
         c.gridheight = 3;
         c.weightx = 0.5;
         c.weighty = 0.5;
-        mImageView = new ImageView();
-        add(mImageView, c);
+        mWorkspace = new AsterWorkspace();
+        add(mWorkspace, c);
 
         setPreferredSize(new Dimension(800, 600));
 
-	Map<String, String> options = new TreeMap<String, String>();
-	options.put("backend", "adb");
-	mChimpChat = ChimpChat.getInstance(options);
+        Map<String, String> options = new TreeMap<String, String>();
+        options.put("backend", "adb");
+        mChimpChat = ChimpChat.getInstance(options);
         mImpl = new WookieeAPI(mChimpChat.waitForConnection());
 
         mImpl.setRunnerChimpChat(mChimpChat);
         String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
-                File.separator + "wookieerunner";
+            File.separator + "wookieerunner";
         mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
         AsterCommand.setScriptRunner(mScriptRunner);
 
@@ -143,8 +143,8 @@ public class AsterMainPanel extends JPanel {
 
         private void updateScreen() {
             IChimpImage snapshot = mImpl.takeSnapshot();
-            mImageView.setImage(snapshot.createBufferedImage());
-            mImageView.repaint(mImageView.getBounds());
+            mWorkspace.setImage(snapshot.createBufferedImage());
+            mWorkspace.repaint(mWorkspace.getBounds());
         }
     }
 }
