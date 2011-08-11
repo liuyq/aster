@@ -21,6 +21,8 @@ package org.zeroxlab.aster;
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
 
+import javax.script.SimpleBindings;
+
 public class Type extends AsterCommand {
 
     String mText;
@@ -43,6 +45,11 @@ public class Type extends AsterCommand {
 
     public String getText() {
 	return mText;
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        return new SimpleBindings();
     }
 
     @Override

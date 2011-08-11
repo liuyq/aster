@@ -29,6 +29,8 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import javax.script.SimpleBindings;
+
 public class Drag extends AsterCommand {
 
     private enum CoordType { FIXED, AUTO }
@@ -114,6 +116,11 @@ public class Drag extends AsterCommand {
 
     public boolean isFixed() {
 	return mCoordType == CoordType.FIXED;
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        return new SimpleBindings();
     }
 
     @Override

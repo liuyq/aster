@@ -22,11 +22,18 @@ package org.zeroxlab.aster;
 
 import java.awt.image.BufferedImage;
 
+import javax.script.SimpleBindings;
+
 public abstract class Recall extends AsterCommand {
     private String mScript;
 
     public Recall(String script) {
         mScript = script;
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        return new SimpleBindings();
     }
 
     @Override

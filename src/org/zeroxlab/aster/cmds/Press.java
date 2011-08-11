@@ -21,6 +21,8 @@ package org.zeroxlab.aster;
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
 
+import javax.script.SimpleBindings;
+
 public class Press extends AsterCommand {
 
     private enum PressType {
@@ -68,6 +70,11 @@ public class Press extends AsterCommand {
 
     public String getKeyCode() {
 	return mKeyCode;
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        return new SimpleBindings();
     }
 
     @Override

@@ -18,33 +18,46 @@
 
 package org.zeroxlab.aster;
 
+import org.zeroxlab.aster.AsterOperation;
+
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import com.android.monkeyrunner.MonkeyRunnerOptions;
 
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
-import org.zeroxlab.aster.AsterOperation;
+
+import javax.script.SimpleBindings;
 
 public abstract class AsterCommand {
     private static ScriptRunner mRunner;
-
-    public abstract String getName();
-
-    /* Return operations that stored in this Command */
-    public abstract AsterOperation[] getOperations();
-
-    public void setImg(BufferedImage img) {
-    }
-
-    /* uncomment these abstract methods and implement them
-    public abstract void drawHint(Graphics g);
-    public abstract Map getSettings();
-    */
+    private BufferedImage mImage;
 
     static public void setScriptRunner(ScriptRunner runner) {
         mRunner = runner;
     }
+
+    public abstract String getName();
+
+    /* uncomment these abstract methods and implement them
+    public abstract void drawHint(Graphics g);
+    */
+
+    /* Return operations that stored in this Command */
+    public abstract AsterOperation[] getOperations();
+
+    /* Get image for command */
+    public void setImg(BufferedImage img) {
+        mImage = img;
+    }
+
+    /* Set image for command */
+    public BufferedImage getImage() {
+        return mImage;
+    }
+
+    /* Get settings of a command */
+    public abstract SimpleBindings getSettings();
 
     /* Execute command */
     public void execute() {
