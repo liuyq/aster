@@ -190,7 +190,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         int startx, starty, endx, endy;
         double seconds = JythonUtils.getFloat(ap, 2, 1.0);
 
-        if (startObject instanceof PyTuple) {
+        if (startObject instanceof PyTuple && endObject instanceof PyTuple) {
             PyTuple start = (PyTuple) startObject;
             PyTuple end = (PyTuple) endObject;
             long ms = (long) (seconds * 1000.0);
@@ -200,6 +200,22 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
             endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
             impl.drag(startx, starty, endx, endy, steps, ms);
+        } else if (startObject instanceof PyString &&
+                   endObject instanceof PyTuple) {
+            PyTuple end = (PyTuple) endObject;
+
+            endx = (Integer) end.__getitem__(0).__tojava__(Integer.class);
+            endy = (Integer) end.__getitem__(1).__tojava__(Integer.class);
+
+            try {
+                wookiee.drag(((PyString) startObject).asString(), endx, endy,
+                             steps, seconds,
+                             JythonUtils.getFloat(ap, 4, default_timeout));
+            } catch (FileNotFoundException e) {
+                throw new PyException(Py.IOError, e.toString());
+            } catch (TemplateNotFoundException e) {
+                throw new PyException(Py.KeyError, "Template not found");
+            }
         } else {
             try {
                 wookiee.drag(((PyString) startObject).asString(),

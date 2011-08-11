@@ -129,6 +129,34 @@ public class WookieeAPI {
         impl.drag(x0, y0, x1, y1, steps, ms);
     }
 
+    public void drag(String start_img, int dx, int dy, int steps, double sec,
+                     double timeout)
+        throws FileNotFoundException, TemplateNotFoundException {
+        MatchResult rs = new MatchResult();
+        String current;
+        long st = System.nanoTime();
+        long ms = (long) (sec * 1000.0);
+
+        if (isLandScape()) {
+            int tmp = height - dx;
+            dx = dy;
+            dy = dx;
+        }
+
+        while (true) {
+            try {
+                current = getCurrentSnapshot();
+                rs = Finder.dispatch(matcher, current, start_img);
+            } catch (TemplateNotFoundException e) {
+                if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                    throw e;
+                continue;
+            }
+            break;
+        }
+        drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
+    }
+
     public void drag(String start_img, String end_img, int steps, double sec,
                      double timeout)
         throws FileNotFoundException, TemplateNotFoundException {
