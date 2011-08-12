@@ -55,6 +55,12 @@ public class AsterMainPanel extends JPanel {
         c.weighty = 0;
         mActionList = new JActionList();
         JScrollPane scrollPane = new JScrollPane();
+        /*
+         * TODO: FIXME:
+         * Always show the scroll bar, otherwise when the scroll bar
+         * was displayed the scrollPane will resize incorretly.
+         */
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
         mCmds = new AsterCommand[1];
