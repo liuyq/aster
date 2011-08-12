@@ -145,7 +145,6 @@ public class BasicActionListUI extends ActionListUI {
     //   Layout Methods
     // ******************
     protected static int BUTTON_MARGIN = 10;
-    protected static String ROOT_LABEL = "RECALL";
     protected java.util.List<JComponent> buttonList;
 
     protected void updateButtonList() {
