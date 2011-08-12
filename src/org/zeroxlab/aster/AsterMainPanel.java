@@ -62,6 +62,20 @@ public class AsterMainPanel extends JPanel {
         for (AsterCommand cmd : mCmds) {
             mActionList.getModel().pushCmd(cmd);
         }
+        mActionList.addNewActionListener(new MouseAdapter () {
+                public void mouseClicked(MouseEvent e) {
+                    Object[] possibilities = {"TOUCH", "DRAG", "TYPE"};
+                    String s = (String)JOptionPane.showInputDialog(
+                        mActionList,
+                        "選擇要加入的動作",
+                        "新增動作",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        possibilities,
+                        "TOUCh");
+                    mActionList.getModel().pushCmd(new Touch(new Point(10, 10)));
+                }
+            });
 
         c.gridx = 1;
         c.gridy = 0;
