@@ -39,5 +39,7 @@ class CmdTest {
         } catch (IOException e) {
             System.out.println(e);
         }
+
+        AsterCommandManager.load("test/test.py");
     }
 }

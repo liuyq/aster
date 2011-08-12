@@ -63,7 +63,7 @@ public class Drag extends AsterCommand {
                                        Integer.parseInt(args[2]));
             mDuration = Double.parseDouble(args[3]);
             mSteps = Integer.parseInt(args[4]);
-            mTimeout = Integer.parseInt(args[5]);
+            mTimeout = Double.parseDouble(args[5]);
             mLandscape = Boolean.parseBoolean(args[6]);
         } else if (args.length == 8) {
             mCoordType = CoordType.FIXED;
@@ -73,7 +73,7 @@ public class Drag extends AsterCommand {
                                      Integer.parseInt(args[3]));
             mDuration = Double.parseDouble(args[4]);
             mSteps = Integer.parseInt(args[5]);
-            mTimeout = Integer.parseInt(args[6]);
+            mTimeout = Double.parseDouble(args[6]);
             mLandscape = Boolean.parseBoolean(args[7]);
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
@@ -142,11 +142,11 @@ public class Drag extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("drag('%d.jpg', (%d, %d), %d, %.1f, %s)\n",
+            return String.format("drag('%d.png', (%d, %d), %.1f, %d, %.1f, %s)\n",
                                  mSerial,
                                  (int)mEndPosition.getX(),
                                  (int)mEndPosition.getY(),
-                                 mSteps, mTimeout,
+                                 mDuration, mSteps, mTimeout,
                                  mLandscape? "True": "False");
         } else {
             return String.format("drag((%d, %d), (%d, %d), %.1f, %d, %.1f, %s)\n",

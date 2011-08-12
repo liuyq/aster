@@ -18,10 +18,13 @@
 
 package org.zeroxlab.aster;
 
+import java.util.ArrayList;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class AsterCommandManager {
     
@@ -44,6 +47,38 @@ public class AsterCommandManager {
     }
 
     static public AsterCommand[] load(String filename) {
-        return new AsterCommand[1];
+        ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
+        try {
+            FileInputStream ist = new FileInputStream(new File(filename));
+
+            byte[] buf = new byte[4096];
+            String data = new String();
+
+            try {
+                while (ist.available() > 0) {
+                    ist.read(buf);
+                    data += new String(buf);
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
+            for (String s: data.split("\n")) {
+                System.out.println(s);
+                if (s.startsWith("drag")) {
+                    cmds.add(new Drag(s.substring(4, s.length())));
+                } else if (s.startsWith("touch")) {
+                    cmds.add(new Touch(s.substring(5, s.length())));
+                } else if (s.startsWith("press")) {
+                    cmds.add(new Press(s.substring(5, s.length())));
+                } else if (s.startsWith("type")) {
+                    cmds.add(new Type(s.substring(4, s.length())));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+        }
+        AsterCommand[] cmd_array = new AsterCommand[cmds.size()];
+        return cmds.toArray(cmd_array);
     }
 }
