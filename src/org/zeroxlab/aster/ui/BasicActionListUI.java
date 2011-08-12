@@ -176,18 +176,6 @@ public class BasicActionListUI extends ActionListUI {
         NewActionButton newbtn = new NewActionButton();
         newbtn.setSize(newbtn.getPreferredSize());
         newbtn.setLocation(mid - newbtn.getWidth() / 2, i);
-        newbtn.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
-                    Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
-                    ((NewActionButton)e.getSource()).setActive(true);
-                    ((NewActionButton)e.getSource()).setCursor(handCursor);
-                    actionList.repaint();
-                }
-                public void mouseExited(MouseEvent e) {
-                    ((NewActionButton)e.getSource()).setActive(false);
-                    actionList.repaint();
-                }
-            });
         actionList.add(newbtn);
     }
 
@@ -313,6 +301,20 @@ public class BasicActionListUI extends ActionListUI {
         boolean mActiveP = false;
 
         public NewActionButton() {
+            addMouseListener(new MouseAdapter() {
+                    public void mouseEntered(MouseEvent e) {
+                        NewActionButton btn = (NewActionButton)e.getSource();
+                        btn.setActive(true);
+                        btn.repaint();
+                    }
+                    public void mouseExited(MouseEvent e) {
+                        NewActionButton btn = (NewActionButton)e.getSource();
+                        btn.setActive(false);
+                        btn.repaint();
+                    }
+                });
+            Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+            setCursor(handCursor);
         }
         public Dimension getPreferredSize() {
             return new Dimension(inactiveImage.getWidth(), inactiveImage.getHeight());
