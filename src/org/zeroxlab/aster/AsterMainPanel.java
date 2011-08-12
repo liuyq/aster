@@ -72,7 +72,7 @@ public class AsterMainPanel extends JPanel {
                 public void mouseClicked(MouseEvent e) {
                     Object[] possibilities = {"TOUCH", "DRAG", "TYPE"};
                     String s = (String)JOptionPane.showInputDialog(
-                        mActionList,
+                        (JComponent)e.getSource(),
                         "選擇要加入的動作",
                         "新增動作",
                         JOptionPane.PLAIN_MESSAGE,
