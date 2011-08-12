@@ -19,6 +19,7 @@
 package org.zeroxlab.aster;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 
 import org.zeroxlab.aster.ActionListModel;
@@ -132,5 +133,13 @@ public class JActionList extends JComponent implements Scrollable {
     public int getScrollableUnitIncrement(Rectangle visibleRect,
                                           int orientation, int direction) {
         return 10;
+    }
+
+    public void addNewActionListener(MouseListener l) {
+        ((ActionListUI)ui).addNewActionListener(l);
+    }
+
+    public void removeNewActionListener(MouseListener l) {
+        ((ActionListUI)ui).removeNewActionListener(l);
     }
 }

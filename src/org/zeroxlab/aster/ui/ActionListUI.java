@@ -18,6 +18,7 @@
 
 package org.zeroxlab.aster.ui;
 
+import java.awt.event.MouseListener;
 import javax.swing.plaf.ComponentUI;
 
 import org.zeroxlab.aster.JActionList;
@@ -26,4 +27,6 @@ import org.zeroxlab.aster.JActionList;
  * UI for JActionList
  */
 public abstract class ActionListUI extends ComponentUI {
+    public abstract void addNewActionListener(MouseListener l);
+    public abstract void removeNewActionListener(MouseListener l);
 }

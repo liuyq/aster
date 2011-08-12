@@ -31,8 +31,7 @@ import java.awt.image.*;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.event.*;
 import javax.swing.plaf.ComponentUI;
 
 import org.zeroxlab.aster.ActionListModel;
@@ -53,6 +52,8 @@ public class BasicActionListUI extends ActionListUI {
     protected MouseMotionListener mouseMotionListener;
 
     protected ChangeListener actionListChangeListener;
+
+    protected EventListenerList newActionListenerList = new EventListenerList();
 
     /*
      * @see javax.swing.plaf.ComponentUI#createUI(javax.swing.JComponent)
@@ -141,6 +142,23 @@ public class BasicActionListUI extends ActionListUI {
         }
     }
 
+    public void addNewActionListener(MouseListener l) {
+        newActionListenerList.add(MouseListener.class, l);
+    }
+
+    public void removeNewActionListener(MouseListener l) {
+        newActionListenerList.remove(MouseListener.class, l);
+    }
+
+    protected void fireNewAction(MouseEvent e) {
+        Object[] listeners = newActionListenerList.getListenerList();
+        for (int i = listeners.length-2; i>=0; i-=2) {
+            if (listeners[i]==MouseListener.class) {
+                ((MouseListener)listeners[i+1]).mouseClicked(e);
+            }
+        }
+    }
+
     // ******************
     //   Layout Methods
     // ******************
@@ -175,6 +193,11 @@ public class BasicActionListUI extends ActionListUI {
         NewActionButton newbtn = new NewActionButton();
         newbtn.setSize(newbtn.getPreferredSize());
         newbtn.setLocation(mid - newbtn.getWidth() / 2, i);
+        newbtn.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    fireNewAction(e);
+                }
+            });
         actionList.add(newbtn);
     }
 
