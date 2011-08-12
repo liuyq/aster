@@ -255,6 +255,8 @@ public class BasicActionListUI extends ActionListUI {
                             bbox.height);
             }
             g.setFont(mFont);
+            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                                             RenderingHints.VALUE_ANTIALIAS_ON);
             g.drawString("Name" /* mCommand.getName() */,
                          mFontBox.x, mFontBox.y);
         }
