@@ -63,6 +63,9 @@ public class Touch extends AsterCommand {
     TouchType mTouchType;
     double mTimeout = 3;
 
+    public Touch() {
+    }
+
     public Touch(BufferedImage img) {
 	mCoordType = CoordType.AUTO;
 	mImage = img;
@@ -166,17 +169,11 @@ public class Touch extends AsterCommand {
         }
     }
 
-    @Override
-    protected String[] getRegex() {
+    static protected String[] getRegex() {
         String[] regexs = {
             "touch\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)",
             "touch\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)"
         };
         return regexs;
-    }
-
-    @Override
-    protected String getPrefix() {
-        return "touch";
     }
 }

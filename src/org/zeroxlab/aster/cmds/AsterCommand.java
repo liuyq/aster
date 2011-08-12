@@ -37,14 +37,9 @@ public abstract class AsterCommand {
         mRunner = runner;
     }
 
-    public abstract String getName();
-
     /* uncomment these abstract methods and implement them
     public abstract void drawHint(Graphics g);
     */
-
-    /* Return operations that stored in this Command */
-    public abstract AsterOperation[] getOperations();
 
     /* Get image for command */
     public void setImg(BufferedImage img) {
@@ -56,23 +51,28 @@ public abstract class AsterCommand {
         return mImage;
     }
 
+    /* Return operations that stored in this Command */
+    public abstract AsterOperation[] getOperations();
+
+    /* Get the name of command */
+    public abstract String getName();
+
     /* Get settings of a command */
     public abstract SimpleBindings getSettings();
 
     /* Set settings of a command */
     public abstract void fill(SimpleBindings settings);
 
+    /* Dump command to script text */
+    protected abstract String toScript();
+
     /* Execute command */
     public void execute() {
         mRunner.runStringLocal(toScript());
     }
 
-    /* Dump command to script text */
-    protected abstract String toScript();
-
     /* Get regex for matching command from script */
-    protected abstract String[] getRegex();
-
-    /* Get command prefix in script */
-    protected abstract String getPrefix();
+    static protected String[] getRegex() {
+        return null;
+    }
 }

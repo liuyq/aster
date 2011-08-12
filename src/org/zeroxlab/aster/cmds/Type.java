@@ -76,16 +76,10 @@ public class Type extends AsterCommand {
         return String.format("type(\"%s\")", mText);
     }
 
-    @Override
-    protected String[] getRegex() {
+    static protected String[] getRegex() {
         String[] regexs = {
             "type\\s*\\(\\s*\"(\\w+)\"\\s*\\)",
         };
         return regexs;
-    }
-
-    @Override
-    protected String getPrefix() {
-        return "type";
     }
 }

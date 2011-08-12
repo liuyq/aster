@@ -104,16 +104,10 @@ public class Press extends AsterCommand {
                              mKeyCode, mPressType.getTypeStr());
     }
 
-    @Override
-    protected String[] getRegex() {
+    static protected String[] getRegex() {
         String[] regexs = {
             "press\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*\\)",
         };
         return regexs;
-    }
-
-    @Override
-    protected String getPrefix() {
-        return "press";
     }
 }

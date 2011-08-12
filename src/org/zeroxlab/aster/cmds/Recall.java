@@ -60,14 +60,8 @@ public abstract class Recall extends AsterCommand {
         return new String();
     }
 
-    @Override
-    protected String[] getRegex() {
+    static protected String[] getRegex() {
         String[] regexs = { "" };
         return regexs;
-    }
-
-    @Override
-    protected String getPrefix() {
-        return "recall";
     }
 }

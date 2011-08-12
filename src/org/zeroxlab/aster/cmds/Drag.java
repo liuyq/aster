@@ -167,17 +167,11 @@ public class Drag extends AsterCommand {
         }
     }
 
-    @Override
-    protected String[] getRegex() {
+    static protected String[] getRegex() {
         String[] regexs = {
             "drag\\s*\\(\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
-            "drag\\s*\\(\\s\"*(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
+            "drag\\s*\\(\\s\"*(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
         };
         return regexs;
-    }
-
-    @Override
-    protected String getPrefix() {
-        return "drag";
     }
 }
