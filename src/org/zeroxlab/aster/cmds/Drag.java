@@ -102,6 +102,18 @@ public class Drag extends AsterCommand {
     }
 
     @Override
+    public String getName() {
+        return "Drag";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Drag operation");
+        AsterOperation[] ops = new OpDrag[1];
+        return ops;
+    }
+
+    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Drag");
@@ -135,13 +147,6 @@ public class Drag extends AsterCommand {
         mTimeout = (Double)settings.get("Timeout");
         mLandscape = (Boolean)settings.get("Landscape");
         mSerial = (Integer)settings.get("Serial");
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Drag operation");
-        AsterOperation[] ops = new OpDrag[1];
-        return ops;
     }
 
     @Override

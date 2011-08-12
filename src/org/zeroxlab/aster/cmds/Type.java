@@ -46,6 +46,18 @@ public class Type extends AsterCommand {
     }
 
     @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Type operation");
+        AsterOperation[] ops = new OpGetInput[1];
+        return ops;
+    }
+
+    @Override
+    public String getName() {
+        return "Type";
+    }
+
+    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Type");
@@ -56,13 +68,6 @@ public class Type extends AsterCommand {
     @Override
     public void fillSettings(SimpleBindings settings) {
         mText = (String)settings.get("Text");
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Type operation");
-        AsterOperation[] ops = new OpGetInput[1];
-        return ops;
     }
 
     @Override

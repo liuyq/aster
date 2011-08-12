@@ -55,10 +55,6 @@ public class Press extends AsterCommand {
         fillSettings(settings);
     }
 
-    /*
-     * Format:
-     * 1. keycode, type
-     */
     public Press(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
         if (args.length == 2) {
@@ -74,6 +70,18 @@ public class Press extends AsterCommand {
     }
 
     @Override
+    public String getName() {
+        return "Press";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Press operation");
+        AsterOperation[] ops = new OpSelectKey[1];
+        return ops;
+    }
+
+    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Press");
@@ -86,13 +94,6 @@ public class Press extends AsterCommand {
     public void fillSettings(SimpleBindings settings) {
         mKeyCode = (String)settings.get("KeyCode");
         mPressType = PressType.parse((String)settings.get("Type"));
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Press operation");
-        AsterOperation[] ops = new OpSelectKey[1];
-        return ops;
     }
 
     @Override

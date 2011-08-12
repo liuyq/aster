@@ -55,6 +55,9 @@ public abstract class AsterCommand {
     public abstract void drawHint(Graphics g);
     */
 
+    /* Get name of command */
+    public abstract String getName();
+
     /* Return operations that stored in this Command */
     public abstract AsterOperation[] getOperations();
 

@@ -42,6 +42,18 @@ public abstract class Recall extends AsterCommand {
     }
 
     @Override
+    public String getName() {
+        return "Recall";
+    }
+
+    @Override
+    public AsterOperation[] getOperations() {
+        System.out.println("Get Operation");
+        AsterOperation[] foo = new AsterOperation[1];
+        return foo;
+    }
+
+    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Recall");
@@ -52,13 +64,6 @@ public abstract class Recall extends AsterCommand {
     @Override
     public void fillSettings(SimpleBindings settings) {
         mScript = (String)settings.get("Script");
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Get Operation");
-        AsterOperation[] foo = new AsterOperation[1];
-        return foo;
     }
 
     @Override
