@@ -206,12 +206,17 @@ public class BasicActionListUI extends ActionListUI {
         AsterCommand mCommand;
         Font mFont;
         Rectangle mFontBox;
+        boolean mSelected = false;
         static NinePatch mPatch;
+        static BufferedImage mCloseButton;
 
         static {
             try {
                 InputStream stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
                 mPatch = NinePatch.load(stream, true, false);
+                stream.close();
+                stream = ActionButton.class.getResourceAsStream("/close_button.png");
+                mCloseButton = ImageIO.read(stream);
                 stream.close();
             } catch (IOException e) {
             }
@@ -244,6 +249,10 @@ public class BasicActionListUI extends ActionListUI {
             mFontBox.translate(TEXT_MARGIN, TEXT_MARGIN + fm.getAscent());
         }
 
+        public void setSelected(boolean sel) {
+            mSelected = sel;
+        }
+
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
@@ -259,6 +268,14 @@ public class BasicActionListUI extends ActionListUI {
                                              RenderingHints.VALUE_ANTIALIAS_ON);
             g.drawString("Name" /* mCommand.getName() */,
                          mFontBox.x, mFontBox.y);
+            if (mSelected && mCloseButton != null) {
+                g.drawImage(mCloseButton,
+                            bbox.x + bbox.width - 15, // TODO: FIXME: fix the image border
+                            bbox.y - 5,
+                            mCloseButton.getWidth(),
+                            mCloseButton.getHeight(),
+                            null);
+            }
         }
     }
 
