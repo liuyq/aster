@@ -95,6 +95,10 @@ public class DefaultActionListModel implements ActionListModel {
         }
     }
 
+    public boolean empty() {
+        return actionList.isEmpty();
+    }
+
     public Iterable<AsterCommand> getCommands() {
         return actionList;
     }

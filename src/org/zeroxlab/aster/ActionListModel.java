@@ -44,6 +44,11 @@ public interface ActionListModel {
     public void popCmd();
 
     /**
+     * Test if the model is empty
+     */
+    public boolean empty();
+
+    /**
      * Get command list
      */
     public Iterable<AsterCommand> getCommands();
