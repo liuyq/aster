@@ -50,6 +50,7 @@ public class Type extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
+        settings.put("Name", "Type");
         settings.put("Text", mText);
         return settings;
     }
@@ -57,11 +58,6 @@ public class Type extends AsterCommand {
     @Override
     public void fill(SimpleBindings settings) {
         mText = (String)settings.get("Text");
-    }
-
-    @Override
-    public String getName() {
-        return "Type";
     }
 
     @Override
@@ -73,7 +69,7 @@ public class Type extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("type(\"%s\")", mText);
+        return String.format("type(\"%s\")\n", mText);
     }
 
     static protected String[] getRegex() {

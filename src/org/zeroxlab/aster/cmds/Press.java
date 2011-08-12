@@ -75,6 +75,7 @@ public class Press extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
+        settings.put("Name", "Press");
         settings.put("KeyCode", mKeyCode);
         settings.put("Type", mPressType.getTypeStr());
         return settings;
@@ -87,11 +88,6 @@ public class Press extends AsterCommand {
     }
 
     @Override
-    public String getName() {
-        return "Press";
-    }
-
-    @Override
     public AsterOperation[] getOperations() {
         System.out.println("Press operation");
         AsterOperation[] ops = new OpSelectKey[1];
@@ -100,7 +96,7 @@ public class Press extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("press(\"%s\", \"%s\")",
+        return String.format("press(\"%s\", \"%s\")\n",
                              mKeyCode, mPressType.getTypeStr());
     }
 

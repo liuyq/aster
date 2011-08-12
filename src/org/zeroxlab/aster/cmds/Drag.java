@@ -64,6 +64,7 @@ public class Drag extends AsterCommand {
         if (strs.length == 6) {
             try {
                 mImage = ImageIO.read(new File(strs[0]));
+                mSerial = Integer.parseInt(strs[0]);
                 mEndPosition.setLocation(Integer.parseInt(strs[1]),
                                          Integer.parseInt(strs[2]));
             } catch (IOException e) {
@@ -112,6 +113,7 @@ public class Drag extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
+        settings.put("Name", "Drag");
         settings.put("CoordType", mCoordType);
         if (isFixed()) {
             settings.put("StartPos", mStartPosition);
@@ -123,6 +125,7 @@ public class Drag extends AsterCommand {
         settings.put("Duration", mDuration);
         settings.put("Steps", mSteps);
         settings.put("Timeout", mTimeout);
+        settings.put("Landscape", mLandscape);
         return settings;
     }
 
@@ -139,11 +142,7 @@ public class Drag extends AsterCommand {
         mDuration = (Double)settings.get("Duration");
         mSteps = (Integer)settings.get("Steps");
         mTimeout = (Double)settings.get("Timeout");
-    }
-
-    @Override
-    public String getName() {
-        return "Drag";
+        mLandscape = (Boolean)settings.get("Landscape");
     }
 
     @Override
@@ -153,14 +152,15 @@ public class Drag extends AsterCommand {
         return ops;
     }
 
-
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("drag(\"%d.jpg\", \"%d.jpg\", %f, %d, %d)",
-                                 0, 1, mDuration, mSteps, mTimeout);
+            return String.format("drag(\"%d.jpg\", (%d, %d), %f, %d, %d)\n",
+                                 mSerial,
+                                 mEndPosition.getX(), mEndPosition.getY(),
+                                 mSteps, mTimeout);
         } else {
-            return String.format("drag((%d, %d), (%d, %d), %f, %d, %d)",
+            return String.format("drag((%d, %d), (%d, %d), %f, %d, %d)\n",
                                  mStartPosition.getX(), mStartPosition.getY(),
                                  mEndPosition.getX(), mEndPosition.getY(),
                                  mDuration, mSteps, mTimeout);

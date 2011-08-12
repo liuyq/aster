@@ -85,6 +85,7 @@ public class Touch extends AsterCommand {
         if (strs.length == 3) {
             try {
                 mImage = ImageIO.read(new File(strs[0]));
+                mSerial = Integer.parseInt(strs[0]);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -121,6 +122,7 @@ public class Touch extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
+        settings.put("Name", "Touch");
         settings.put("CoordType", mCoordType);
         if (isFixed()) {
             settings.put("Pos", mPosition);
@@ -129,6 +131,7 @@ public class Touch extends AsterCommand {
         }
         settings.put("Timeout", mTimeout);
         settings.put("Type", mTouchType.getTypeStr());
+        settings.put("Landscape", mLandscape);
         return settings;
     }
 
@@ -142,12 +145,7 @@ public class Touch extends AsterCommand {
         }
         mTouchType = (TouchType)settings.get("Type");
         mTimeout = (Double)settings.get("Timeout");
-    }
-
-
-    @Override
-    public String getName() {
-        return "Touch";
+        mLandscape = (Boolean)settings.get("Landscape");
     }
 
     @Override
@@ -160,10 +158,10 @@ public class Touch extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("touch(%d.jpg, \"%s\", %d)", 0,
+            return String.format("touch('%d.jpg', \"%s\", %d)\n", mSerial,
                                  mTouchType.getTypeStr(), mTimeout);
         } else {
-            return String.format("touch(%d, %d, \"%s\", %d)",
+            return String.format("touch(%d, %d, \"%s\", %d)\n",
                                  mPosition.getX(), mPosition.getY(),
                                  mTouchType.getTypeStr(), mTimeout);
         }
