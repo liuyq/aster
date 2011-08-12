@@ -274,7 +274,7 @@ public class BasicActionListUI extends ActionListUI {
 
         public Dimension getPreferredSize() {
             FontMetrics fm = getFontMetrics(mFont);
-            return new Dimension(fm.stringWidth("Name" /* mCommand.getName() */) + TEXT_MARGIN*2,
+            return new Dimension(fm.stringWidth(mCommand.getName()) + TEXT_MARGIN*2,
                                  fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2);
         }
 
@@ -302,7 +302,7 @@ public class BasicActionListUI extends ActionListUI {
             g.setFont(mFont);
             ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                              RenderingHints.VALUE_ANTIALIAS_ON);
-            g.drawString("Name" /* mCommand.getName() */,
+            g.drawString(mCommand.getName(),
                          mFontBox.x, mFontBox.y);
         }
     }

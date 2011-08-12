@@ -69,6 +69,7 @@ public class AsterMainPanel extends JPanel {
         add(scrollPane, c);
         mCmds = new AsterCommand[1];
         generateCmds(mCmds);
+        mActionList.getModel().setRecall(new Touch(new Point(10, 10)));
         for (AsterCommand cmd : mCmds) {
             mActionList.getModel().pushCmd(cmd);
         }
