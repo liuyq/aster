@@ -137,9 +137,15 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
+        CloseButton delay = null;
         for (Component child: c.getComponents()) {
-            child.paint(g);
+            if (child instanceof CloseButton)
+                delay = (CloseButton)child;
+            else
+                child.paint(g);
         }
+        if (delay != null)
+            delay.paint(g);
     }
 
     public void addNewActionListener(MouseListener l) {
@@ -180,12 +186,23 @@ public class BasicActionListUI extends ActionListUI {
         int i = BUTTON_MARGIN;
         int mid = 0;
         Iterator<JComponent> it = buttonList.iterator();
-        JComponent btn = null;
         while (it.hasNext()) {
-            btn = it.next();
+            JComponent btn = it.next();
             Dimension size = btn.getPreferredSize();
             btn.setBounds(BUTTON_MARGIN, i, size.width, size.height);
             i += btn.getHeight() + BUTTON_MARGIN;
+            if (!it.hasNext() && !actionList.getModel().empty()) {
+                CloseButton closebtn = new CloseButton();
+                closebtn.setSize(closebtn.getPreferredSize());
+                closebtn.setLocation(btn.getX() + btn.getWidth() - 15,
+                                     btn.getY() - 5);
+                closebtn.addMouseListener(new MouseAdapter() {
+                        public void mouseClicked(MouseEvent e) {
+                            actionList.getModel().popCmd();
+                        }
+                    });
+                actionList.add(closebtn);
+            }
             actionList.add(btn);
             LittleArrow arrow = new LittleArrow();
             arrow.setLocation(btn.getX(), btn.getY() + btn.getHeight() - 3); // TODO: How to calculate?
@@ -193,16 +210,6 @@ public class BasicActionListUI extends ActionListUI {
             actionList.add(arrow);
             mid = btn.getX() + btn.getWidth() / 2;
         }
-        CloseButton closebtn = new CloseButton();
-        closebtn.setSize(closebtn.getPreferredSize());
-        closebtn.setLocation(btn.getX() + btn.getWidth() - 15,
-                             btn.getY() - 5);
-        closebtn.addMouseListener(new MouseAdapter() {
-                public void mouseClicked(MouseEvent e) {
-                    actionList.getModel().popCmd();
-                }
-            });
-        actionList.add(closebtn);
         NewActionButton newbtn = new NewActionButton();
         newbtn.setSize(newbtn.getPreferredSize());
         newbtn.setLocation(mid - newbtn.getWidth() / 2, i);
