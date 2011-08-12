@@ -199,6 +199,7 @@ public class BasicActionListUI extends ActionListUI {
                 }
             });
         actionList.add(newbtn);
+        actionList.scrollRectToVisible(newbtn.getBounds());
     }
 
     public Dimension getMinimumSize(JComponent c) {
