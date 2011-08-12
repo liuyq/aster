@@ -43,54 +43,40 @@ public class Drag extends AsterCommand {
     int mSteps = 10;
     double mTimeout = 3;
 
-    public Drag(Point pos2) {
-	mCoordType = CoordType.AUTO;
-	mStartPosition = new Point();
-        mEndPosition = pos2;
+    public Drag(SimpleBindings settings) {
+        fillSettings(settings);
     }
 
-    public Drag(Point pos1, Point pos2) {
-	mCoordType = CoordType.FIXED;
-	mStartPosition = pos1;
-        mEndPosition = pos2;
-    }
 
-    /*
-     * Format:
-     * 1. start_img, end_x1, end_y1, duration, step, timeout
-     * 2. start_x1, start_y1, end_x1, end_y1, duration, step, timeout
-     */
-    public Drag(String[] strs) throws IllegalArgumentException {
-        if (strs.length == 6) {
+    public Drag(String argline) throws IllegalArgumentException {
+        String[] args = splitArgs(argline);
+
+        if (args.length == 7) {
+            mCoordType = CoordType.AUTO;
             try {
-                mImage = ImageIO.read(new File(strs[0]));
-                mSerial = Integer.parseInt(strs[0]);
-                mEndPosition.setLocation(Integer.parseInt(strs[1]),
-                                         Integer.parseInt(strs[2]));
+                args[0] = stripQuote(args[0]);
+                mImage = ImageIO.read(new File(args[0]));
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-            try {
-                mDuration = Double.parseDouble(strs[3]);
-                mSteps = Integer.parseInt(strs[4]);
-                mTimeout = Double.parseDouble(strs[5]);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e.toString());
-            }
-        } else if (strs.length == 7) {
-            try {
-                mStartPosition.setLocation(Integer.parseInt(strs[0]),
-                                           Integer.parseInt(strs[1]));
-                mEndPosition.setLocation(Integer.parseInt(strs[2]),
-                                         Integer.parseInt(strs[3]));
-                mDuration = Double.parseDouble(strs[4]);
-                mSteps = Integer.parseInt(strs[5]);
-                mTimeout = Double.parseDouble(strs[6]);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e.toString());
-            }
+            mEndPosition = new Point(Integer.parseInt(args[1]),
+                                       Integer.parseInt(args[2]));
+            mDuration = Double.parseDouble(args[3]);
+            mSteps = Integer.parseInt(args[4]);
+            mTimeout = Integer.parseInt(args[5]);
+            mLandscape = Boolean.parseBoolean(args[6]);
+        } else if (args.length == 8) {
+            mCoordType = CoordType.FIXED;
+            mStartPosition = new Point(Integer.parseInt(args[0]),
+                                       Integer.parseInt(args[1]));
+            mEndPosition = new Point(Integer.parseInt(args[2]),
+                                     Integer.parseInt(args[3]));
+            mDuration = Double.parseDouble(args[4]);
+            mSteps = Integer.parseInt(args[5]);
+            mTimeout = Integer.parseInt(args[6]);
+            mLandscape = Boolean.parseBoolean(args[7]);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid argument line.");
         }
     }
 
@@ -130,7 +116,7 @@ public class Drag extends AsterCommand {
     }
 
     @Override
-    public void fill(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) {
         mCoordType = (CoordType)settings.get("CoordType");
         if (mCoordType == CoordType.AUTO) {
             mImage = (BufferedImage)settings.get("Image");
@@ -143,6 +129,7 @@ public class Drag extends AsterCommand {
         mSteps = (Integer)settings.get("Steps");
         mTimeout = (Double)settings.get("Timeout");
         mLandscape = (Boolean)settings.get("Landscape");
+        mSerial = (Integer)settings.get("Serial");
     }
 
     @Override
@@ -155,23 +142,26 @@ public class Drag extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("drag(\"%d.jpg\", (%d, %d), %f, %d, %d)\n",
+            return String.format("drag('%d.jpg', (%d, %d), %d, %.1f, %s)\n",
                                  mSerial,
-                                 mEndPosition.getX(), mEndPosition.getY(),
-                                 mSteps, mTimeout);
+                                 (int)mEndPosition.getX(),
+                                 (int)mEndPosition.getY(),
+                                 mSteps, mTimeout,
+                                 mLandscape? "True": "False");
         } else {
-            return String.format("drag((%d, %d), (%d, %d), %f, %d, %d)\n",
-                                 mStartPosition.getX(), mStartPosition.getY(),
-                                 mEndPosition.getX(), mEndPosition.getY(),
-                                 mDuration, mSteps, mTimeout);
+            return String.format("drag((%d, %d), (%d, %d), %.1f, %d, %.1f, %s)\n",
+                                 (int)mStartPosition.getX(),
+                                 (int)mStartPosition.getY(),
+                                 (int)mEndPosition.getX(),
+                                 (int)mEndPosition.getY(),
+                                 mDuration, mSteps, mTimeout,
+                                 mLandscape? "True": "False");
         }
     }
 
-    static protected String[] getRegex() {
-        String[] regexs = {
-            "drag\\s*\\(\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
-            "drag\\s*\\(\\s\"*(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9]+)\\s*,\\s*([0-9.]+)\\s*\\)",
+    static protected String[] getKeys() {
+        String[] keys = {
         };
-        return regexs;
+        return keys;
     }
 }

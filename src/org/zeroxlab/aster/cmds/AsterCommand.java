@@ -40,6 +40,17 @@ public abstract class AsterCommand {
         mRunner = runner;
     }
 
+    protected String[] splitArgs(String argline) {
+        String[] args = argline.split(",");
+        for (int i = 0; i < args.length; ++i)
+            args[i] = args[i].replaceAll("^[() ]+","").replaceAll("[() ]$","");
+        return args;
+    }
+
+    protected String stripQuote(String src) {
+        return src.replaceAll("'", "").replaceAll("\"", "");
+    }
+
     /* uncomment these abstract methods and implement them
     public abstract void drawHint(Graphics g);
     */
@@ -51,7 +62,7 @@ public abstract class AsterCommand {
     public abstract SimpleBindings getSettings();
 
     /* Set settings of a command */
-    public abstract void fill(SimpleBindings settings);
+    public abstract void fillSettings(SimpleBindings settings);
 
     /* Dump command to script text */
     protected abstract String toScript();
@@ -62,7 +73,7 @@ public abstract class AsterCommand {
     }
 
     /* Get regex for matching command from script */
-    static protected String[] getRegex() {
+    static protected String[] getKeys() {
         return null;
     }
 }

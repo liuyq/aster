@@ -51,18 +51,19 @@ public class Press extends AsterCommand {
     PressType mPressType;
     String mKeyCode;
 
-    public Press(String keycode) {
-	mKeyCode = keycode;
+    public Press(SimpleBindings settings) {
+        fillSettings(settings);
     }
 
     /*
      * Format:
      * 1. keycode, type
      */
-    public Press(String[] strs) throws IllegalArgumentException {
-        if (strs.length == 2) {
-            mKeyCode = strs[0];
-            mPressType = PressType.parse(strs[1]);
+    public Press(String argline) throws IllegalArgumentException {
+        String[] args = splitArgs(argline);
+        if (args.length == 2) {
+            mKeyCode = stripQuote(args[0]);
+            mPressType = PressType.parse(args[1]);
         } else {
             throw new IllegalArgumentException();
         }
@@ -82,7 +83,7 @@ public class Press extends AsterCommand {
     }
 
     @Override
-    public void fill(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) {
         mKeyCode = (String)settings.get("KeyCode");
         mPressType = PressType.parse((String)settings.get("Type"));
     }
@@ -96,14 +97,13 @@ public class Press extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("press(\"%s\", \"%s\")\n",
+        return String.format("press('%s', '%s')\n",
                              mKeyCode, mPressType.getTypeStr());
     }
 
-    static protected String[] getRegex() {
-        String[] regexs = {
-            "press\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*\\)",
+    static protected String[] getKeys() {
+        String[] keys = {
         };
-        return regexs;
+        return keys;
     }
 }

@@ -27,19 +27,17 @@ public class Type extends AsterCommand {
 
     String mText;
 
-    public Type(String text) {
-	mText = text;
+    public Type(SimpleBindings settings) {
+        fillSettings(settings);
     }
 
-    /*
-     * Format:
-     * 1. text
-     */
-    public Type(String[] strs) throws IllegalArgumentException {
-        if (strs.length == 1) {
-            mText = strs[0];
+    public Type(String argline) throws IllegalArgumentException {
+        String[] args = splitArgs(argline);
+
+        if (args.length == 1) {
+            mText = stripQuote(args[0]);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid argument line.");
         }
     }
 
@@ -56,7 +54,7 @@ public class Type extends AsterCommand {
     }
 
     @Override
-    public void fill(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) {
         mText = (String)settings.get("Text");
     }
 
@@ -69,13 +67,12 @@ public class Type extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("type(\"%s\")\n", mText);
+        return String.format("type('%s')\n", mText);
     }
 
-    static protected String[] getRegex() {
-        String[] regexs = {
-            "type\\s*\\(\\s*\"(\\w+)\"\\s*\\)",
+    static protected String[] getKeys() {
+        String[] keys = {
         };
-        return regexs;
+        return keys;
     }
 }

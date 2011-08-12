@@ -27,8 +27,18 @@ import javax.script.SimpleBindings;
 public abstract class Recall extends AsterCommand {
     private String mScript;
 
-    public Recall(String script) {
-        mScript = script;
+    public Recall(SimpleBindings settings) {
+        fillSettings(settings);
+    }
+
+    public Recall(String argline) throws IllegalArgumentException {
+        String[] args = splitArgs(argline);
+
+        if (args.length == 1) {
+            mScript = args[0];
+        } else {
+            throw new IllegalArgumentException("Invalid argument line.");
+        }
     }
 
     @Override
@@ -40,7 +50,7 @@ public abstract class Recall extends AsterCommand {
     }
 
     @Override
-    public void fill(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) {
         mScript = (String)settings.get("Script");
     }
 
@@ -56,8 +66,9 @@ public abstract class Recall extends AsterCommand {
         return new String();
     }
 
-    static protected String[] getRegex() {
-        String[] regexs = { "" };
-        return regexs;
+    static protected String[] getKeys() {
+        String[] keys = {
+        };
+        return keys;
     }
 }

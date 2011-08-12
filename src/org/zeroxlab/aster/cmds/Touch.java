@@ -63,43 +63,39 @@ public class Touch extends AsterCommand {
     TouchType mTouchType;
     double mTimeout = 3;
 
-    public Touch() {
+    public Touch(SimpleBindings settings) {
+        fillSettings(settings);
     }
 
-    public Touch(BufferedImage img) {
-	mCoordType = CoordType.AUTO;
-	mImage = img;
-    }
-
+    // For testing should be remove after CmdSelector is finished.
     public Touch(Point pos) {
 	mCoordType = CoordType.FIXED;
 	mPosition = pos;
     }
 
-    /*
-     * Format:
-     * 1. img, type, timeout
-     * 2. pos_x, pos_y, type, timeout
-     */
-    public Touch(String[] strs) throws IllegalArgumentException {
-        if (strs.length == 3) {
+    public Touch(String argline) throws IllegalArgumentException {
+        String[] args = splitArgs(argline);
+
+        if (args.length == 4) {
+            mCoordType = CoordType.AUTO;
             try {
-                mImage = ImageIO.read(new File(strs[0]));
-                mSerial = Integer.parseInt(strs[0]);
+                args[0] = args[0].replaceAll("'", "").replaceAll("\"", "");
+                mImage = ImageIO.read(new File(args[0]));
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-            mTouchType = TouchType.parse(strs[1]);
-        } else if (strs.length == 4) {
-            try {
-                mPosition.setLocation(Integer.parseInt(strs[0]),
-                                      Integer.parseInt(strs[1]));
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(e.toString());
-            }
-            mTouchType = TouchType.parse(strs[2]);
+            mTouchType = TouchType.parse(args[1]);
+            mTimeout = Integer.parseInt(args[2]);
+            mLandscape = Boolean.parseBoolean(args[3]);
+        } else if (args.length == 5) {
+            mCoordType = CoordType.FIXED;
+            mPosition = new Point(Integer.parseInt(args[0]),
+                                  Integer.parseInt(args[1]));
+            mTouchType = TouchType.parse(args[2]);
+            mTimeout = Integer.parseInt(args[3]);
+            mLandscape = Boolean.parseBoolean(args[4]);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Invalid argument line.");
         }
     }
 
@@ -136,7 +132,7 @@ public class Touch extends AsterCommand {
     }
 
     @Override
-    public void fill(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) {
         mCoordType = (CoordType)settings.get("CoordType");
         if (mCoordType == CoordType.AUTO) {
             mImage = (BufferedImage)settings.get("Image");
@@ -146,6 +142,7 @@ public class Touch extends AsterCommand {
         mTouchType = (TouchType)settings.get("Type");
         mTimeout = (Double)settings.get("Timeout");
         mLandscape = (Boolean)settings.get("Landscape");
+        mSerial = (Integer)settings.get("Serial");
     }
 
     @Override
@@ -158,20 +155,20 @@ public class Touch extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("touch('%d.jpg', \"%s\", %d)\n", mSerial,
-                                 mTouchType.getTypeStr(), mTimeout);
+            return String.format("touch('%d.jpg', '%s', %.1f, %s)\n", mSerial,
+                                 mTouchType.getTypeStr(), mTimeout,
+                                 mLandscape? "True": "False");
         } else {
-            return String.format("touch(%d, %d, \"%s\", %d)\n",
-                                 mPosition.getX(), mPosition.getY(),
-                                 mTouchType.getTypeStr(), mTimeout);
+            return String.format("touch(%d, %d, '%s', %.1f, %s)\n",
+                                 (int)mPosition.getX(), (int)mPosition.getY(),
+                                 mTouchType.getTypeStr(), mTimeout,
+                                 mLandscape? "True": "False");
         }
     }
 
-    static protected String[] getRegex() {
-        String[] regexs = {
-            "touch\\s*\\(\\s*([0-9]+)\\s*,\\s*([0-9]+)\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)",
-            "touch\\s*\\(\\s*\"(\\w+)\"\\s*,\\s*\"(\\w+)\"\\s*,\\s*([0-9]+)\\s*\\)"
+    static protected String[] getKeys() {
+        String[] keys = {
         };
-        return regexs;
+        return keys;
     }
 }
