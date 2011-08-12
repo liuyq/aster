@@ -56,8 +56,13 @@ public class Drag extends AsterCommand {
             try {
                 args[0] = stripQuote(args[0]);
                 mImage = ImageIO.read(new File(args[0]));
+                mSerial = Integer.parseInt(args[0].substring(0,
+                                           args[0].length() -4));
+                mSeqNext = mSerial + 1;
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
+            } catch (NumberFormatException e) {
+                mSerial = mSeqNext++;
             }
             mEndPosition = new Point(Integer.parseInt(args[1]),
                                        Integer.parseInt(args[2]));

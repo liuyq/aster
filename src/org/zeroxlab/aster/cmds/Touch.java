@@ -81,8 +81,13 @@ public class Touch extends AsterCommand {
             try {
                 args[0] = args[0].replaceAll("'", "").replaceAll("\"", "");
                 mImage = ImageIO.read(new File(args[0]));
+                mSerial = Integer.parseInt(args[0].substring(0,
+                                           args[0].length() -4));
+                mSeqNext = mSerial + 1;
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
+            } catch (NumberFormatException e) {
+                mSerial = mSeqNext++;
             }
             mTouchType = TouchType.parse(args[1]);
             mTimeout = Double.parseDouble(args[2]);
