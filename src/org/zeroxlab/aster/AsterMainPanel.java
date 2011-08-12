@@ -35,6 +35,7 @@ import javax.swing.*;
 public class AsterMainPanel extends JPanel {
 
     private ImageView mImageView;
+    private JActionList mActionList;
 
     private ChimpChat mChimpChat;
     private WookieeAPI mImpl;
@@ -49,32 +50,51 @@ public class AsterMainPanel extends JPanel {
 
 	setLayout(gridbag);
 	c.fill = GridBagConstraints.BOTH;
-	c.gridx = 0;
-	c.gridy = 0;
-	c.gridwidth = 3;
-	c.gridheight = 3;
-	c.weightx = 0.5;
-	c.weighty = 0.5;
-	mImageView = new ImageView();
-	add(mImageView, c);
 
-        mCmds = new AsterCommand[14];
-        generateCmds(mCmds);
-        JList myList = new JList(mCmds);
-	myList.setCellRenderer(new AsterCommandCellRenderer());
-	myList.setFixedCellHeight(50);
-	myList.setFixedCellWidth(200);
-	JScrollPane scrollPane = new JScrollPane();
-	scrollPane.getViewport().setView(myList);
-	scrollPane.setMinimumSize(new Dimension(250, 100));
-
-        c.gridx = 4;
+        c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 3;
         c.weightx = 0;
         c.weighty = 0;
+        mActionList = new JActionList();
+        JScrollPane scrollPane = new JScrollPane();
+        /*
+         * TODO: FIXME:
+         * Always show the scroll bar, otherwise when the scroll bar
+         * was displayed the scrollPane will resize incorretly.
+         */
+        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
+        mCmds = new AsterCommand[1];
+        generateCmds(mCmds);
+        for (AsterCommand cmd : mCmds) {
+            mActionList.getModel().pushCmd(cmd);
+        }
+        mActionList.addNewActionListener(new MouseAdapter () {
+                public void mouseClicked(MouseEvent e) {
+                    Object[] possibilities = {"TOUCH", "DRAG", "TYPE"};
+                    String s = (String)JOptionPane.showInputDialog(
+                        (JComponent)e.getSource(),
+                        "選擇要加入的動作",
+                        "新增動作",
+                        JOptionPane.PLAIN_MESSAGE,
+                        null,
+                        possibilities,
+                        "TOUCh");
+                    mActionList.getModel().pushCmd(new Touch(new Point(10, 10)));
+                }
+            });
+
+        c.gridx = 1;
+        c.gridy = 0;
+        c.gridwidth = 3;
+        c.gridheight = 3;
+        c.weightx = 0.5;
+        c.weighty = 0.5;
+        mImageView = new ImageView();
+        add(mImageView, c);
 
         setPreferredSize(new Dimension(800, 600));
 

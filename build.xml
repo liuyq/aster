@@ -71,6 +71,24 @@
     </target>
 
     <!--
+         NinePatch
+    -->
+    <target name="-compile-ninepatch" depends="init">
+        <javac includeantruntime="false"
+               srcdir="src/com/android/ninepatch"
+               destdir="${build.classes.dir}">
+            <classpath>
+                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+            </classpath>
+        </javac>
+    </target>
+    <target name="-jar-ninepatch" depends="-compile-ninepatch">
+        <jar destfile="${dist.dir}/ninepatch.jar"
+             basedir="${build.classes.dir}"
+             includes="com/android/ninepatch/**/*.class"/>
+    </target>
+
+    <!--
          Owl
     -->
     <target name="-compile-owl" depends="init">
@@ -125,17 +143,20 @@
     </target>
     <target name="-jar-aster" depends="-compile-aster">
         <jar destfile="${dist.dir}/aster.jar"
-             basedir="${build.classes.dir}"
-             includes="org/zeroxlab/aster/**/*.class"
-             manifest="etc/aster/manifest.txt"/>
+             manifest="etc/aster/manifest.txt">
+	  <fileset dir="${build.classes.dir}"
+		   includes="org/zeroxlab/aster/**/*.class"/>
+	  <fileset dir="res"
+		   includes="*.png"/>
+	</jar>
     </target>
 
     <!--
          Targets
     -->
-    <target name="compile" depends="init,-compile-javacv,-compile-ddmlib,-compile-chimpchat,-compile-owl,-compile-wookieerunner,-compile-aster"/>
+    <target name="compile" depends="init,-compile-javacv,-compile-ddmlib,-compile-chimpchat,-compile-ninepatch,-compile-owl,-compile-wookieerunner,-compile-aster"/>
 
-    <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-owl,-jar-wookieerunner,-jar-aster"/>
+    <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-ninepatch,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
         <copy file="etc/aster/aster" todir="${dist.dir}"/>
