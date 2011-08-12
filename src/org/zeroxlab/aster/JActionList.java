@@ -106,7 +106,7 @@ public class JActionList extends JComponent implements Scrollable {
      */
     public int getScrollableBlockIncrement(Rectangle visibleRect,
                                            int orientation, int direction) {
-        return 10;
+        return 20;
     }
 
     /**
@@ -132,7 +132,7 @@ public class JActionList extends JComponent implements Scrollable {
      */
     public int getScrollableUnitIncrement(Rectangle visibleRect,
                                           int orientation, int direction) {
-        return 10;
+        return 20;
     }
 
     public void addNewActionListener(MouseListener l) {
