@@ -179,7 +179,10 @@ public class BasicActionListUI extends ActionListUI {
         actionList.removeAll();
         int i = BUTTON_MARGIN;
         int mid = 0;
-        for (JComponent btn : buttonList) {
+        Iterator<JComponent> it = buttonList.iterator();
+        JComponent btn = null;
+        while (it.hasNext()) {
+            btn = it.next();
             Dimension size = btn.getPreferredSize();
             btn.setBounds(BUTTON_MARGIN, i, size.width, size.height);
             i += btn.getHeight() + BUTTON_MARGIN;
@@ -190,6 +193,16 @@ public class BasicActionListUI extends ActionListUI {
             actionList.add(arrow);
             mid = btn.getX() + btn.getWidth() / 2;
         }
+        CloseButton closebtn = new CloseButton();
+        closebtn.setSize(closebtn.getPreferredSize());
+        closebtn.setLocation(btn.getX() + btn.getWidth() - 15,
+                             btn.getY() - 5);
+        closebtn.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    actionList.getModel().popCmd();
+                }
+            });
+        actionList.add(closebtn);
         NewActionButton newbtn = new NewActionButton();
         newbtn.setSize(newbtn.getPreferredSize());
         newbtn.setLocation(mid - newbtn.getWidth() / 2, i);
@@ -230,7 +243,6 @@ public class BasicActionListUI extends ActionListUI {
         AsterCommand mCommand;
         Font mFont;
         Rectangle mFontBox;
-        boolean mSelected = false;
         static NinePatch mPatch;
         static BufferedImage mCloseButton;
 
@@ -238,9 +250,6 @@ public class BasicActionListUI extends ActionListUI {
             try {
                 InputStream stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
                 mPatch = NinePatch.load(stream, true, false);
-                stream.close();
-                stream = ActionButton.class.getResourceAsStream("/close_button.png");
-                mCloseButton = ImageIO.read(stream);
                 stream.close();
             } catch (IOException e) {
             }
@@ -273,10 +282,6 @@ public class BasicActionListUI extends ActionListUI {
             mFontBox.translate(TEXT_MARGIN, TEXT_MARGIN + fm.getAscent());
         }
 
-        public void setSelected(boolean sel) {
-            mSelected = sel;
-        }
-
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
@@ -292,14 +297,6 @@ public class BasicActionListUI extends ActionListUI {
                                              RenderingHints.VALUE_ANTIALIAS_ON);
             g.drawString("Name" /* mCommand.getName() */,
                          mFontBox.x, mFontBox.y);
-            if (mSelected && mCloseButton != null) {
-                g.drawImage(mCloseButton,
-                            bbox.x + bbox.width - 15, // TODO: FIXME: fix the image border
-                            bbox.y - 5,
-                            mCloseButton.getWidth(),
-                            mCloseButton.getHeight(),
-                            null);
-            }
         }
     }
 
@@ -371,6 +368,33 @@ public class BasicActionListUI extends ActionListUI {
         }
         public void setActive(boolean activep) {
             this.mActiveP = activep;
+        }
+    }
+
+    static class CloseButton extends JComponent {
+        static BufferedImage closeImage;
+        static {
+            try {
+                InputStream stream = CloseButton.class.getResourceAsStream("/close_button.png");
+                closeImage = ImageIO.read(stream);
+                stream.close();
+            } catch (IOException e) {
+            }
+        }
+
+        public CloseButton() {
+            Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+            setCursor(handCursor);
+        }
+
+        public Dimension getPreferredSize() {
+            return new Dimension(closeImage.getWidth(), closeImage.getHeight());
+        }
+
+        public void paint(Graphics g) {
+            super.paint(g);
+            Rectangle bbox = getBounds();
+            g.drawImage(closeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
         }
     }
 }
