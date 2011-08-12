@@ -81,24 +81,14 @@ public class WookieeAPI {
         return impl.getProperty(key);
     }
 
-    public boolean isLandScape() {
-        // To be implement
-        return false;
-    }
-
     public void touch(int x, int y, String typestr) {
         TouchPressType type = TouchPressType.fromIdentifier(typestr);
         if (type == null)
             type = TouchPressType.DOWN_AND_UP;
-        if (isLandScape()) {
-            int tmp = height - x;
-            x = y;
-            y = tmp;
-        }
         impl.touch(x, y, type);
     }
 
-    public void touch(String name, String typestr, double timeout)
+    public void touch(String name, String typestr, double timeout, boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();
@@ -112,36 +102,25 @@ public class WookieeAPI {
             }
             break;
         }
-        touch(r.cx(), r.cy(), typestr);
+        if (landscape) {
+            touch(r.cy(), height - r.cx(), typestr);
+        } else {
+            touch(r.cx(), r.cy(), typestr);
+        }
     }
 
     public void drag(int x0, int y0, int x1, int y1, int steps, double sec) {
         long ms = (long) (sec * 1000.0);
-        if (isLandScape()) {
-            int tmp = height - x0;
-            x0 = y0;
-            y0 = tmp;
-
-            tmp = height - x1;
-            x1 = y1;
-            y1 = x1;
-        }
         impl.drag(x0, y0, x1, y1, steps, ms);
     }
 
     public void drag(String start_img, int dx, int dy, int steps, double sec,
-                     double timeout)
+                     double timeout, boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         MatchResult rs = new MatchResult();
         String current;
         long st = System.nanoTime();
         long ms = (long) (sec * 1000.0);
-
-        if (isLandScape()) {
-            int tmp = height - dx;
-            dx = dy;
-            dy = dx;
-        }
 
         while (true) {
             try {
@@ -154,7 +133,12 @@ public class WookieeAPI {
             }
             break;
         }
-        drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
+        if (landscape) {
+            drag(rs.cy(), height - rs.cx(),
+                 rs.cy() + dx, height - rs.cx() + dy, steps, sec);
+        } else {
+            drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
+        }
     }
 
     public void drag(String start_img, String end_img, int steps, double sec,

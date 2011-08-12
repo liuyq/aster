@@ -49,6 +49,7 @@ import org.python.core.PyInteger;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.core.PyTuple;
+import org.python.core.PyBoolean;
 
 import java.io.FileNotFoundException;
 
@@ -164,7 +165,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             try {
                 wookiee.touch(((PyString) arg1).asString(),
                               ((PyString) arg2).asString(),
-                              JythonUtils.getFloat(ap, 2, default_timeout));
+                              JythonUtils.getFloat(ap, 2, default_timeout),
+                              (Boolean)(ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
@@ -174,11 +176,13 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
     }
 
     @MonkeyRunnerExported(doc = "Simulates dragging (touch, hold, and move) on the device screen.",
-            args = { "start", "end", "duration", "steps"},
-            argDocs = { "The starting point for the drag (a tuple (x,y) in pixels)",
+            args = { "start", "end", "duration", "steps", "timeout", "landscape"},
+            argDocs = { "The starting point for the drag (a tuple (x,y) in pixels, or a filename that specifies the target template)",
             "The end point for the drag (a tuple (x,y) in pixels",
             "Duration of the drag in seconds (default is 1.0 seconds)",
-            "The number of steps to take when interpolating points. (default is 10)"})
+            "The number of steps to take when interpolating points. (default is 10)",
+            "Timeout when using a template",
+            "True if in landscape mode"})
     public void drag(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
@@ -210,7 +214,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             try {
                 wookiee.drag(((PyString) startObject).asString(), endx, endy,
                              steps, seconds,
-                             JythonUtils.getFloat(ap, 4, default_timeout));
+                             JythonUtils.getFloat(ap, 4, default_timeout),
+                             (Boolean)(ap.getPyObject(5, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
