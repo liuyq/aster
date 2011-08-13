@@ -35,6 +35,10 @@ import java.awt.Rectangle;
 import java.util.Vector;
 import javax.swing.JComponent;
 
+import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.OpDrag;
+import org.zeroxlab.aster.OpTouch;
+
 public class AsterWorkspace extends JComponent implements ComponentListener, MouseListener, MouseMotionListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
@@ -45,7 +49,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
 
-    private Vector<SnapshotListener> mSnapListeners;
+    private DragListener mDragListener;
+    private TouchListener mTouchListener;
 
     private Rectangle mImgRect;
     private int mSourceWidth;
@@ -70,10 +75,6 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     }
 
     public AsterWorkspace(BufferedImage img) {
-        if (mSnapListeners == null) {
-            mSnapListeners = new Vector<SnapshotListener>();
-        }
-
         mRegion = new ClipRegion();
         mImgRect = new Rectangle();
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
@@ -91,12 +92,28 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         }
     }
 
-    public void addSnapshotListener(SnapshotListener listener) {
-        mSnapListeners.add(listener);
+    public void fillCmd(AsterCommand cmd) {
+        AsterOperation[] ops = cmd.getOperations();
+        if (ops == null) {
+            System.err.println("You are asking me to fill an empty command");
+            return;
+        }
+
+        for (int i = 0; i < ops.length; i++) {
+            mRegion.setVisible(false);
+            mRegion.moveD(-1, -1); // hide
+            setDragListener(null);
+            setTouchListener(null);
+            ops[i].record();
+        }
     }
 
-    public void removeSnapshotListener(SnapshotListener listener) {
-        mSnapListeners.remove(listener);
+    public void setDragListener(DragListener listener) {
+        mDragListener = listener;
+    }
+
+    public void setTouchListener(TouchListener listener) {
+        mTouchListener = listener;
     }
 
     public void paintComponent(Graphics g) {
@@ -135,8 +152,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         mRegion.moveC(x, y);
         x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
         y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
-        for (SnapshotListener listener: mSnapListeners){
-            listener.clicked(x, y);
+        if (mTouchListener != null) {
+            mTouchListener.clicked(x, y);
+        } else if (mDragListener != null) {
+            int ex = mRegion.pD.x;
+            int ey = mRegion.pD.y;
+            mDragListener.dragged(x, y, ex, ey);
         }
     }
 
@@ -179,12 +200,16 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             return;
         }
 
-        pX = (int)((mSourceWidth * (pX - mImgRect.x)) / mImgRect.width);
-        pY = (int)((mSourceHeight * (pY - mImgRect.y)) / mImgRect.height);
-        rX = (int)((mSourceWidth * (rX - mImgRect.x)) / mImgRect.width);
-        rY = (int)((mSourceHeight * (rY - mImgRect.y)) / mImgRect.height);
-        for (SnapshotListener listener: mSnapListeners){
-            listener.dragged(pX, pY, rX, rY);
+        if (mMoving == NONE) {
+            mRegion.moveC(mPressX, mPressY);
+            mRegion.moveD(e.getX(), e.getY());
+        }
+        pX = (int)((mSourceWidth  * (mRegion.pC.x - mImgRect.x)) / mImgRect.width);
+        pY = (int)((mSourceHeight * (mRegion.pC.y - mImgRect.y)) / mImgRect.height);
+        rX = (int)((mSourceWidth  * (mRegion.pD.x - mImgRect.x)) / mImgRect.width);
+        rY = (int)((mSourceHeight * (mRegion.pD.y - mImgRect.y)) / mImgRect.height);
+        if (mDragListener != null){
+            mDragListener.dragged(pX, pY, rX, rY);
         }
     }
 
@@ -238,9 +263,20 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
                 );
     }
 
-    public interface SnapshotListener {
-        public void clicked(int x, int y);
+    public interface DragListener {
         public void dragged(int startX, int startY, int endX, int endY);
+    }
+
+    public interface TouchListener {
+        public void clicked(int x, int y);
+    }
+
+    public OpTouch getOpTouch() {
+        return new MyTouch();
+    }
+
+    public OpDrag getOpDrag() {
+        return new MyDrag();
     }
 
     class ClipRegion {
@@ -260,7 +296,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             mVisible = false;
         }
 
-        public void visible(boolean visible) {
+        public void setVisible(boolean visible) {
             mVisible = visible;
         }
 
@@ -338,6 +374,87 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             dx = x - pD.x;
             dy = y - pD.y;
             return (Math.abs(dx) < (W / 2) || Math.abs(dy) < (H / 2));
+        }
+    }
+
+    class MyTouch extends OpTouch implements TouchListener {
+        public void clicked(int x, int y) {
+            setPoint(x, y);
+        }
+
+        public void setPoint(int x, int y) {
+            x = Math.max(0, x);
+            y = Math.max(0, y);
+            x = Math.min(x, mSourceWidth);
+            y = Math.min(y, mSourceHeight);
+            System.out.println("Set point:" + x + "," + y);
+            super.set(x, y);
+        }
+
+        public String getName() {
+            return "Touch";
+        }
+
+        public void record() {
+            int x = super.getX();
+            int y = super.getY();
+            if (x > 0 && y > 0 && x < mSourceWidth && y < mSourceHeight) {
+                // valid location
+                x = (int)((x / mSourceWidth) * mImgRect.width);
+                y = (int)((y / mSourceHeight) * mImgRect.height);
+            } else {
+                // move to center by default
+                x = (int)(mImgRect.width / 2);
+                y = (int)(mImgRect.height / 2);
+            }
+            mRegion.moveC(x + mImgRect.x, y + mImgRect.y);
+            mRegion.setVisible(true);
+            setTouchListener(this);
+        }
+    }
+
+    class MyDrag extends OpDrag implements DragListener {
+        public String getName() {
+            return "Drag";
+        }
+
+        public void record() {
+            int sX = super.getStartX();
+            int sY = super.getStartY();
+            int eX = super.getEndX();
+            int eY = super.getEndY();
+            Rectangle r = new Rectangle(0, 0, mSourceWidth, mSourceHeight);
+            if (r.contains(sX, sY) && r.contains(eX, eY)) {
+                // valid location
+                sX = (int)((sX / mSourceWidth) * mImgRect.width);
+                sY = (int)((sY / mSourceHeight) * mImgRect.height);
+                eX = (int)((eX / mSourceWidth) * mImgRect.width);
+                eY = (int)((eY / mSourceHeight) * mImgRect.height);
+            } else {
+                // move to center by default
+                sX = (int)(mImgRect.width / 2);
+                sY = (int)(mImgRect.height / 2);
+                eX = sX + 100;
+                eY = sY;
+            }
+            mRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
+            mRegion.moveD(eX + mImgRect.x, eY + mImgRect.y);
+            mRegion.setVisible(true);
+            setDragListener(this);
+        }
+
+        public void dragged(int sx, int sy, int ex, int ey) {
+            sx = Math.max(0, sx);
+            sy = Math.max(0, sy);
+            sx = Math.min(sx, mSourceWidth);
+            sy = Math.min(sy, mSourceHeight);
+            ex = Math.max(0, ex);
+            ey = Math.max(0, ey);
+            ex = Math.min(ex, mSourceWidth);
+            ey = Math.min(ey, mSourceHeight);
+            System.out.println("Set point:(" + sx + "," + sy
+                    + ") to (" + ex + "," + ey + ")");
+            super.set(sx, sy, ex, ey);
         }
     }
 }
