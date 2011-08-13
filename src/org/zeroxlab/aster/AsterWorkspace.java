@@ -25,15 +25,17 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
 import javax.swing.JComponent;
 
-public class AsterWorkspace extends JComponent implements ComponentListener, MouseListener{
+public class AsterWorkspace extends JComponent implements ComponentListener, MouseListener, MouseMotionListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
     public final static int LANDSCAPE_HEIGHT = 240;
@@ -55,6 +57,14 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     private int mPressX;
     private int mPressY;
 
+    private final int NONE = 0;
+    private final int POINT_L = 1;
+    private final int POINT_C = 2;
+    private final int POINT_R = 3;
+    private final int POINT_D = 4;
+    private int mMoving = NONE;
+    private ClipRegion mRegion;
+
     public AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
@@ -64,9 +74,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             mSnapListeners = new Vector<SnapshotListener>();
         }
 
+        mRegion = new ClipRegion();
+        mImgRect = new Rectangle();
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
         addMouseListener(this);
+        addMouseMotionListener(this);
         setImage(img);
         generateDrawingBuffer();
     }
@@ -90,6 +103,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, mWidth, mHeight);
         g.drawImage(mDrawingBuffer, mImgRect.x, mImgRect.y, null);
+
+        mRegion.paint(g);
     }
 
     public void componentHidden(ComponentEvent e) {
@@ -117,6 +132,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             return;
         }
 
+        mRegion.moveC(x, y);
         x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
         y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
         for (SnapshotListener listener: mSnapListeners){
@@ -133,6 +149,16 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     public void mousePressed(MouseEvent e) {
         mPressX = e.getX();
         mPressY = e.getY();
+
+        if (mRegion.inLT(mPressX, mPressY)) {
+            mMoving = POINT_L;
+        } else if (mRegion.inRB(mPressX, mPressY)) {
+            mMoving = POINT_R;
+        } else if (mRegion.inD(mPressX, mPressY)) {
+            mMoving = POINT_D;
+        } else {
+            mMoving = NONE;
+        }
     }
 
     public void mouseReleased(MouseEvent e) {
@@ -160,6 +186,22 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         for (SnapshotListener listener: mSnapListeners){
             listener.dragged(pX, pY, rX, rY);
         }
+    }
+
+    public void mouseDragged(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        if (mMoving == POINT_L) {
+            mRegion.moveL(x, y);
+        } else if (mMoving == POINT_R) {
+            mRegion.moveR(x, y);
+        } else if (mMoving == POINT_D) {
+            mRegion.moveD(x, y);
+        }
+        repaint();
+    }
+
+    public void mouseMoved(MouseEvent e) {
     }
 
     private void generateDrawingBuffer() {
@@ -199,5 +241,103 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     public interface SnapshotListener {
         public void clicked(int x, int y);
         public void dragged(int startX, int startY, int endX, int endY);
+    }
+
+    class ClipRegion {
+        final int W = 10;
+        final int H = 10;
+        int dx, dy;
+
+        final Point pL, pC, pR, pD;
+
+        private boolean mVisible;
+
+        ClipRegion() {
+            pL = new Point(0, 0);
+            pC = new Point(30, 30);
+            pR = new Point(60, 60);
+            pD = new Point(-1, -1);
+            mVisible = false;
+        }
+
+        public void visible(boolean visible) {
+            mVisible = visible;
+        }
+
+        public void paint(Graphics g) {
+            if (!mVisible) {
+                return;
+            }
+
+            g.setColor(Color.RED);
+            g.drawRect(pL.x, pL.y, pR.x - pL.x, pR.y - pL.y);
+            g.setColor(Color.BLUE);
+            g.fillRect(pL.x, pL.y, W, H);
+            g.fillRect(pR.x - W, pR.y - H, W, H);
+            g.fillRect(pC.x - (int)(W / 2), pC.y - (int)(H / 2), W, H);
+
+            if (pD.x != -1 || pD.y != -1) {
+                g.drawLine(pC.x, pC.y, pD.x, pD.y);
+                g.fillRect(pD.x - (int)(W / 2), pD.y - (int)(H / 2), W, H);
+            }
+        }
+
+        public void moveC(int x, int y) {
+            dx = x - pC.x;
+            dy = y - pC.y;
+            pC.setLocation(x, y);
+            pL.translate(dx, dy);
+            pR.translate(dx, dy);
+            if (pD.x != -1 && pD.y != -1) {
+                pD.translate(dx, dy);
+            }
+            repaint();
+        }
+
+        public void moveD(int x, int y) {
+            pD.setLocation(x, y);
+        }
+
+        public void moveL(int x, int y) {
+            dx = x - pC.x;
+            dy = y - pC.y;
+            if (dx > -1 * W || dy > -1 * H) {
+                return;
+            }
+
+            pL.setLocation(x , y);
+            repaint();
+        }
+
+        public void moveR(int x, int y) {
+            dx = x - pC.x;
+            dy = y - pC.y;
+            if (dx < W || dy < H) {
+                return;
+            }
+
+            pR.setLocation(x , y);
+            repaint();
+        }
+
+        public boolean inLT(int x, int y) {
+            return (x >= pL.x && x <= (pL.x + W)
+                    && y >= pL.y && y <= (pL.y + H));
+        }
+
+        public boolean inRB(int x, int y) {
+            return (x >= (pR.x - W) && x <= pR.x
+                    && y >= (pR.y - H) && y <= pR.y);
+        }
+
+        public boolean inD(int x, int y) {
+            if (pD.x == -1 || pD.y == -1) {
+                return false;
+            }
+
+            dx = x - pD.x;
+            dy = y - pD.y;
+            return (Math.abs(dx) < (W / 2) || Math.abs(dy) < (H / 2));
+        }
     }
 }
