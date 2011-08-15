@@ -69,7 +69,7 @@ public class AsterMainPanel extends JPanel {
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
         mWorkspace = new AsterWorkspace();
-        mActionList.getModel().setRecall(new Touch(mWorkspace.getOpTouch()));
+        mActionList.getModel().setRecall(new Touch());
         mSelector = new CmdSelector(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {

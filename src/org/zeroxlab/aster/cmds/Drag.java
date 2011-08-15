@@ -33,6 +33,7 @@ import javax.script.SimpleBindings;
 
 import org.zeroxlab.aster.AsterOperation;
 import org.zeroxlab.aster.OpDrag;
+import org.zeroxlab.aster.AsterWorkspace;
 
 public class Drag extends AsterCommand {
 
@@ -48,16 +49,9 @@ public class Drag extends AsterCommand {
     int mSteps = 10;
     double mTimeout = 3;
 
-    public Drag(OpDrag drag) {
-        this(null, drag);
-    }
-
-    public Drag(SimpleBindings settings, OpDrag drag) {
+    public Drag() {
         mOps = new AsterOperation[1];
-        mOps[0] = drag;
-        if (settings != null) {
-            fillSettings(settings);
-        }
+        mOps[0] = AsterWorkspace.getOpDrag();
     }
 
 

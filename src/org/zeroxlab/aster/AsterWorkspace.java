@@ -68,14 +68,18 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     private final int POINT_R = 3;
     private final int POINT_D = 4;
     private int mMoving = NONE;
-    private ClipRegion mRegion;
+    private static ClipRegion sRegion;
+    private static MyDrag sOpDrag;
+    private static MyTouch sOpTouch;
 
     public AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
     public AsterWorkspace(BufferedImage img) {
-        mRegion = new ClipRegion();
+        sRegion = new ClipRegion();
+        sOpDrag  = new MyDrag();
+        sOpTouch = new MyTouch();
         mImgRect = new Rectangle();
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
@@ -100,8 +104,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         }
 
         for (int i = 0; i < ops.length; i++) {
-            mRegion.setVisible(false);
-            mRegion.moveD(-1, -1); // hide
+            sRegion.setVisible(false);
+            sRegion.moveD(-1, -1); // hide
             setDragListener(null);
             setTouchListener(null);
             ops[i].record();
@@ -121,7 +125,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         g.fillRect(0, 0, mWidth, mHeight);
         g.drawImage(mDrawingBuffer, mImgRect.x, mImgRect.y, null);
 
-        mRegion.paint(g);
+        sRegion.paint(g);
     }
 
     public void componentHidden(ComponentEvent e) {
@@ -149,14 +153,14 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             return;
         }
 
-        mRegion.moveC(x, y);
+        sRegion.moveC(x, y);
         x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
         y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
         if (mTouchListener != null) {
             mTouchListener.clicked(x, y);
         } else if (mDragListener != null) {
-            int ex = mRegion.pD.x;
-            int ey = mRegion.pD.y;
+            int ex = sRegion.pD.x;
+            int ey = sRegion.pD.y;
             mDragListener.dragged(x, y, ex, ey);
         }
     }
@@ -171,11 +175,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         mPressX = e.getX();
         mPressY = e.getY();
 
-        if (mRegion.inLT(mPressX, mPressY)) {
+        if (sRegion.inLT(mPressX, mPressY)) {
             mMoving = POINT_L;
-        } else if (mRegion.inRB(mPressX, mPressY)) {
+        } else if (sRegion.inRB(mPressX, mPressY)) {
             mMoving = POINT_R;
-        } else if (mRegion.inD(mPressX, mPressY)) {
+        } else if (sRegion.inD(mPressX, mPressY)) {
             mMoving = POINT_D;
         } else {
             mMoving = NONE;
@@ -201,13 +205,13 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         }
 
         if (mMoving == NONE) {
-            mRegion.moveC(mPressX, mPressY);
-            mRegion.moveD(e.getX(), e.getY());
+            sRegion.moveC(mPressX, mPressY);
+            sRegion.moveD(e.getX(), e.getY());
         }
-        pX = (int)((mSourceWidth  * (mRegion.pC.x - mImgRect.x)) / mImgRect.width);
-        pY = (int)((mSourceHeight * (mRegion.pC.y - mImgRect.y)) / mImgRect.height);
-        rX = (int)((mSourceWidth  * (mRegion.pD.x - mImgRect.x)) / mImgRect.width);
-        rY = (int)((mSourceHeight * (mRegion.pD.y - mImgRect.y)) / mImgRect.height);
+        pX = (int)((mSourceWidth  * (sRegion.pC.x - mImgRect.x)) / mImgRect.width);
+        pY = (int)((mSourceHeight * (sRegion.pC.y - mImgRect.y)) / mImgRect.height);
+        rX = (int)((mSourceWidth  * (sRegion.pD.x - mImgRect.x)) / mImgRect.width);
+        rY = (int)((mSourceHeight * (sRegion.pD.y - mImgRect.y)) / mImgRect.height);
         if (mDragListener != null){
             mDragListener.dragged(pX, pY, rX, rY);
         }
@@ -217,11 +221,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         int x = e.getX();
         int y = e.getY();
         if (mMoving == POINT_L) {
-            mRegion.moveL(x, y);
+            sRegion.moveL(x, y);
         } else if (mMoving == POINT_R) {
-            mRegion.moveR(x, y);
+            sRegion.moveR(x, y);
         } else if (mMoving == POINT_D) {
-            mRegion.moveD(x, y);
+            sRegion.moveD(x, y);
         }
         repaint();
     }
@@ -271,12 +275,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         public void clicked(int x, int y);
     }
 
-    public OpTouch getOpTouch() {
-        return new MyTouch();
+    public static OpTouch getOpTouch() {
+        return sOpTouch;
     }
 
-    public OpDrag getOpDrag() {
-        return new MyDrag();
+    public static OpDrag getOpDrag() {
+        return sOpDrag;
     }
 
     class ClipRegion {
@@ -407,8 +411,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
                 x = (int)(mImgRect.width / 2);
                 y = (int)(mImgRect.height / 2);
             }
-            mRegion.moveC(x + mImgRect.x, y + mImgRect.y);
-            mRegion.setVisible(true);
+            sRegion.moveC(x + mImgRect.x, y + mImgRect.y);
+            sRegion.setVisible(true);
             setTouchListener(this);
         }
     }
@@ -437,9 +441,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
                 eX = sX + 100;
                 eY = sY;
             }
-            mRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
-            mRegion.moveD(eX + mImgRect.x, eY + mImgRect.y);
-            mRegion.setVisible(true);
+            sRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
+            sRegion.moveD(eX + mImgRect.x, eY + mImgRect.y);
+            sRegion.setVisible(true);
             setDragListener(this);
         }
 

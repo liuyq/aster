@@ -32,6 +32,7 @@ import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
 import org.zeroxlab.aster.AsterOperation;
+import org.zeroxlab.aster.AsterWorkspace;
 import org.zeroxlab.aster.OpTouch;
 
 public class Touch extends AsterCommand {
@@ -66,17 +67,9 @@ public class Touch extends AsterCommand {
     double mTimeout = 3;
     AsterOperation[] mOps;
 
-    public Touch(OpTouch touch) {
-        this(null, touch);
-    }
-
-    public Touch(SimpleBindings settings, OpTouch touch) {
+    public Touch() {
         mOps = new AsterOperation[1];
-        mOps[0] = touch;
-
-        if(settings != null) {
-            fillSettings(settings);
-        }
+        mOps[0] = AsterWorkspace.getOpTouch();
     }
 
     public Touch(String argline) throws IllegalArgumentException {

@@ -57,9 +57,9 @@ public class CmdSelector {
 
     public AsterCommand selectCmd(int i) {
         if (i == 0) {
-            return new Touch(mWorkspace.getOpTouch());
+            return new Touch();
         } else if (i == 1) {
-            return new Drag(mWorkspace.getOpDrag());
+            return new Drag();
         }
 
         System.err.println("Unknow index:" + i);
