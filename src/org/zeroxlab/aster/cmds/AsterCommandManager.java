@@ -20,13 +20,87 @@ package org.zeroxlab.aster;
 
 import java.util.ArrayList;
 
+import java.io.BufferedOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
 public class AsterCommandManager {
+    static private void zipDir(String dir, ZipOutputStream zos)
+        throws FileNotFoundException, IOException {
+        File dirfile = new File(dir);
+        String[] dirlist = dirfile.list();
+        byte[] buffer = new byte[4096];
+        int len = 0;
+
+        for (int i = 0; i < dirlist.length; ++i) {
+            File f = new File(dirfile, dirlist[i]);
+
+            if (f.isDirectory()) {
+                zipDir(f.getPath(), zos);
+                continue;
+            }
+
+            FileInputStream fis = new FileInputStream(f);
+            ZipEntry ent = new ZipEntry(f.getPath());
+            zos.putNextEntry(ent);
+            while ((len = fis.read(buffer)) != -1) {
+                zos.write(buffer, 0, len);
+            }
+            fis.close();
+        }
+    }
+
+    static private void unzipDir(String zipfile, String target)
+        throws IOException {
+        Enumeration entries;
+        ZipFile zipFile = new ZipFile(zipfile);
+        byte[] buffer = new byte[4096];
+        int len = 0;
+
+        (new File(target)).mkdirs();
+        entries = zipFile.entries();
+
+        while(entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry)entries.nextElement();
+            if(entry.isDirectory()) {
+                (new File(entry.getName())).mkdir();
+                continue;
+            }
+
+            InputStream is = zipFile.getInputStream(entry);
+            OutputStream os = new BufferedOutputStream
+                                    (new FileOutputStream(entry.getName()));
+            while ((len = is.read(buffer)) > 0) {
+                os.write(buffer, 0, len);
+            }
+            is.close();
+            os.close();
+        }
+        zipFile.close();
+    }
+
+    public static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i=0; i<children.length; i++) {
+                boolean success = deleteDir(new File(dir, children[i]));
+                if (!success) {
+                    return false;
+                }
+            }
+        }
+        return dir.delete();
+    }
     
     static public void dump(AsterCommand[] cmds, String filename)
         throws IOException {
@@ -35,21 +109,39 @@ public class AsterCommandManager {
 
         String dirname = filename.substring(0, filename.length() - 4);
         File root = new File(dirname);
-        if (root.mkdirs())
+        if (!root.mkdirs())
             throw new IOException(String.format("can not mkdir for '%s'",
                                                 dirname));
 
         FileOutputStream out = new FileOutputStream(new File(dirname,
                                                     root.getName() + ".py"));
-        for (int i = 0; i < cmds.length; ++i) {
-            out.write(cmds[i].toScript().getBytes());
+        for (AsterCommand c: cmds) {
+            out.write(c.toScript().getBytes());
+            c.saveImage(dirname);
+        }
+        out.close();
+
+        try {
+            ZipOutputStream zos = new ZipOutputStream
+                                        (new FileOutputStream(filename));
+            zipDir(dirname, zos);
+            zos.close();
+            deleteDir(new File(dirname));
+        } catch(FileNotFoundException e) {
+            throw new IOException(e);
         }
     }
 
-    static public AsterCommand[] load(String filename) {
+    static public AsterCommand[] load(String zipfile)
+        throws IOException {
+        String dirname = zipfile.substring(0, zipfile.length() -4);
+        String filename = dirname + ".py";
+        unzipDir(zipfile, dirname);
+
         ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
         try {
-            FileInputStream ist = new FileInputStream(new File(filename));
+            FileInputStream ist = new FileInputStream
+                                        (new File(dirname, filename));
 
             byte[] buf = new byte[4096];
             String data = new String();
@@ -64,7 +156,6 @@ public class AsterCommandManager {
             }
 
             for (String s: data.split("\n")) {
-                System.out.println(s);
                 if (s.startsWith("drag")) {
                     cmds.add(new Drag(s.substring(4, s.length())));
                 } else if (s.startsWith("touch")) {

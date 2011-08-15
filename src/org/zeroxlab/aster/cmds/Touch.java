@@ -58,7 +58,6 @@ public class Touch extends AsterCommand {
     }
 
     CoordType mCoordType;
-    BufferedImage mImage;
     Point mPosition;
     TouchType mTouchType;
     double mTimeout = 3;

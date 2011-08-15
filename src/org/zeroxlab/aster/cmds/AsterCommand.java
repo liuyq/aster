@@ -24,8 +24,13 @@ import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import com.android.monkeyrunner.MonkeyRunnerOptions;
 
-import java.awt.image.BufferedImage;
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import javax.script.SimpleBindings;
 
@@ -49,6 +54,13 @@ public abstract class AsterCommand {
 
     protected String stripQuote(String src) {
         return src.replaceAll("'", "").replaceAll("\"", "");
+    }
+
+    protected void saveImage(String prefix) throws IOException {
+        if (mImage != null) {
+            File pngfile = new File(prefix, String.format("%d.png", mSerial));
+            ImageIO.write(mImage, "png", pngfile);
+        }
     }
 
     /* uncomment these abstract methods and implement them

@@ -35,11 +35,13 @@ class CmdTest {
         AsterCommand[] cmds = { drag1, drag2, touch1, touch2, press, type };
 
         try {
-            AsterCommandManager.dump(cmds, "test.ast");
+            AsterCommandManager.dump(cmds, "cmds.ast");
+            cmds = AsterCommandManager.load("cmds.ast");
+            for (AsterCommand c: cmds) {
+                System.out.printf("%s", c.toScript());
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
-
-        AsterCommandManager.load("test/test.py");
     }
 }
