@@ -31,15 +31,16 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.File;
 import javax.swing.*;
+import javax.script.SimpleBindings;
 
 public class AsterMainPanel extends JPanel {
 
     private AsterWorkspace mWorkspace;
+    private CmdSelector mSelector;
     private JActionList mActionList;
 
     private ChimpChat mChimpChat;
     private WookieeAPI mImpl;
-    private AsterCommand[] mCmds;
     private ScriptRunner mScriptRunner;
 
     private UpdateScreen mUpdateScreen;
@@ -67,24 +68,22 @@ public class AsterMainPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
-        mCmds = new AsterCommand[1];
-        generateCmds(mCmds);
-        mActionList.getModel().setRecall(new Touch(new Point(10, 10)));
-        for (AsterCommand cmd : mCmds) {
-            mActionList.getModel().pushCmd(cmd);
-        }
+        mWorkspace = new AsterWorkspace();
+        mActionList.getModel().setRecall(new Touch(mWorkspace.getOpTouch()));
+        mSelector = new CmdSelector(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {
-                    Object[] possibilities = {"TOUCH", "DRAG", "TYPE"};
-                    String s = (String)JOptionPane.showInputDialog(
+                    int s = JOptionPane.showOptionDialog(
                         (JComponent)e.getSource(),
-                        "選擇要加入的動作",
-                        "新增動作",
+                        mSelector.getMsg(),
+                        mSelector.getTitle(),
+                        JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE,
                         null,
-                        possibilities,
-                        "TOUCh");
-                    mActionList.getModel().pushCmd(new Touch(new Point(10, 10)));
+                        mSelector.getCmdNames(),
+                        mSelector.getDefValue());
+
+                    mActionList.getModel().pushCmd(mSelector.selectCmd(s));
                 }
             });
 
@@ -94,9 +93,7 @@ public class AsterMainPanel extends JPanel {
         c.gridheight = 3;
         c.weightx = 0.5;
         c.weighty = 0.5;
-        mWorkspace = new AsterWorkspace();
         add(mWorkspace, c);
-
         setPreferredSize(new Dimension(800, 600));
 
         Map<String, String> options = new TreeMap<String, String>();
@@ -113,12 +110,6 @@ public class AsterMainPanel extends JPanel {
         mUpdateScreen = new UpdateScreen();
         Thread thread = new Thread(mUpdateScreen);
         thread.start();
-    }
-
-    private void generateCmds(AsterCommand cmds[]) {
-        for (int i = 0; i < cmds.length; i++) {
-	    cmds[i] = new Touch(new Point(i, 2));
-        }
     }
 
     class UpdateScreen implements Runnable {
