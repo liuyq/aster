@@ -82,13 +82,13 @@ public class DefaultActionListModel implements ActionListModel {
     }
 
     public void pushCmd(AsterCommand cmd) {
-        actionList.addFirst(cmd);
+        actionList.addLast(cmd);
         fireStateChanged();
     }
 
     public void popCmd() {
         try {
-            actionList.removeFirst();
+            actionList.removeLast();
             fireStateChanged();
         } catch (NoSuchElementException e) {
             // log.w("try to pop empty command list");
