@@ -91,4 +91,8 @@ public abstract class AsterCommand {
     static protected String[] getKeys() {
         return null;
     }
+
+    public interface CommandListener {
+        public void commandFinished(AsterCommand whichOne);
+    }
 }

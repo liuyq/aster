@@ -21,6 +21,8 @@
 package org.zeroxlab.aster;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
@@ -33,18 +35,26 @@ import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 
 import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.AsterCommand.CommandListener;
+import org.zeroxlab.aster.AsterOperation.OperationListener;
 import org.zeroxlab.aster.OpDrag;
 import org.zeroxlab.aster.OpTouch;
 
-public class AsterWorkspace extends JComponent implements ComponentListener, MouseListener, MouseMotionListener {
+public class AsterWorkspace extends JComponent implements ComponentListener
+                                                         , MouseListener
+                                                         , MouseMotionListener
+                                                         , AsterOperation.OperationListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
     public final static int LANDSCAPE_HEIGHT = 240;
     public final static int PORTRAIT_WIDTH  = 240;
     public final static int PORTRAIT_HEIGHT = 400;
+
+    private static JButton sDone;
 
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
@@ -72,11 +82,18 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
     private static MyDrag sOpDrag;
     private static MyTouch sOpTouch;
 
+    private static CommandListener sCmdListener;
+    private static OperationListener sOpListener;
+    private static AsterCommand sRecordingCmd;
+    private static AsterOperation sRecordingOp;
+
     public AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
     public AsterWorkspace(BufferedImage img) {
+        initJComponents();
+
         sRegion = new ClipRegion();
         sOpDrag  = new MyDrag();
         sOpTouch = new MyTouch();
@@ -89,6 +106,26 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         generateDrawingBuffer();
     }
 
+    private void initJComponents() {
+        /* It is not elegant but acceptable */
+        setLayout(null);
+        sDone = new JButton("Done");
+        sDone.addActionListener(
+                new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        sDone.setEnabled(false);
+                        if (sOpListener != null) {
+                            sOpListener.operationFinished(sRecordingOp);
+                        } else {
+                            System.out.println("There is no OperationListener");
+                        }
+                    }
+                });
+        sDone.setBounds(10, 10, 100, 50);
+        sDone.setEnabled(false);
+        add(sDone);
+    }
+
     public void setImage(BufferedImage img) {
         mSourceImage = img;
         if (mSourceImage != null) {
@@ -96,20 +133,45 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
         }
     }
 
-    public void fillCmd(AsterCommand cmd) {
-        AsterOperation[] ops = cmd.getOperations();
-        if (ops == null) {
+    public void fillCmd(AsterCommand cmd, CommandListener listener) {
+        sRecordingCmd = cmd;
+        sCmdListener = listener;
+        AsterOperation[] ops = sRecordingCmd.getOperations();
+        if (ops == null || ops.length == 0) {
             System.err.println("You are asking me to fill an empty command");
             return;
         }
 
+        sRegion.setVisible(false);
+        sRegion.moveD(-1, -1); // hide
+        setDragListener(null);
+        setTouchListener(null);
+        ops[0].record(this);
+    }
+
+    public void operationFinished(AsterOperation op) {
+        AsterOperation[] ops = sRecordingCmd.getOperations();
+        int now = 0;
         for (int i = 0; i < ops.length; i++) {
-            sRegion.setVisible(false);
-            sRegion.moveD(-1, -1); // hide
-            setDragListener(null);
-            setTouchListener(null);
-            ops[i].record();
+            if (ops[i] == op) {
+                now = i;
+            }
         }
+
+        if (now == ops.length -1) { // tail
+            if (sCmdListener != null) {
+                sCmdListener.commandFinished(sRecordingCmd);
+            }
+
+            return;
+        }
+
+        sRegion.setVisible(false);
+        sRegion.moveD(-1, -1); // hide
+        setDragListener(null);
+        setTouchListener(null);
+        sRecordingOp = ops[now + 1];
+        ops[now + 1].record(this);
     }
 
     public void setDragListener(DragListener listener) {
@@ -393,13 +455,16 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             y = Math.min(y, mSourceHeight);
             System.out.println("Set point:" + x + "," + y);
             super.set(x, y);
+            sDone.setEnabled(true);
         }
 
         public String getName() {
             return "Touch";
         }
 
-        public void record() {
+        public void record(AsterOperation.OperationListener listener) {
+            sDone.setEnabled(false);
+            sOpListener = listener;
             int x = super.getX();
             int y = super.getY();
             if (x > 0 && y > 0 && x < mSourceWidth && y < mSourceHeight) {
@@ -422,7 +487,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             return "Drag";
         }
 
-        public void record() {
+        public void record(AsterOperation.OperationListener listener) {
+            sDone.setEnabled(false);
+            sOpListener = listener;
             int sX = super.getStartX();
             int sY = super.getStartY();
             int eX = super.getEndX();
@@ -459,6 +526,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener, Mou
             System.out.println("Set point:(" + sx + "," + sy
                     + ") to (" + ex + "," + ey + ")");
             super.set(sx, sy, ex, ey);
+            sDone.setEnabled(true);
         }
     }
 }

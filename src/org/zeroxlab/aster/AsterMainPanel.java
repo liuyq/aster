@@ -19,6 +19,7 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.AsterCommand.CommandListener;
 import org.zeroxlab.wookieerunner.WookieeAPI;
 import org.zeroxlab.wookieerunner.WookieeRunner;
 import org.zeroxlab.wookieerunner.ScriptRunner;
@@ -45,9 +46,12 @@ public class AsterMainPanel extends JPanel {
 
     private UpdateScreen mUpdateScreen;
 
+    private MyListener mCmdListener;
+
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
+        mCmdListener = new MyListener();
 
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
@@ -83,7 +87,9 @@ public class AsterMainPanel extends JPanel {
                         mSelector.getCmdNames(),
                         mSelector.getDefValue());
 
-                    mActionList.getModel().pushCmd(mSelector.selectCmd(s));
+                    AsterCommand cmd = mSelector.selectCmd(s);
+                    mActionList.getModel().pushCmd(cmd);
+                    mWorkspace.fillCmd(cmd, mCmdListener);
                 }
             });
 
@@ -110,6 +116,12 @@ public class AsterMainPanel extends JPanel {
         mUpdateScreen = new UpdateScreen();
         Thread thread = new Thread(mUpdateScreen);
         thread.start();
+    }
+
+    class MyListener implements CommandListener {
+        public void commandFinished(AsterCommand whichOne) {
+            System.out.println("Complete cmd:" + whichOne.getName());
+        }
     }
 
     class UpdateScreen implements Runnable {
