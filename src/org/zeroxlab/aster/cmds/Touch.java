@@ -80,14 +80,15 @@ public class Touch extends AsterCommand {
         mOps[0] = AsterWorkspace.getOpTouch();
     }
 
-    public Touch(String argline) throws IllegalArgumentException {
+    public Touch(String prefix, String argline)
+        throws IllegalArgumentException {
         String[] args = splitArgs(argline);
 
         if (args.length == 4) {
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = args[0].replaceAll("'", "").replaceAll("\"", "");
-                mImage = ImageIO.read(new File(args[0]));
+                mImage = ImageIO.read(new File(prefix, args[0]));
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;

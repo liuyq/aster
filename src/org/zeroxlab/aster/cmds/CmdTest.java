@@ -25,10 +25,10 @@ import java.io.IOException;
 class CmdTest {
     static public void main(String argv[]) {
 
-        Drag drag1 = new Drag("('0.png', (400, 400), 0.1, 10, 4, False)");
-        Drag drag2 = new Drag("((0, 0), (400, 400), 0.1, 10, 4, False)");
-        Touch touch1 = new Touch("('test.png', 'downAndUp', 4, False)");
-        Touch touch2 = new Touch("((400, 400), 'downAndUp', 4, False)");
+        Drag drag1 = new Drag(".", "('0.png', (400, 400), 0.1, 10, 4, False)");
+        Drag drag2 = new Drag(".", "((0, 0), (400, 400), 0.1, 10, 4, False)");
+        Touch touch1 = new Touch(".", "('test.png', 'downAndUp', 4, False)");
+        Touch touch2 = new Touch(".", "((400, 400), 'downAndUp', 4, False)");
         Press press = new Press("('KEYCODE_HOME', 'downAndUp')");
         Type type = new Type("('testing')");
 

@@ -199,9 +199,9 @@ public class AsterCommandManager {
 
             for (String s: data.split("\n")) {
                 if (s.startsWith("drag")) {
-                    cmds.add(new Drag(s.substring(4, s.length())));
+                    cmds.add(new Drag(dirname, s.substring(4, s.length())));
                 } else if (s.startsWith("touch")) {
-                    cmds.add(new Touch(s.substring(5, s.length())));
+                    cmds.add(new Touch(dirname, s.substring(5, s.length())));
                 } else if (s.startsWith("press")) {
                     cmds.add(new Press(s.substring(5, s.length())));
                 } else if (s.startsWith("type")) {
