@@ -52,7 +52,7 @@ public class Press extends AsterCommand {
     String mKeyCode;
 
     public Press() {
-        mPressType = Press.DOWN_AND_UP;
+        mPressType = PressType.DOWN_AND_UP;
         mKeyCode = new String();
         mOps = new AsterOperation[1];
         //mOps[0] = AsterWorkspace.getOpPress();
