@@ -102,4 +102,15 @@ public class DefaultActionListModel implements ActionListModel {
     public Iterable<AsterCommand> getCommands() {
         return actionList;
     }
+
+    public void clear() {
+        actionList.clear();
+    }
+
+    public AsterCommand[] toArray() {
+        AsterCommand[] commands = new AsterCommand[actionList.size()+1];
+        commands[0] = recall;
+        System.arraycopy(actionList.toArray(), 0, commands, 1, actionList.size());
+        return commands;
+    }
 }

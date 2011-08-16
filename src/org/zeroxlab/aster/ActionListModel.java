@@ -49,9 +49,19 @@ public interface ActionListModel {
     public boolean empty();
 
     /**
+     * Empty the model
+     */
+    public void clear();
+
+    /**
      * Get command list
      */
     public Iterable<AsterCommand> getCommands();
+
+    /**
+     * Turn the model into a command Array (including the recall command)
+     */
+    public AsterCommand[] toArray();
 
     /**
      * Adds a ChangeListener to the model's listener list.

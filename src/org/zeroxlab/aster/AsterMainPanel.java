@@ -28,7 +28,7 @@ import org.python.core.PyException;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.io.File;
+import java.io.*;
 import javax.swing.*;
 import javax.script.SimpleBindings;
 
@@ -91,6 +91,54 @@ public class AsterMainPanel extends JPanel {
         mCmdConn = new CmdConn();
         Thread thread = new Thread(mCmdConn);
         thread.start();
+    }
+
+    public JMenuBar createMenuBar() {
+        JMenuBar menu = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        menu.add(fileMenu);
+        JMenuItem openItem = new JMenuItem();
+        openItem.setAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent ev) {
+                    try {
+                        final JFileChooser fc = new JFileChooser();
+                        int returnVal = fc.showOpenDialog(AsterMainPanel.this);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File file = fc.getSelectedFile();
+                            AsterCommand[] cmds = AsterCommandManager.load(file.getAbsolutePath());
+                            mActionList.getModel().clear();
+                            mActionList.getModel().setRecall(cmds[0]);
+                            for (int i = 1; i < cmds.length; i++) {
+                                mActionList.getModel().pushCmd(cmds[i]);
+                            }
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            });
+        openItem.setText("Open...");
+        openItem.setMnemonic(KeyEvent.VK_O);
+        fileMenu.add(openItem);
+        JMenuItem saveItem = new JMenuItem();
+        saveItem.setAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent ev) {
+                    try {
+                        final JFileChooser fc = new JFileChooser();
+                        int returnVal = fc.showSaveDialog(AsterMainPanel.this);
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File file = fc.getSelectedFile();
+                            AsterCommandManager.dump(mActionList.getModel().toArray(),
+                                                     file.getAbsolutePath());
+                        }
+                    } catch (IOException e) {
+                    }
+                }
+            });
+        saveItem.setText("Save...");
+        saveItem.setMnemonic(KeyEvent.VK_S);
+        fileMenu.add(saveItem);
+        return menu;
     }
 
     class MyListener implements CommandListener {
