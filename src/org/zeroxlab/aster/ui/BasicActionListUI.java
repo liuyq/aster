@@ -272,16 +272,22 @@ public class BasicActionListUI extends ActionListUI {
 
     static class ActionButton extends JComponent {
         static int TEXT_MARGIN = 10;
+        static int CLIP_WIDTH = 54;
         AsterCommand mCommand;
         Font mFont;
         Rectangle mFontBox;
         static NinePatch mPatch;
+        static NinePatch mInnerPatch;
         static BufferedImage mCloseButton;
+        BufferedImage mClipImage;
 
         static {
             try {
                 InputStream stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
                 mPatch = NinePatch.load(stream, true, false);
+                stream.close();
+                stream = ActionButton.class.getResourceAsStream("/inner_border.9.png");
+                mInnerPatch = NinePatch.load(stream, true, false);
                 stream.close();
             } catch (IOException e) {
             }
@@ -291,6 +297,8 @@ public class BasicActionListUI extends ActionListUI {
             mCommand = cmd;
             mFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
             mFontBox = new Rectangle();
+            if (mCommand.getSettings() != null)
+                mClipImage = (BufferedImage)mCommand.getSettings().get("Image");
         }
 
         public Dimension getMinimumSize() {
@@ -299,8 +307,11 @@ public class BasicActionListUI extends ActionListUI {
 
         public Dimension getPreferredSize() {
             FontMetrics fm = getFontMetrics(mFont);
-            return new Dimension(fm.stringWidth(mCommand.getName()) + TEXT_MARGIN*2,
-                                 fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2);
+            int width = fm.stringWidth(mCommand.getName()) + TEXT_MARGIN*2;
+            int height = fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2;
+            if (mClipImage != null)
+                height += TEXT_MARGIN + CLIP_WIDTH;
+            return new Dimension(width, height);
         }
 
         public Dimension getMaximumSize() {
@@ -329,6 +340,14 @@ public class BasicActionListUI extends ActionListUI {
                                              RenderingHints.VALUE_ANTIALIAS_ON);
             g.drawString(mCommand.getName(),
                          mFontBox.x, mFontBox.y);
+            if (mClipImage != null) {
+                int clip_x = bbox.x + (bbox.width - CLIP_WIDTH)/2;
+                int clip_y = bbox.y + (bbox.height - TEXT_MARGIN - CLIP_WIDTH);
+                g.drawImage(mClipImage, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH, null);
+                if (mInnerPatch != null) {
+                    mInnerPatch.draw((Graphics2D)g, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH);
+                }
+            }
         }
     }
 
