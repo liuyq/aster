@@ -35,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
+import javax.script.SimpleBindings;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
@@ -162,6 +163,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
 
         if (now == ops.length -1) { // tail
+            for (int i = 0; i < ops.length; i++) {
+                sRecordingCmd.fillSettings(ops[i].getSettings());
+            }
+
             if (sCmdListener != null) {
                 sCmdListener.commandFinished(sRecordingCmd);
             }
@@ -498,6 +503,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             repaint();
             setTouchListener(this);
         }
+
+        public SimpleBindings getSettings() {
+            SimpleBindings settings = new SimpleBindings();
+            settings.put("Pos", super.getPoint());
+            return null;
+        }
     }
 
     class MyDrag extends OpDrag implements DragListener {
@@ -547,6 +558,13 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             super.set(sx, sy, ex, ey);
             sDone.setEnabled(true);
             sRegion.setVisible(true);
+        }
+
+        public SimpleBindings getSettings() {
+            SimpleBindings settings = new SimpleBindings();
+            settings.put("StartPos", super.getStart());
+            settings.put("EndPos", super.getEnd());
+            return settings;
         }
     }
 }
