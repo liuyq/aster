@@ -20,12 +20,10 @@ package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterCommand.CommandListener;
-import org.zeroxlab.wookieerunner.WookieeAPI;
-import org.zeroxlab.wookieerunner.WookieeRunner;
-import org.zeroxlab.wookieerunner.ScriptRunner;
 
-import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpImage;
+
+import org.python.core.PyException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -36,14 +34,12 @@ import javax.script.SimpleBindings;
 
 public class AsterMainPanel extends JPanel {
 
+    private enum ExecutionState { NORMAL, EXECUTION }
+
     private AsterWorkspace mWorkspace;
     private JActionList mActionList;
 
-    private ChimpChat mChimpChat;
-    private WookieeAPI mImpl;
-    private ScriptRunner mScriptRunner;
-
-    private UpdateScreen mUpdateScreen;
+    private CmdConn mCmdConn;
 
     private MyListener mCmdListener;
 
@@ -92,39 +88,56 @@ public class AsterMainPanel extends JPanel {
         add(mWorkspace, c);
         setPreferredSize(new Dimension(800, 600));
 
-        Map<String, String> options = new TreeMap<String, String>();
-        options.put("backend", "adb");
-        mChimpChat = ChimpChat.getInstance(options);
-        mImpl = new WookieeAPI(mChimpChat.waitForConnection());
-
-        mImpl.setRunnerChimpChat(mChimpChat);
-        String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
-            File.separator + "wookieerunner";
-        mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
-        AsterCommand.setScriptRunner(mScriptRunner);
-
-        mUpdateScreen = new UpdateScreen();
-        Thread thread = new Thread(mUpdateScreen);
+        mCmdConn = new CmdConn();
+        Thread thread = new Thread(mCmdConn);
         thread.start();
     }
 
     class MyListener implements CommandListener {
         public void commandFinished(AsterCommand whichOne) {
-            System.out.println("Complete cmd:" + whichOne.getName());
+            System.out.println("Complete cmd: " + whichOne.getName());
         }
     }
 
-    class UpdateScreen implements Runnable {
+    class CmdConn implements Runnable {
 
         private boolean mKeepWalking = true;
+        private AsterCommand[] mCmds;
+        private ExecutionState mState;
 
         public void finish() {
             mKeepWalking = false;
         }
 
+        public void runCommands(AsterCommand[] cmds) {
+            mCmds = cmds;
+            switchState(ExecutionState.EXECUTION);
+        }
+
+        synchronized void switchState(ExecutionState state) {
+            mState = state;
+        }
+
         public void run() {
+            mState = ExecutionState.NORMAL;
+            AsterCommandManager.connect();
+
             while(mKeepWalking) {
-                updateScreen();
+                if (mState == ExecutionState.NORMAL) {
+                    updateScreen();
+                } else {
+                    System.err.printf("Staring command execution...\n");
+                    try {
+                        for (AsterCommand c: mCmds) {
+                            System.err.println(c.toScript());
+                            c.execute();
+                            updateScreen();
+                        }
+                    } catch (PyException e) {
+                        System.out.printf("%s\n", e);
+                    }
+                    switchState(ExecutionState.NORMAL);
+                }
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -135,7 +148,7 @@ public class AsterMainPanel extends JPanel {
         }
 
         private void updateScreen() {
-            IChimpImage snapshot = mImpl.takeSnapshot();
+            IChimpImage snapshot = AsterCommandManager.takeSnapshot();
             mWorkspace.setImage(snapshot.createBufferedImage());
             mWorkspace.repaint(mWorkspace.getBounds());
         }

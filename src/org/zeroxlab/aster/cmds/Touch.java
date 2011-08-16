@@ -65,9 +65,17 @@ public class Touch extends AsterCommand {
     Point mPosition;
     TouchType mTouchType;
     double mTimeout = 3;
-    AsterOperation[] mOps;
 
     public Touch() {
+        mCoordType = CoordType.FIXED;
+        mTouchType = TouchType.DOWN_AND_UP;
+        mPosition = new Point();
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpTouch();
+    }
+
+    public Touch(SimpleBindings settings) {
+        fillSettings(settings);
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getOpTouch();
     }
@@ -101,6 +109,8 @@ public class Touch extends AsterCommand {
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpTouch();
     }
 
     public Point getPos() {
@@ -118,11 +128,6 @@ public class Touch extends AsterCommand {
     @Override
     public String getName() {
         return "Touch";
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        return mOps;
     }
 
     @Override

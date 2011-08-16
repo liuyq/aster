@@ -191,9 +191,9 @@ public class ScriptRunner {
         PythonInterpreter.initialize(System.getProperties(), props, argv);
 
         String frameworkDir = System.getProperty("java.ext.dirs");
-        File monkeyRunnerJar = new File(frameworkDir, "monkeyrunner.jar");
-        if (monkeyRunnerJar.canRead()) {
-            PySystemState.packageManager.addJar(monkeyRunnerJar.getAbsolutePath(), false);
+        File wookieerRunnerJar = new File(frameworkDir, "wookieerunner.jar");
+        if (wookieerRunnerJar.canRead()) {
+            PySystemState.packageManager.addJar(wookieerRunnerJar.getAbsolutePath(), false);
         }
     }
 

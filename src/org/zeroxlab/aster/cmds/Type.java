@@ -27,8 +27,17 @@ public class Type extends AsterCommand {
 
     String mText;
 
+    public Type() {
+        mText = new String();
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpType();
+    }
+
     public Type(SimpleBindings settings) {
         fillSettings(settings);
+        mText = new String();
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpType();
     }
 
     public Type(String argline) throws IllegalArgumentException {
@@ -39,6 +48,8 @@ public class Type extends AsterCommand {
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpType();
     }
 
     public String getText() {

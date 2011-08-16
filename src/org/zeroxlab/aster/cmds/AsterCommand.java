@@ -40,6 +40,7 @@ public abstract class AsterCommand {
     protected int mSerial = 0;
     protected boolean mLandscape = false;
     protected BufferedImage mImage = null;
+    protected AsterOperation[] mOps;
 
     static public void setScriptRunner(ScriptRunner runner) {
         mRunner = runner;
@@ -56,11 +57,20 @@ public abstract class AsterCommand {
         return src.replaceAll("'", "").replaceAll("\"", "");
     }
 
+    protected BufferedImage getImage() {
+        return mImage;
+    }
+
     protected void saveImage(String prefix) throws IOException {
         if (mImage != null) {
             File pngfile = new File(prefix, String.format("%d.png", mSerial));
             ImageIO.write(mImage, "png", pngfile);
         }
+    }
+
+    /* Return operations that stored in this Command */
+    public AsterOperation[] getOperations() {
+        return mOps;
     }
 
     /* uncomment these abstract methods and implement them
@@ -69,9 +79,6 @@ public abstract class AsterCommand {
 
     /* Get name of command */
     public abstract String getName();
-
-    /* Return operations that stored in this Command */
-    public abstract AsterOperation[] getOperations();
 
     /* Get settings of a command */
     public abstract SimpleBindings getSettings();
