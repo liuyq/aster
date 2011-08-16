@@ -158,6 +158,7 @@
 
     <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-ninepatch,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
+        <copy file="src/python/WookieeRunnerWrapper.py" todir="${dist.dir}"/>
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
         <copy file="etc/aster/aster" todir="${dist.dir}"/>
         <chmod file="${dist.dir}/wookieerunner" perm="ugo+x"/>

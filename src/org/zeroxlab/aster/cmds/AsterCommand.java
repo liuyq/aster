@@ -61,7 +61,7 @@ public abstract class AsterCommand {
         return mImage;
     }
 
-    protected void saveImage(String prefix) throws IOException {
+    public void saveImage(String prefix) throws IOException {
         if (mImage != null) {
             File pngfile = new File(prefix, String.format("%d.png", mSerial));
             ImageIO.write(mImage, "png", pngfile);
