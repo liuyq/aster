@@ -288,12 +288,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             sRegion.moveC(mPressX, mPressY);
             sRegion.moveD(e.getX(), e.getY());
         }
-        pX = (int)((mSourceWidth  * (sRegion.pC.x - mImgRect.x)) / mImgRect.width);
-        pY = (int)((mSourceHeight * (sRegion.pC.y - mImgRect.y)) / mImgRect.height);
-        rX = (int)((mSourceWidth  * (sRegion.pD.x - mImgRect.x)) / mImgRect.width);
-        rY = (int)((mSourceHeight * (sRegion.pD.y - mImgRect.y)) / mImgRect.height);
+
+        Point pressOnSource   = convertPointW2Img(sRegion.pC.x, sRegion.pC.y);
+        Point releaseOnSource = convertPointW2Img(sRegion.pD.x, sRegion.pD.y);
         if (mDragListener != null){
-            mDragListener.dragged(pX, pY, rX, rY);
+            mDragListener.dragged(pressOnSource.x, pressOnSource.y, releaseOnSource.x, releaseOnSource.y);
         }
     }
 
@@ -312,6 +311,20 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     }
 
     public void mouseMoved(MouseEvent e) {
+    }
+
+    /* The source image will be resized and drawed on Workspace.
+     * Convert the point on workspace to the point on the original image */
+    private Point convertPointW2Img(int workspaceX, int workspaceY) {
+        int iX, iY;
+        iX = (int)((mSourceWidth  * (workspaceX - mImgRect.x)) / mImgRect.width);
+        iY = (int)((mSourceHeight * (workspaceY - mImgRect.y)) / mImgRect.height);
+
+        iX = Math.min(iX, mSourceWidth);
+        iY = Math.min(iY, mSourceHeight);
+        iX = Math.max(iX, 0);
+        iY = Math.max(iY, 0);
+        return new Point(iX, iY);
     }
 
     private void generateDrawingBuffer() {
