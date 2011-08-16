@@ -51,10 +51,11 @@ public class Drag extends AsterCommand {
 
     public Drag() {
         mCoordType = CoordType.FIXED;
+        mStartPosition = new Point();
+        mEndPosition = new Point();
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getOpDrag();
     }
-
 
     public Drag(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);

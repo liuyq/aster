@@ -69,6 +69,8 @@ public class Touch extends AsterCommand {
 
     public Touch() {
         mCoordType = CoordType.FIXED;
+        mTouchType = TouchType.DOWN_AND_UP;
+        mPosition = new Point();
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getOpTouch();
     }
