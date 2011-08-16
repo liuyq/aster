@@ -21,14 +21,48 @@
 package org.zeroxlab.aster;
 
 import java.awt.Point;
+import java.awt.event.MouseListener;
+import java.util.Vector;
+
+import org.zeroxlab.aster.AsterWorkspace;
+import org.zeroxlab.aster.Touch;
 
 public class CmdSelector {
 
+    String[] mNames;
+    AsterWorkspace mWorkspace;
 
-    public void addCmd(AsterCommand cmd) {
+    CmdSelector(AsterWorkspace workspace) {
+        mNames = new String[2];
+        mNames[0] = "Touch";
+        mNames[1] = "Drag";
+        mWorkspace = workspace;
     }
 
-    public AsterCommand selectCmd() {
-        return new Touch(new Point(0, 0));
+    public static String getMsg() {
+        return "選擇要加入的動作";
+    }
+
+    public static String getTitle() {
+        return "新增動作";
+    }
+
+    public Object[] getCmdNames() {
+        return mNames;
+    }
+
+    public Object getDefValue() {
+        return mNames[0];
+    }
+
+    public AsterCommand selectCmd(int i) {
+        if (i == 0) {
+            return new Touch();
+        } else if (i == 1) {
+            return new Drag();
+        }
+
+        System.err.println("Unknow index:" + i);
+        return null;
     }
 }

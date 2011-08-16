@@ -31,6 +31,10 @@ import javax.imageio.ImageIO;
 
 import javax.script.SimpleBindings;
 
+import org.zeroxlab.aster.AsterOperation;
+import org.zeroxlab.aster.OpDrag;
+import org.zeroxlab.aster.AsterWorkspace;
+
 public class Drag extends AsterCommand {
 
     private enum CoordType { FIXED, AUTO }
@@ -39,12 +43,15 @@ public class Drag extends AsterCommand {
     Point mStartPosition;
     Point mEndPosition;
 
+    AsterOperation[] mOps;
+
     double mDuration = 1;
     int mSteps = 10;
     double mTimeout = 3;
 
-    public Drag(SimpleBindings settings) {
-        fillSettings(settings);
+    public Drag() {
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpDrag();
     }
 
 

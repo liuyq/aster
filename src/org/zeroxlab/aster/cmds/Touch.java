@@ -31,6 +31,10 @@ import javax.imageio.ImageIO;
 
 import javax.script.SimpleBindings;
 
+import org.zeroxlab.aster.AsterOperation;
+import org.zeroxlab.aster.AsterWorkspace;
+import org.zeroxlab.aster.OpTouch;
+
 public class Touch extends AsterCommand {
 
     private enum CoordType { FIXED, AUTO }
@@ -61,15 +65,11 @@ public class Touch extends AsterCommand {
     Point mPosition;
     TouchType mTouchType;
     double mTimeout = 3;
+    AsterOperation[] mOps;
 
-    public Touch(SimpleBindings settings) {
-        fillSettings(settings);
-    }
-
-    // For testing should be remove after CmdSelector is finished.
-    public Touch(Point pos) {
-	mCoordType = CoordType.FIXED;
-	mPosition = pos;
+    public Touch() {
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpTouch();
     }
 
     public Touch(String argline) throws IllegalArgumentException {
@@ -122,9 +122,7 @@ public class Touch extends AsterCommand {
 
     @Override
     public AsterOperation[] getOperations() {
-        System.out.println("Touch operation");
-        AsterOperation[] ops = new OpTouch[1];
-        return ops;
+        return mOps;
     }
 
     @Override

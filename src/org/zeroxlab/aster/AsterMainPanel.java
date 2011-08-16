@@ -19,6 +19,7 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.AsterCommand.CommandListener;
 import org.zeroxlab.wookieerunner.WookieeAPI;
 import org.zeroxlab.wookieerunner.WookieeRunner;
 import org.zeroxlab.wookieerunner.ScriptRunner;
@@ -31,25 +32,29 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.File;
 import javax.swing.*;
+import javax.script.SimpleBindings;
 
 public class AsterMainPanel extends JPanel {
 
-    private ImageView mImageView;
+    private AsterWorkspace mWorkspace;
+    private CmdSelector mSelector;
     private JActionList mActionList;
 
     private ChimpChat mChimpChat;
     private WookieeAPI mImpl;
-    private AsterCommand[] mCmds;
     private ScriptRunner mScriptRunner;
 
     private UpdateScreen mUpdateScreen;
 
+    private MyListener mCmdListener;
+
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
+        mCmdListener = new MyListener();
 
-	setLayout(gridbag);
-	c.fill = GridBagConstraints.BOTH;
+        setLayout(gridbag);
+        c.fill = GridBagConstraints.BOTH;
 
         c.gridx = 0;
         c.gridy = 0;
@@ -67,24 +72,24 @@ public class AsterMainPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
-        mCmds = new AsterCommand[1];
-        generateCmds(mCmds);
-        mActionList.getModel().setRecall(new Touch(new Point(10, 10)));
-        for (AsterCommand cmd : mCmds) {
-            mActionList.getModel().pushCmd(cmd);
-        }
+        mWorkspace = new AsterWorkspace();
+        mActionList.getModel().setRecall(new Touch());
+        mSelector = new CmdSelector(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {
-                    Object[] possibilities = {"TOUCH", "DRAG", "TYPE"};
-                    String s = (String)JOptionPane.showInputDialog(
+                    int s = JOptionPane.showOptionDialog(
                         (JComponent)e.getSource(),
-                        "選擇要加入的動作",
-                        "新增動作",
+                        mSelector.getMsg(),
+                        mSelector.getTitle(),
+                        JOptionPane.OK_CANCEL_OPTION,
                         JOptionPane.PLAIN_MESSAGE,
                         null,
-                        possibilities,
-                        "TOUCh");
-                    mActionList.getModel().pushCmd(new Touch(new Point(10, 10)));
+                        mSelector.getCmdNames(),
+                        mSelector.getDefValue());
+
+                    AsterCommand cmd = mSelector.selectCmd(s);
+                    mActionList.getModel().pushCmd(cmd);
+                    mWorkspace.fillCmd(cmd, mCmdListener);
                 }
             });
 
@@ -94,19 +99,17 @@ public class AsterMainPanel extends JPanel {
         c.gridheight = 3;
         c.weightx = 0.5;
         c.weighty = 0.5;
-        mImageView = new ImageView();
-        add(mImageView, c);
-
+        add(mWorkspace, c);
         setPreferredSize(new Dimension(800, 600));
 
-	Map<String, String> options = new TreeMap<String, String>();
-	options.put("backend", "adb");
-	mChimpChat = ChimpChat.getInstance(options);
+        Map<String, String> options = new TreeMap<String, String>();
+        options.put("backend", "adb");
+        mChimpChat = ChimpChat.getInstance(options);
         mImpl = new WookieeAPI(mChimpChat.waitForConnection());
 
         mImpl.setRunnerChimpChat(mChimpChat);
         String wookieeRunnerPath = System.getProperty("com.android.wookieerunner.bindir") +
-                File.separator + "wookieerunner";
+            File.separator + "wookieerunner";
         mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
         AsterCommand.setScriptRunner(mScriptRunner);
 
@@ -115,9 +118,9 @@ public class AsterMainPanel extends JPanel {
         thread.start();
     }
 
-    private void generateCmds(AsterCommand cmds[]) {
-        for (int i = 0; i < cmds.length; i++) {
-	    cmds[i] = new Touch(new Point(i, 2));
+    class MyListener implements CommandListener {
+        public void commandFinished(AsterCommand whichOne) {
+            System.out.println("Complete cmd:" + whichOne.getName());
         }
     }
 
@@ -143,8 +146,8 @@ public class AsterMainPanel extends JPanel {
 
         private void updateScreen() {
             IChimpImage snapshot = mImpl.takeSnapshot();
-            mImageView.setImage(snapshot.createBufferedImage());
-            mImageView.repaint(mImageView.getBounds());
+            mWorkspace.setImage(snapshot.createBufferedImage());
+            mWorkspace.repaint(mWorkspace.getBounds());
         }
     }
 }

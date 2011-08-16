@@ -36,5 +36,9 @@ public interface AsterOperation{
     /**
      * To record necessary information to AsterCommand
      */
-    public void record();
+    public void record(OperationListener listener);
+
+    public interface OperationListener {
+        public void operationFinished(AsterOperation op);
+    }
 }
