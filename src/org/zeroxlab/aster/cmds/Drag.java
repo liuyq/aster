@@ -50,6 +50,7 @@ public class Drag extends AsterCommand {
     double mTimeout = 3;
 
     public Drag() {
+        mCoordType = CoordType.FIXED;
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getOpDrag();
     }
