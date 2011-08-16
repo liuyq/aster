@@ -67,7 +67,7 @@ public class Touch extends AsterCommand {
     double mTimeout = 3;
 
     public Touch() {
-        mCoordType = CoordType.FIXED;
+        mCoordType = CoordType.AUTO;
         mTouchType = TouchType.DOWN_AND_UP;
         mPosition = new Point();
         mOps = new AsterOperation[1];
