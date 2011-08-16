@@ -50,15 +50,21 @@ import javax.swing.JOptionPane;
 public class WookieeRunner extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeRunner.class.getCanonicalName());
     private static ChimpChat chimpchat;
+    private static IChimpDevice device = null;
 
     public static void classDictInit(PyObject dict) {
         JythonUtils.convertDocAnnotationsForClass(WookieeRunner.class, dict);
     }
 
-    static void setChimpChat(ChimpChat chimp){
+    // This is a ungly hack, in oreder to get the IChimpDevice outside
+    // WookieeRunner after the connection is established.
+    static public void setChimpChat(ChimpChat chimp){
         chimpchat = chimp;
     }
 
+    static public IChimpDevice getLastChimpDevice() {
+        return device;
+    }
 
     @MonkeyRunnerExported(doc = "Waits for the workstation to connect to the device.",
             args = {"timeout", "deviceId"},
@@ -78,8 +84,7 @@ public class WookieeRunner extends PyObject implements ClassDictInit {
             timeoutMs = Long.MAX_VALUE;
         }
 
-        IChimpDevice device = chimpchat.waitForConnection(timeoutMs,
-                ap.getString(1, ".*"));
+        device = chimpchat.waitForConnection(timeoutMs, ap.getString(1, ".*"));
         WookieeDevice chimpDevice = new WookieeDevice(device);
         return chimpDevice;
     }

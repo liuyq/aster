@@ -57,10 +57,6 @@ public class WookieeAPI {
         return "/tmp/owl.png";
     }
 
-    static public void setRunnerChimpChat(ChimpChat chimpchat) {
-        WookieeRunner.setChimpChat(chimpchat);
-    }
-
     public IChimpDevice getImpl() {
         return impl;
     }

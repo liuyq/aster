@@ -18,6 +18,14 @@
 
 package org.zeroxlab.aster;
 
+import org.zeroxlab.wookieerunner.WookieeAPI;
+import org.zeroxlab.wookieerunner.WookieeRunner;
+import org.zeroxlab.wookieerunner.ScriptRunner;
+
+import com.android.chimpchat.ChimpChat;
+import com.android.chimpchat.core.IChimpDevice;
+import com.android.chimpchat.core.IChimpImage;
+
 import java.util.ArrayList;
 
 import java.io.BufferedOutputStream;
@@ -30,11 +38,18 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import java.util.Enumeration;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class AsterCommandManager {
+
+    private static ChimpChat mChimpChat;
+    private static IChimpDevice mImpl;
+    private static ScriptRunner mScriptRunner;
+
     static private void zipDir(String dir, ZipOutputStream zos)
         throws FileNotFoundException, IOException {
         File dirfile = new File(dir);
@@ -89,7 +104,7 @@ public class AsterCommandManager {
         zipFile.close();
     }
 
-    public static boolean deleteDir(File dir) {
+    static private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i=0; i<children.length; i++) {
@@ -100,6 +115,32 @@ public class AsterCommandManager {
             }
         }
         return dir.delete();
+    }
+
+    static public void connect() {
+        Map<String, String> options = new TreeMap<String, String>();
+        options.put("backend", "adb");
+        mChimpChat = ChimpChat.getInstance(options);
+        WookieeRunner.setChimpChat(mChimpChat);
+
+        String wookieeRunnerPath =
+            System.getProperty("org.zeroxlab.wookieerunner.bindir") +
+            File.separator + "wookieerunner";
+        mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
+        AsterCommand.setScriptRunner(mScriptRunner);
+
+        // Import WookieeRunnerWrapper
+        mScriptRunner.runStringLocal("import os, sys");
+        mScriptRunner.runStringLocal("sys.path.insert(0, os.getcwd())");
+        mScriptRunner.runStringLocal("from WookieeRunnerWrapper import *");
+
+        // Connect to the device and get IChimpDevice
+        mScriptRunner.runStringLocal("connect()");
+        mImpl = WookieeRunner.getLastChimpDevice();
+    }
+
+    static public IChimpImage takeSnapshot() {
+        return mImpl.takeSnapshot();
     }
     
     static public void dump(AsterCommand[] cmds, String filename)
