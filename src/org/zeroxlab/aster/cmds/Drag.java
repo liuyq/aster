@@ -57,6 +57,12 @@ public class Drag extends AsterCommand {
         mOps[0] = AsterWorkspace.getOpDrag();
     }
 
+    public Drag(SimpleBindings settings) {
+        fillSettings(settings);
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpDrag();
+    }
+
     public Drag(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
 
@@ -115,13 +121,6 @@ public class Drag extends AsterCommand {
     @Override
     public String getName() {
         return "Drag";
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Drag operation");
-        AsterOperation[] ops = new OpDrag[1];
-        return ops;
     }
 
     @Override

@@ -75,6 +75,12 @@ public class Touch extends AsterCommand {
         mOps[0] = AsterWorkspace.getOpTouch();
     }
 
+    public Touch(SimpleBindings settings) {
+        fillSettings(settings);
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpTouch();
+    }
+
     public Touch(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
 
@@ -123,11 +129,6 @@ public class Touch extends AsterCommand {
     @Override
     public String getName() {
         return "Touch";
-    }
-
-    @Override
-    public AsterOperation[] getOperations() {
-        return mOps;
     }
 
     @Override

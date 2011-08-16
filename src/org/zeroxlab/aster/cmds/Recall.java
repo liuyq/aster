@@ -27,8 +27,16 @@ import javax.script.SimpleBindings;
 public abstract class Recall extends AsterCommand {
     private String mScript;
 
+    public Recall() {
+        mScript = new String();
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpRecall();
+    }
+
     public Recall(SimpleBindings settings) {
         fillSettings(settings);
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpRecall();
     }
 
     public Recall(String argline) throws IllegalArgumentException {
@@ -39,6 +47,8 @@ public abstract class Recall extends AsterCommand {
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
+        mOps = new AsterOperation[1];
+        //mOps[0] = AsterWorkspace.getOpRecall();
     }
 
     @Override
