@@ -25,8 +25,9 @@ public class AsterMain {
     public static void main(String[] args) {
 	trySetupLookFeel();
 	JFrame f = new JFrame("Aster");
-	f.setJMenuBar(new AsterMainMenuBar());
-	f.setContentPane(new AsterMainPanel());
+        AsterMainPanel p = new AsterMainPanel();
+	f.setContentPane(p);
+	f.setJMenuBar(p.createMenuBar());
 	f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	f.pack();
 	f.setVisible(true);

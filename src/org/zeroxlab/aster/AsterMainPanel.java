@@ -93,6 +93,16 @@ public class AsterMainPanel extends JPanel {
         thread.start();
     }
 
+    public JMenuBar createMenuBar() {
+        JMenuBar menu = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        menu.add(fileMenu);
+        fileMenu.add(new JMenuItem("Open...", KeyEvent.VK_O));
+        fileMenu.add(new JMenuItem("Save...", KeyEvent.VK_S));
+        return menu;
+    }
+
     class MyListener implements CommandListener {
         public void commandFinished(AsterCommand whichOne) {
             System.out.println("Complete cmd: " + whichOne.getName());
