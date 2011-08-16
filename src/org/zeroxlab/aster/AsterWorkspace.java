@@ -69,6 +69,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private int mHeight;
 
     private boolean mValid;
+    private boolean mDragged;
     private int mPressX;
     private int mPressY;
 
@@ -113,7 +114,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sDone.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
+                        sRegion.setVisible(false);
                         sDone.setEnabled(false);
+                        repaint();
                         if (sOpListener != null) {
                             sOpListener.operationFinished(sRecordingOp);
                         } else {
@@ -171,6 +174,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         setDragListener(null);
         setTouchListener(null);
         sRecordingOp = ops[now + 1];
+        repaint();
         ops[now + 1].record(this);
     }
 
@@ -215,10 +219,15 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             return;
         }
 
+        if (mMoving != NONE) {
+            // if clicked on draggable area, just return directly
+            return;
+        }
+
         sRegion.moveC(x, y);
         x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
         y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
-        if (mTouchListener != null) {
+        if (mMoving == NONE && mTouchListener != null) {
             mTouchListener.clicked(x, y);
         } else if (mDragListener != null) {
             int ex = sRegion.pD.x;
@@ -236,12 +245,13 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public void mousePressed(MouseEvent e) {
         mPressX = e.getX();
         mPressY = e.getY();
+        mDragged = false;
 
         if (sRegion.inLT(mPressX, mPressY)) {
             mMoving = POINT_L;
         } else if (sRegion.inRB(mPressX, mPressY)) {
             mMoving = POINT_R;
-        } else if (sRegion.inD(mPressX, mPressY)) {
+        } else if (sRegion.inD(mPressX, mPressY) && mDragListener != null) {
             mMoving = POINT_D;
         } else {
             mMoving = NONE;
@@ -259,10 +269,13 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             return;
         }
 
-        /* if the drag distance too short, ignore it */
-        distance = Math.pow(rX - pX, 2);
-        distance += Math.pow(rY - pY, 2);
-        if (distance < 16) {
+        if (mTouchListener != null) {
+            /* if we are recording Touch, just return cause
+             * mouseClicked will handle it */
+            return;
+        }
+
+        if (!mDragged) {
             return;
         }
 
@@ -282,6 +295,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public void mouseDragged(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
+        mDragged = true;
         if (mMoving == POINT_L) {
             sRegion.moveL(x, y);
         } else if (mMoving == POINT_R) {
@@ -374,9 +388,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             g.setColor(Color.RED);
             g.drawRect(pL.x, pL.y, pR.x - pL.x, pR.y - pL.y);
             g.setColor(Color.BLUE);
+            g.fillOval(pC.x - (int)(W / 2), pC.y - (int)(H / 2), W, H);
+            g.setColor(Color.YELLOW);
             g.fillRect(pL.x, pL.y, W, H);
             g.fillRect(pR.x - W, pR.y - H, W, H);
-            g.fillRect(pC.x - (int)(W / 2), pC.y - (int)(H / 2), W, H);
 
             if (pD.x != -1 || pD.y != -1) {
                 g.drawLine(pC.x, pC.y, pD.x, pD.y);
@@ -456,6 +471,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             System.out.println("Set point:" + x + "," + y);
             super.set(x, y);
             sDone.setEnabled(true);
+            sRegion.setVisible(true);
+            repaint();
         }
 
         public String getName() {
@@ -477,7 +494,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 y = (int)(mImgRect.height / 2);
             }
             sRegion.moveC(x + mImgRect.x, y + mImgRect.y);
-            sRegion.setVisible(true);
+            sRegion.setVisible(false);
+            repaint();
             setTouchListener(this);
         }
     }
@@ -510,7 +528,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             }
             sRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
             sRegion.moveD(eX + mImgRect.x, eY + mImgRect.y);
-            sRegion.setVisible(true);
+            sRegion.setVisible(false);
+            repaint();
             setDragListener(this);
         }
 
@@ -527,6 +546,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                     + ") to (" + ex + "," + ey + ")");
             super.set(sx, sy, ex, ey);
             sDone.setEnabled(true);
+            sRegion.setVisible(true);
         }
     }
 }
