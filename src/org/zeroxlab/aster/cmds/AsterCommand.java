@@ -57,7 +57,7 @@ public abstract class AsterCommand {
         return src.replaceAll("'", "").replaceAll("\"", "");
     }
 
-    protected BufferedImage getImage() {
+    public BufferedImage getImage() {
         return mImage;
     }
 
