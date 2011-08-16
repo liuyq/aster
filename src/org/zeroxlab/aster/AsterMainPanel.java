@@ -76,8 +76,10 @@ public class AsterMainPanel extends JPanel {
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {
                     AsterCommand cmd = CmdSelector.selectCommand((Component)e.getSource());
-                    mActionList.getModel().pushCmd(cmd);
-                    mWorkspace.fillCmd(cmd, mCmdListener);
+                    if (cmd != null) {
+                        mActionList.getModel().pushCmd(cmd);
+                        mWorkspace.fillCmd(cmd, mCmdListener);
+                    }
                 }
             });
 

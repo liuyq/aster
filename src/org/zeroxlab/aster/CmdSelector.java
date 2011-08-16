@@ -47,11 +47,12 @@ public class CmdSelector {
             commands.keySet().toArray(),
             null);
         try {
-            return (AsterCommand)commands.get(s).getConstructor().newInstance();
+            if (s != null)
+                return (AsterCommand)commands.get(s).getConstructor().newInstance();
         } catch (Exception e) {
             System.out.println("Warning: Class cannot be instantiated");
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 }
