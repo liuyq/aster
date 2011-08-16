@@ -400,7 +400,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
         Rectangle r = new Rectangle(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
         BufferedImage buf = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
-        buf.getGraphics().drawImage(mSourceImage, r.x, r.y, r.width, r.height, null);
+        buf.getGraphics().drawImage(mSourceImage
+                                     , 0, 0, buf.getWidth(), buf.getHeight()
+                                     , r.x, r.y, r.x + r.width, r.y + r.height, null
+                                     );
         return buf;
     }
 
