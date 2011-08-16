@@ -176,13 +176,13 @@ public class AsterCommandManager {
     static public AsterCommand[] load(String zipfile)
         throws IOException {
         String dirname = zipfile.substring(0, zipfile.length() -4);
-        String filename = dirname + ".py";
+        File zipdir = new File(dirname);
+        String filename = zipdir.getName() + ".py";
         unzipDir(zipfile, dirname);
 
         ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
         try {
-            FileInputStream ist = new FileInputStream
-                                        (new File(dirname, filename));
+            FileInputStream ist = new FileInputStream(new File(dirname, filename));
 
             byte[] buf = new byte[4096];
             String data = new String();
