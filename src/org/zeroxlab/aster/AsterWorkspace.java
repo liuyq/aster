@@ -30,6 +30,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -39,6 +40,7 @@ import java.util.Vector;
 import javax.script.SimpleBindings;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterCommand.CommandListener;
@@ -57,6 +59,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public final static int PORTRAIT_HEIGHT = 400;
 
     private static JButton sDone;
+    private static JButton sHome;
+    private static JButton sMenu;
+    private static JButton sBack;
+    private static JButton sSearch;
 
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
@@ -85,6 +91,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private static MyDrag sOpDrag;
     private static MyTouch sOpTouch;
 
+    private static MainKeyListener sMainKeyListener;
     private static CommandListener sCmdListener;
     private static OperationListener sOpListener;
     private static AsterCommand sRecordingCmd;
@@ -131,6 +138,24 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sDone.setBounds(10, 10, 100, 50);
         sDone.setEnabled(false);
         add(sDone);
+
+        sBack   = new JButton("BACK");
+        sMenu   = new JButton("MENU");
+        sHome   = new JButton("HOME");
+        sSearch = new JButton("SEARCH");
+        MainKeyMonitor monitor = new MainKeyMonitor();
+        sBack.addActionListener(monitor);
+        sMenu.addActionListener(monitor);
+        sHome.addActionListener(monitor);
+        sSearch.addActionListener(monitor);
+        GridLayout grid = new GridLayout(1, 4);
+        JPanel btnPanel = new JPanel(grid);
+        btnPanel.add(sBack);
+        btnPanel.add(sMenu);
+        btnPanel.add(sHome);
+        btnPanel.add(sSearch);
+        btnPanel.setBounds(220, 10, 280, 30);
+        add(btnPanel);
     }
 
     public void setImage(BufferedImage img) {
@@ -184,6 +209,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sRecordingOp = ops[now + 1];
         repaint();
         ops[now + 1].record(this);
+    }
+
+    public void setMainKeyListener(MainKeyListener listener) {
+        sMainKeyListener = listener;
     }
 
     public void setDragListener(DragListener listener) {
@@ -379,6 +408,13 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
     public interface TouchListener {
         public void clicked(int x, int y);
+    }
+
+    public interface MainKeyListener {
+        public void onClickHome();
+        public void onClickMenu();
+        public void onClickBack();
+        public void onClickSearch();
     }
 
     public static OpTouch getOpTouch() {
@@ -594,6 +630,27 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             BufferedImage buf = createClipImage();
             settings.put("Image", buf);
             return settings;
+        }
+    }
+
+    private class MainKeyMonitor implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (sMainKeyListener == null) {
+                return;
+            }
+
+            Object o = e.getSource();
+            if (o == sHome) {
+                sMainKeyListener.onClickHome();
+            } else if (o == sMenu) {
+                sMainKeyListener.onClickMenu();
+            } else if (o == sBack) {
+                sMainKeyListener.onClickBack();
+            } else if (o == sSearch) {
+                sMainKeyListener.onClickSearch();
+            } else {
+                System.err.println("Clicked an unknow button");
+            }
         }
     }
 }
