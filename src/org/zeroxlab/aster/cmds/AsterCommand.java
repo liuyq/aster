@@ -57,6 +57,10 @@ public abstract class AsterCommand {
         return src.replaceAll("'", "").replaceAll("\"", "");
     }
 
+    protected BufferedImage getImage() {
+        return mImage;
+    }
+
     protected void saveImage(String prefix) throws IOException {
         if (mImage != null) {
             File pngfile = new File(prefix, String.format("%d.png", mSerial));
