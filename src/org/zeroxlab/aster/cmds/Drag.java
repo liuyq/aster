@@ -115,9 +115,7 @@ public class Drag extends AsterCommand {
 
     @Override
     public AsterOperation[] getOperations() {
-        System.out.println("Drag operation");
-        AsterOperation[] ops = new OpDrag[1];
-        return ops;
+        return mOps;
     }
 
     @Override
