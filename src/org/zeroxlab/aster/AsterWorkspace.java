@@ -30,13 +30,17 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
+import javax.script.SimpleBindings;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterCommand.CommandListener;
@@ -55,6 +59,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public final static int PORTRAIT_HEIGHT = 400;
 
     private static JButton sDone;
+    private static JButton sHome;
+    private static JButton sMenu;
+    private static JButton sBack;
+    private static JButton sSearch;
 
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
@@ -83,6 +91,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private static MyDrag sOpDrag;
     private static MyTouch sOpTouch;
 
+    private static MainKeyListener sMainKeyListener;
     private static CommandListener sCmdListener;
     private static OperationListener sOpListener;
     private static AsterCommand sRecordingCmd;
@@ -116,6 +125,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                     public void actionPerformed(ActionEvent e) {
                         sRegion.setVisible(false);
                         sDone.setEnabled(false);
+                        mDragListener = null;
+                        mTouchListener = null;
                         repaint();
                         if (sOpListener != null) {
                             sOpListener.operationFinished(sRecordingOp);
@@ -127,6 +138,24 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sDone.setBounds(10, 10, 100, 50);
         sDone.setEnabled(false);
         add(sDone);
+
+        sBack   = new JButton("BACK");
+        sMenu   = new JButton("MENU");
+        sHome   = new JButton("HOME");
+        sSearch = new JButton("SEARCH");
+        MainKeyMonitor monitor = new MainKeyMonitor();
+        sBack.addActionListener(monitor);
+        sMenu.addActionListener(monitor);
+        sHome.addActionListener(monitor);
+        sSearch.addActionListener(monitor);
+        GridLayout grid = new GridLayout(1, 4);
+        JPanel btnPanel = new JPanel(grid);
+        btnPanel.add(sBack);
+        btnPanel.add(sMenu);
+        btnPanel.add(sHome);
+        btnPanel.add(sSearch);
+        btnPanel.setBounds(220, 10, 280, 30);
+        add(btnPanel);
     }
 
     public void setImage(BufferedImage img) {
@@ -162,6 +191,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
 
         if (now == ops.length -1) { // tail
+            for (int i = 0; i < ops.length; i++) {
+                sRecordingCmd.fillSettings(ops[i].getSettings());
+            }
+
             if (sCmdListener != null) {
                 sCmdListener.commandFinished(sRecordingCmd);
             }
@@ -176,6 +209,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sRecordingOp = ops[now + 1];
         repaint();
         ops[now + 1].record(this);
+    }
+
+    public void setMainKeyListener(MainKeyListener listener) {
+        sMainKeyListener = listener;
     }
 
     public void setDragListener(DragListener listener) {
@@ -205,6 +242,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         mHeight = getHeight();
         generateDrawingBuffer();
         updateDrawingBuffer(mSourceImage);
+        sRegion.setVisible(false);
+        sDone.setEnabled(false);
         repaint();
     }
 
@@ -283,12 +322,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             sRegion.moveC(mPressX, mPressY);
             sRegion.moveD(e.getX(), e.getY());
         }
-        pX = (int)((mSourceWidth  * (sRegion.pC.x - mImgRect.x)) / mImgRect.width);
-        pY = (int)((mSourceHeight * (sRegion.pC.y - mImgRect.y)) / mImgRect.height);
-        rX = (int)((mSourceWidth  * (sRegion.pD.x - mImgRect.x)) / mImgRect.width);
-        rY = (int)((mSourceHeight * (sRegion.pD.y - mImgRect.y)) / mImgRect.height);
+
+        Point pressOnSource   = convertPointW2Img(sRegion.pC.x, sRegion.pC.y);
+        Point releaseOnSource = convertPointW2Img(sRegion.pD.x, sRegion.pD.y);
         if (mDragListener != null){
-            mDragListener.dragged(pX, pY, rX, rY);
+            mDragListener.dragged(pressOnSource.x, pressOnSource.y, releaseOnSource.x, releaseOnSource.y);
         }
     }
 
@@ -307,6 +345,20 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     }
 
     public void mouseMoved(MouseEvent e) {
+    }
+
+    /* The source image will be resized and drawed on Workspace.
+     * Convert the point on workspace to the point on the original image */
+    private Point convertPointW2Img(int workspaceX, int workspaceY) {
+        int iX, iY;
+        iX = (int)((mSourceWidth  * (workspaceX - mImgRect.x)) / mImgRect.width);
+        iY = (int)((mSourceHeight * (workspaceY - mImgRect.y)) / mImgRect.height);
+
+        iX = Math.min(iX, mSourceWidth);
+        iY = Math.min(iY, mSourceHeight);
+        iX = Math.max(iX, 0);
+        iY = Math.max(iY, 0);
+        return new Point(iX, iY);
     }
 
     private void generateDrawingBuffer() {
@@ -343,12 +395,28 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 );
     }
 
+    private BufferedImage createClipImage() {
+        Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
+        Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
+        Rectangle r = new Rectangle(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
+        BufferedImage buf = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
+        buf.getGraphics().drawImage(mSourceImage, r.x, r.y, r.width, r.height, null);
+        return buf;
+    }
+
     public interface DragListener {
         public void dragged(int startX, int startY, int endX, int endY);
     }
 
     public interface TouchListener {
         public void clicked(int x, int y);
+    }
+
+    public interface MainKeyListener {
+        public void onClickHome();
+        public void onClickMenu();
+        public void onClickBack();
+        public void onClickSearch();
     }
 
     public static OpTouch getOpTouch() {
@@ -498,6 +566,14 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             repaint();
             setTouchListener(this);
         }
+
+        public SimpleBindings getSettings() {
+            SimpleBindings settings = new SimpleBindings();
+            settings.put("Pos", super.getPoint());
+            BufferedImage buf = createClipImage();
+            settings.put("Image", buf);
+            return settings;
+        }
     }
 
     class MyDrag extends OpDrag implements DragListener {
@@ -547,6 +623,36 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             super.set(sx, sy, ex, ey);
             sDone.setEnabled(true);
             sRegion.setVisible(true);
+        }
+
+        public SimpleBindings getSettings() {
+            SimpleBindings settings = new SimpleBindings();
+            settings.put("StartPos", super.getStart());
+            settings.put("EndPos", super.getEnd());
+            BufferedImage buf = createClipImage();
+            settings.put("Image", buf);
+            return settings;
+        }
+    }
+
+    private class MainKeyMonitor implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (sMainKeyListener == null) {
+                return;
+            }
+
+            Object o = e.getSource();
+            if (o == sHome) {
+                sMainKeyListener.onClickHome();
+            } else if (o == sMenu) {
+                sMainKeyListener.onClickMenu();
+            } else if (o == sBack) {
+                sMainKeyListener.onClickBack();
+            } else if (o == sSearch) {
+                sMainKeyListener.onClickSearch();
+            } else {
+                System.err.println("Clicked an unknow button");
+            }
         }
     }
 }

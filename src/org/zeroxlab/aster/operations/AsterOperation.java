@@ -20,6 +20,8 @@
 
 package org.zeroxlab.aster;
 
+import javax.script.SimpleBindings;
+
 /**
  * In general, AsterOperation describe an operation to GUI, such as
  * Drag or Click.
@@ -37,6 +39,11 @@ public interface AsterOperation{
      * To record necessary information to AsterCommand
      */
     public void record(OperationListener listener);
+
+    /**
+     * Get settings which is record by this operation
+     */
+    public SimpleBindings getSettings();
 
     public interface OperationListener {
         public void operationFinished(AsterOperation op);

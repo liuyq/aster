@@ -148,16 +148,30 @@ public class Touch extends AsterCommand {
 
     @Override
     public void fillSettings(SimpleBindings settings) {
-        mCoordType = (CoordType)settings.get("CoordType");
-        if (mCoordType == CoordType.AUTO) {
-            mImage = (BufferedImage)settings.get("Image");
-        } else {
-            mPosition = (Point)settings.get("Pos");
+        if (settings.containsKey("CoordType")) {
+            mCoordType = (CoordType)settings.get("CoordType");
         }
-        mTouchType = (TouchType)settings.get("Type");
-        mTimeout = (Double)settings.get("Timeout");
-        mLandscape = (Boolean)settings.get("Landscape");
-        mSerial = (Integer)settings.get("Serial");
+        if (mCoordType == CoordType.AUTO) {
+            if (settings.containsKey("Image")) {
+                mImage = (BufferedImage)settings.get("Image");
+            }
+        } else {
+            if (settings.containsKey("Pos")) {
+                mPosition = (Point)settings.get("Pos");
+            }
+        }
+        if (settings.containsKey("Type")) {
+            mTouchType = (TouchType)settings.get("Type");
+        }
+        if (settings.containsKey("Timeout")) {
+            mTimeout = (Double)settings.get("Timeout");
+        }
+        if (settings.containsKey("Landscape")) {
+            mLandscape = (Boolean)settings.get("Landscape");
+        }
+        if (settings.containsKey("Serial")) {
+            mSerial = (Integer)settings.get("Serial");
+        }
     }
 
     @Override

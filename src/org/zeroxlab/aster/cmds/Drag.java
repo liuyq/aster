@@ -142,19 +142,41 @@ public class Drag extends AsterCommand {
 
     @Override
     public void fillSettings(SimpleBindings settings) {
-        mCoordType = (CoordType)settings.get("CoordType");
-        if (mCoordType == CoordType.AUTO) {
-            mImage = (BufferedImage)settings.get("Image");
-            mEndPosition = (Point)settings.get("Offset");
-        } else {
-            mStartPosition = (Point)settings.get("StartPos");
-            mEndPosition = (Point)settings.get("EndPos");
+        if (settings.containsKey("CoordType")) {
+            mCoordType = (CoordType)settings.get("CoordType");
         }
-        mDuration = (Double)settings.get("Duration");
-        mSteps = (Integer)settings.get("Steps");
-        mTimeout = (Double)settings.get("Timeout");
-        mLandscape = (Boolean)settings.get("Landscape");
-        mSerial = (Integer)settings.get("Serial");
+
+        if (mCoordType == CoordType.AUTO) {
+            if (settings.containsKey("Image")) {
+                mImage = (BufferedImage)settings.get("Image");
+            }
+            if (settings.containsKey("Offset")) {
+                mEndPosition = (Point)settings.get("Offset");
+            }
+        } else {
+            if (settings.containsKey("StartPos")) {
+                mStartPosition = (Point)settings.get("StartPos");
+            }
+            if (settings.containsKey("EndPos")) {
+                mEndPosition = (Point)settings.get("EndPos");
+            }
+        }
+
+        if (settings.containsKey("Duration")) {
+            mDuration = (Double)settings.get("Duration");
+        }
+        if (settings.containsKey("Steps")) {
+            mSteps = (Integer)settings.get("Steps");
+        }
+        if (settings.containsKey("Timeout")) {
+            mTimeout = (Double)settings.get("Timeout");
+        }
+        if (settings.containsKey("Landscape")) {
+            mLandscape = (Boolean)settings.get("Landscape");
+        }
+        if (settings.containsKey("Serial")) {
+            mSerial = (Integer)settings.get("Serial");
+        }
     }
 
     @Override
