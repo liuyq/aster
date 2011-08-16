@@ -242,6 +242,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         mHeight = getHeight();
         generateDrawingBuffer();
         updateDrawingBuffer(mSourceImage);
+        sRegion.setVisible(false);
+        sDone.setEnabled(false);
         repaint();
     }
 
