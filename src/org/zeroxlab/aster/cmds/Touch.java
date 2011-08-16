@@ -101,6 +101,8 @@ public class Touch extends AsterCommand {
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpTouch();
     }
 
     public Point getPos() {

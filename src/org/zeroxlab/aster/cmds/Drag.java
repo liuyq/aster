@@ -90,6 +90,8 @@ public class Drag extends AsterCommand {
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
+        mOps = new AsterOperation[1];
+        mOps[0] = AsterWorkspace.getOpDrag();
     }
 
     public Point getStartPos() {
