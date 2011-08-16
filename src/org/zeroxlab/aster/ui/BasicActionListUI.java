@@ -297,8 +297,7 @@ public class BasicActionListUI extends ActionListUI {
             mCommand = cmd;
             mFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
             mFontBox = new Rectangle();
-            if (mCommand.getSettings() != null)
-                mClipImage = (BufferedImage)mCommand.getSettings().get("Image");
+            mClipImage = mCommand.getImage();
         }
 
         public Dimension getMinimumSize() {
