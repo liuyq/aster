@@ -149,6 +149,7 @@ public class Drag extends AsterCommand {
         if (mCoordType == CoordType.AUTO) {
             if (settings.containsKey("Image")) {
                 mImage = (BufferedImage)settings.get("Image");
+                mSerial = mSeqNext++;
             }
             if (settings.containsKey("Offset")) {
                 mEndPosition = (Point)settings.get("Offset");
@@ -173,9 +174,6 @@ public class Drag extends AsterCommand {
         }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
-        }
-        if (settings.containsKey("Serial")) {
-            mSerial = (Integer)settings.get("Serial");
         }
     }
 

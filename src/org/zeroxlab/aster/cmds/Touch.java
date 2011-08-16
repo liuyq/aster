@@ -154,6 +154,7 @@ public class Touch extends AsterCommand {
         if (mCoordType == CoordType.AUTO) {
             if (settings.containsKey("Image")) {
                 mImage = (BufferedImage)settings.get("Image");
+                mSerial = mSeqNext++;
             }
         } else {
             if (settings.containsKey("Pos")) {
@@ -168,9 +169,6 @@ public class Touch extends AsterCommand {
         }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
-        }
-        if (settings.containsKey("Serial")) {
-            mSerial = (Integer)settings.get("Serial");
         }
     }
 
