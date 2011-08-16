@@ -50,7 +50,7 @@ public class AsterCommandManager {
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
 
-    static private void zipDir(String dir, ZipOutputStream zos)
+    static private void zipDir(File prefix, String dir, ZipOutputStream zos)
         throws FileNotFoundException, IOException {
         File dirfile = new File(dir);
         String[] dirlist = dirfile.list();
@@ -61,12 +61,13 @@ public class AsterCommandManager {
             File f = new File(dirfile, dirlist[i]);
 
             if (f.isDirectory()) {
-                zipDir(f.getPath(), zos);
+                zipDir(prefix, f.getPath(), zos);
                 continue;
             }
 
             FileInputStream fis = new FileInputStream(f);
-            ZipEntry ent = new ZipEntry(f.getPath());
+            String rpath = prefix.toURI().relativize(f.toURI()).getPath();
+            ZipEntry ent = new ZipEntry(rpath);
             zos.putNextEntry(ent);
             while ((len = fis.read(buffer)) != -1) {
                 zos.write(buffer, 0, len);
@@ -75,26 +76,26 @@ public class AsterCommandManager {
         }
     }
 
-    static private void unzipDir(String zipfile, String target)
+    static private void unzipDir(String zipfile, String prefix)
         throws IOException {
         Enumeration entries;
         ZipFile zipFile = new ZipFile(zipfile);
         byte[] buffer = new byte[4096];
         int len = 0;
 
-        (new File(target)).mkdirs();
+        (new File(prefix)).mkdirs();
         entries = zipFile.entries();
 
-        while(entries.hasMoreElements()) {
+        while (entries.hasMoreElements()) {
             ZipEntry entry = (ZipEntry)entries.nextElement();
             if(entry.isDirectory()) {
-                (new File(entry.getName())).mkdir();
+                (new File(prefix, entry.getName())).mkdir();
                 continue;
             }
 
             InputStream is = zipFile.getInputStream(entry);
-            OutputStream os = new BufferedOutputStream
-                                    (new FileOutputStream(entry.getName()));
+            OutputStream os = new BufferedOutputStream(new FileOutputStream
+                               ((new File(prefix, entry.getName())).getPath()));
             while ((len = is.read(buffer)) > 0) {
                 os.write(buffer, 0, len);
             }
@@ -165,7 +166,7 @@ public class AsterCommandManager {
         try {
             ZipOutputStream zos = new ZipOutputStream
                                         (new FileOutputStream(filename));
-            zipDir(dirname, zos);
+            zipDir(new File(dirname), dirname, zos);
             zos.close();
             deleteDir(new File(dirname));
         } catch(FileNotFoundException e) {
