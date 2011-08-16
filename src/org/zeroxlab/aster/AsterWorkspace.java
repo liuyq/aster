@@ -118,6 +118,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                     public void actionPerformed(ActionEvent e) {
                         sRegion.setVisible(false);
                         sDone.setEnabled(false);
+                        mDragListener = null;
+                        mTouchListener = null;
                         repaint();
                         if (sOpListener != null) {
                             sOpListener.operationFinished(sRecordingOp);
