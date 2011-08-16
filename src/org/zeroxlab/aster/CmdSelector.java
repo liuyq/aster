@@ -20,49 +20,38 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.Point;
-import java.awt.event.MouseListener;
-import java.util.Vector;
-
-import org.zeroxlab.aster.AsterWorkspace;
-import org.zeroxlab.aster.Touch;
+import java.util.*;
+import java.awt.*;
+import javax.swing.*;
 
 public class CmdSelector {
 
-    String[] mNames;
-    AsterWorkspace mWorkspace;
-
-    CmdSelector(AsterWorkspace workspace) {
-        mNames = new String[2];
-        mNames[0] = "Touch";
-        mNames[1] = "Drag";
-        mWorkspace = workspace;
-    }
-
-    public static String getMsg() {
-        return "選擇要加入的動作";
-    }
-
-    public static String getTitle() {
-        return "新增動作";
-    }
-
-    public Object[] getCmdNames() {
-        return mNames;
-    }
-
-    public Object getDefValue() {
-        return mNames[0];
-    }
-
-    public AsterCommand selectCmd(int i) {
-        if (i == 0) {
-            return new Touch();
-        } else if (i == 1) {
-            return new Drag();
+    static final Map<String, Class> commands = new LinkedHashMap<String, Class>()
+    {
+        {
+            put("Touch", Touch.class);
+            put("Drag", Drag.class);
+            put("Press", Press.class);
+            put("Type", Type.class);
+            put("Recall", Recall.class);
         }
+    };
 
-        System.err.println("Unknow index:" + i);
-        return null;
+    static public AsterCommand selectCommand(Component parent) {
+        String s = (String)JOptionPane.showInputDialog(
+            parent,
+            "Select next command",
+            "New Command",
+            JOptionPane.PLAIN_MESSAGE,
+            null,
+            commands.keySet().toArray(),
+            null);
+        try {
+            return (AsterCommand)commands.get(s).getConstructor().newInstance();
+        } catch (Exception e) {
+            System.out.println("Warning: Class cannot be instantiated");
+            e.printStackTrace();
+            return null;
+        }
     }
 }

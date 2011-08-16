@@ -37,7 +37,6 @@ import javax.script.SimpleBindings;
 public class AsterMainPanel extends JPanel {
 
     private AsterWorkspace mWorkspace;
-    private CmdSelector mSelector;
     private JActionList mActionList;
 
     private ChimpChat mChimpChat;
@@ -74,20 +73,9 @@ public class AsterMainPanel extends JPanel {
         add(scrollPane, c);
         mWorkspace = new AsterWorkspace();
         mActionList.getModel().setRecall(new Touch());
-        mSelector = new CmdSelector(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {
-                    int s = JOptionPane.showOptionDialog(
-                        (JComponent)e.getSource(),
-                        mSelector.getMsg(),
-                        mSelector.getTitle(),
-                        JOptionPane.OK_CANCEL_OPTION,
-                        JOptionPane.PLAIN_MESSAGE,
-                        null,
-                        mSelector.getCmdNames(),
-                        mSelector.getDefValue());
-
-                    AsterCommand cmd = mSelector.selectCmd(s);
+                    AsterCommand cmd = CmdSelector.selectCommand((Component)e.getSource());
                     mActionList.getModel().pushCmd(cmd);
                     mWorkspace.fillCmd(cmd, mCmdListener);
                 }
