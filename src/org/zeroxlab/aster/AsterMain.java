@@ -23,35 +23,31 @@ import javax.swing.*;
 public class AsterMain {
 
     public static void main(String[] args) {
-	trySetupLookFeel();
-	JFrame f = new JFrame("Aster");
+        trySetupLookFeel();
+        JFrame f = new JFrame("Aster");
         AsterMainPanel p = new AsterMainPanel();
-	f.setContentPane(p);
-	f.setJMenuBar(p.createMenuBar());
-	f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	f.pack();
-	f.setVisible(true);
+        f.setContentPane(p);
+        f.setJMenuBar(p.createMenuBar());
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.pack();
+        f.setVisible(true);
     }
 
     static void trySetupLookFeel() {
-	System.setProperty("awt.useSystemAAFontSettings","on");
-	System.setProperty("swing.aatext", "true");
-	try {
-	    // Set System L&F
-	    UIManager.setLookAndFeel(
-		"com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
-	} 
-	catch (UnsupportedLookAndFeelException e) {
-	    // handle exception
-	}
-	catch (ClassNotFoundException e) {
-	    // handle exception
-	}
-	catch (InstantiationException e) {
-	    // handle exception
-	}
-	catch (IllegalAccessException e) {
-	    // handle exception
-	}
+        System.setProperty("awt.useSystemAAFontSettings","on");
+        System.setProperty("swing.aatext", "true");
+        try {
+            // Set System L&F
+            UIManager.setLookAndFeel(
+                "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+        } catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+        } catch (ClassNotFoundException e) {
+            // handle exception
+        } catch (InstantiationException e) {
+            // handle exception
+        } catch (IllegalAccessException e) {
+            // handle exception
+        }
     }
 }
