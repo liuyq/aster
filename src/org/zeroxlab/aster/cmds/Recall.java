@@ -57,13 +57,6 @@ public abstract class Recall extends AsterCommand {
     }
 
     @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Get Operation");
-        AsterOperation[] foo = new AsterOperation[1];
-        return foo;
-    }
-
-    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Recall");

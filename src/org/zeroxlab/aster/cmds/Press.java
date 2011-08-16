@@ -86,13 +86,6 @@ public class Press extends AsterCommand {
     }
 
     @Override
-    public AsterOperation[] getOperations() {
-        System.out.println("Press operation");
-        AsterOperation[] ops = new OpSelectKey[1];
-        return ops;
-    }
-
-    @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Press");
