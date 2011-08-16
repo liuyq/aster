@@ -32,6 +32,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.Raster;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.Vector;
@@ -361,6 +362,15 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 );
     }
 
+    private BufferedImage createClipImage() {
+        Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
+        Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
+        Rectangle r = new Rectangle(lt.x, lt.y, rb.x - lt.x, rb.y - lt.y);
+        BufferedImage buf = new BufferedImage(r.width, r.height, BufferedImage.TYPE_INT_ARGB);
+        buf.getGraphics().drawImage(mSourceImage, r.x, r.y, r.width, r.height, null);
+        return buf;
+    }
+
     public interface DragListener {
         public void dragged(int startX, int startY, int endX, int endY);
     }
@@ -520,7 +530,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         public SimpleBindings getSettings() {
             SimpleBindings settings = new SimpleBindings();
             settings.put("Pos", super.getPoint());
-            return null;
+            BufferedImage buf = createClipImage();
+            settings.put("Image", buf);
+            return settings;
         }
     }
 
@@ -577,6 +589,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             SimpleBindings settings = new SimpleBindings();
             settings.put("StartPos", super.getStart());
             settings.put("EndPos", super.getEnd());
+            BufferedImage buf = createClipImage();
+            settings.put("Image", buf);
             return settings;
         }
     }
