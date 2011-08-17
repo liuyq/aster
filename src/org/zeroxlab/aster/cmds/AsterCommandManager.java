@@ -44,6 +44,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.python.core.PyException;
+
 public class AsterCommandManager {
 
     private static ChimpChat mChimpChat;
@@ -119,9 +121,7 @@ public class AsterCommandManager {
     }
 
     static public void connect() {
-        Map<String, String> options = new TreeMap<String, String>();
-        options.put("backend", "adb");
-        mChimpChat = ChimpChat.getInstance(options);
+        mChimpChat = ChimpChat.getInstance();
         WookieeRunner.setChimpChat(mChimpChat);
 
         String wookieeRunnerPath =
@@ -142,6 +142,24 @@ public class AsterCommandManager {
 
     static public IChimpImage takeSnapshot() {
         return mImpl.takeSnapshot();
+    }
+
+    static public void run(String astfile)
+        throws IOException {
+        AsterCommand[] cmds = AsterCommandManager.load(astfile);
+        String prefix = astfile.substring(0, astfile.length() -4);
+
+        AsterCommandManager.connect();
+        System.setProperty("user.dir", prefix);
+        System.out.printf("Staring command execution...\n");
+        try {
+            for (AsterCommand c: cmds) {
+                System.err.println(c.toScript());
+                c.execute();
+            }
+        } catch (PyException e) {
+            System.out.printf("%s\n", e);
+        }
     }
     
     static public void dump(AsterCommand[] cmds, String filename)
