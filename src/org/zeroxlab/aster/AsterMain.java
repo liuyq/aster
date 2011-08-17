@@ -29,22 +29,25 @@ public class AsterMain {
     public static void main(String[] args) {
         if (args.length > 0) {
             try {
-                if (args[0] == "-run") {
+                if ("-run".equals(args[0])) {
                     startCLI(args[1]);
                 }
-                startCLI(args[1]);
             } catch(ArrayIndexOutOfBoundsException e) {
                 usage();
-            } catch(IOException e) {
-                System.err.printf(e.toString());
             }
         } else {
             startGUI();
         }
     }
 
-    public static void startCLI(String script) throws IOException {
-        AsterCommandManager.run(script);
+    public static void startCLI(String script) {
+        try {
+            AsterCommandManager.run(script);
+        } catch(IOException e) {
+            System.err.printf(e.toString());
+            System.exit(1);
+        }
+        System.exit(0);
     }
 
     public static void startGUI() {
