@@ -172,6 +172,22 @@ public class WookieeAPI {
         impl.type(text);
     }
 
+    public void iassert(String name, double timeout)
+        throws FileNotFoundException, TemplateNotFoundException {
+        long st = System.nanoTime();
+        MatchResult r = new MatchResult();
+        while (true) {
+            try {
+                r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
+            } catch (TemplateNotFoundException e) {
+                if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
+                    throw e;
+                continue;
+            }
+            break;
+        }
+    }
+
     public void shell(String cmd) {
         impl.shell(cmd);
     }

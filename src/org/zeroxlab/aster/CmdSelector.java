@@ -34,6 +34,7 @@ public class CmdSelector {
             put("Press", Press.class);
             put("Type", Type.class);
             put("Recall", Recall.class);
+            put("Assert", Assert.class);
         }
     };
 
