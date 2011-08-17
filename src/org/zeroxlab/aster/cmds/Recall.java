@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 
 import javax.script.SimpleBindings;
 
-public abstract class Recall extends AsterCommand {
+public class Recall extends AsterCommand {
     private String mScript;
 
     public Recall() {
