@@ -1,8 +1,10 @@
 #!/bin/bash
 
-absolute_dir="$( cd "$( dirname "$0" )" && pwd )"
-jarpath="$absolute_dir/wookieerunner.jar"
-android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
-framework=$absolute_dir:$android_framework_dir
+export LD_LIBRARY_PATH=$PWD/lib/linux-`uname -m`
 
-exec java -Xmx128M -Djava.ext.dirs="$framework" -Dcom.android.wookieerunner.bindir="$progdir" -jar "$jarpath" "$@"
+absolute_dir="$( cd "$( dirname "$0" )" && pwd )"
+jarpath="$absolute_dir/jar/wookieerunner.jar"
+android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
+framework=$absolute_dir/jar:$android_framework_dir
+
+exec java -Xmx128M -Djava.ext.dirs="$framework" -Dorg.zeroxlab.wookieerunner.bindir="$absolute_dir" -jar "$jarpath" "$@"

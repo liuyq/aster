@@ -1,9 +1,11 @@
 #!/bin/bash
 
+export LD_LIBRARY_PATH=$PWD/lib/linux-`uname -m`
+
 absolute_dir="$( cd "$( dirname "$0" )" && pwd )"
-jarpath="$absolute_dir/aster.jar"
+jarpath="$absolute_dir/jar/aster.jar"
 android_framework_dir=`grep framework $absolute_dir/../*.properties | cut -d '=' -f 2`
-framework=$absolute_dir:$android_framework_dir
+framework=$absolute_dir/jar:$android_framework_dir
 
 debug_parameters=""
 
@@ -15,4 +17,4 @@ if [ z"$1" == z"-debug" ]; then
     echo "$ jdb -attach 127.0.0.1:5487"
 fi
 
-exec java $debug_parameters -Xmx128M -Djava.ext.dirs="$framework" -Dcom.android.wookieerunner.bindir="$progdir" -jar "$jarpath" "$@"
+exec java $debug_parameters -Xmx128M -Djava.ext.dirs="$framework" -Dorg.zeroxlab.wookieerunner.bindir="$absolute_dir" -jar "$jarpath" "$@"
