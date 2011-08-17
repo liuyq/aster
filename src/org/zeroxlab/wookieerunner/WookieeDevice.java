@@ -274,6 +274,26 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         impl.type(message);
     }
 
+    @MonkeyRunnerExported(doc = "Image assertion",
+            args = { "name", "timeout" },
+            argDocs = { "name name of the image",
+                        "timeout timeout before assertion failed"})
+    public void iassert(PyObject[] args, String[] kws) {
+        ArgParser ap = JythonUtils.createArgParser(args, kws);
+        Preconditions.checkNotNull(ap);
+
+        String name = ap.getString(0);
+        double timeout = JythonUtils.getFloat(ap, 1, default_timeout);
+
+        try {
+            wookiee.iassert(name, timeout);
+        } catch (FileNotFoundException e) {
+            throw new PyException(Py.IOError, e.toString());
+        } catch (TemplateNotFoundException e) {
+            throw new PyException(Py.KeyError, "Template not found");
+        }
+    }
+
     @MonkeyRunnerExported(doc = "Executes an adb shell command and returns the result, if any.",
             args = { "cmd"},
             argDocs = { "The adb shell command to execute." },
