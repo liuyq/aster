@@ -234,6 +234,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         mTouchListener = listener;
     }
 
+    public void setCommandListener(CommandListener listener) {
+        sCmdListener = listener;
+    }
+
     public void paintComponent(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, mWidth, mHeight);
@@ -413,7 +417,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             last = iterator.next();
         }
 
-        fillCmd(last, null);
+        fillCmd(last, sCmdListener);
     }
 
     private void updateDrawingBuffer(BufferedImage source) {
