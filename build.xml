@@ -119,11 +119,12 @@
                 <fileset dir="${framework.dir}" includes="**/*.jar"/>
             </classpath>
         </javac>
+        <copy file="src/python/WookieeRunnerWrapper.py" todir="${build.classes.dir}"/>
     </target>
     <target name="-jar-wookieerunner" depends="-compile-wookieerunner">
         <jar destfile="${dist.dir}/wookieerunner.jar"
              basedir="${build.classes.dir}"
-             includes="org/zeroxlab/wookieerunner/**/*.class"
+             includes="org/zeroxlab/wookieerunner/**/*.class,**/*.py"
              manifest="etc/wookieerunner/manifest.txt"/>
     </target>
 
@@ -158,7 +159,6 @@
 
     <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-ninepatch,-jar-owl,-jar-wookieerunner,-jar-aster"/>
     <target name="dist" depends="jar">
-        <copy file="src/python/WookieeRunnerWrapper.py" todir="${dist.dir}"/>
         <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
         <copy file="etc/aster/aster" todir="${dist.dir}"/>
         <chmod file="${dist.dir}/wookieerunner" perm="ugo+x"/>
