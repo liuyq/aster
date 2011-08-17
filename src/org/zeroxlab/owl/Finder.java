@@ -35,7 +35,7 @@ public class Finder {
                                        String needle)
         throws FileNotFoundException, TemplateNotFoundException {
         String pre = System.getProperty("user.dir");
-        IplImage img = cvLoadImage(new File(pre, haystack).getAbsolutePath());
+        IplImage img = cvLoadImage(haystack);
         IplImage tmpl = cvLoadImage(new File(pre, needle).getAbsolutePath());
 
         if (img == null)
