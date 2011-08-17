@@ -107,6 +107,10 @@ public class DefaultActionListModel implements ActionListModel {
         actionList.clear();
     }
 
+    public void trigger() {
+        fireStateChanged();
+    }
+
     public AsterCommand[] toArray() {
         AsterCommand[] commands = new AsterCommand[actionList.size()+1];
         commands[0] = recall;
