@@ -36,12 +36,16 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Iterator;
 import java.util.Vector;
 import javax.script.SimpleBindings;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.zeroxlab.aster.ActionListModel;
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterCommand.CommandListener;
 import org.zeroxlab.aster.AsterOperation.OperationListener;
@@ -51,6 +55,7 @@ import org.zeroxlab.aster.OpTouch;
 public class AsterWorkspace extends JComponent implements ComponentListener
                                                          , MouseListener
                                                          , MouseMotionListener
+                                                         , ChangeListener
                                                          , AsterOperation.OperationListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
@@ -382,6 +387,27 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 || mDrawingBuffer.getHeight() != mImgRect.height) {
             mDrawingBuffer = new BufferedImage(mImgRect.width, mImgRect.height, BufferedImage.TYPE_INT_ARGB);
         }
+    }
+
+    public void stateChanged(ChangeEvent e) {
+        if (!(e.getSource() instanceof ActionListModel)) {
+            System.err.println("The source is not an ActionListModel");
+            return;
+        }
+
+        ActionListModel model = (ActionListModel) e.getSource();
+
+        if (model.empty()) {
+            return;
+        }
+
+        Iterator<AsterCommand> iterator = model.getCommands().iterator();
+        AsterCommand last = null;
+        while(iterator.hasNext()) {
+            last = iterator.next();
+        }
+
+        fillCmd(last, null);
     }
 
     private void updateDrawingBuffer(BufferedImage source) {
