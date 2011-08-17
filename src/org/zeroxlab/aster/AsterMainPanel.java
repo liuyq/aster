@@ -34,6 +34,16 @@ import javax.script.SimpleBindings;
 
 public class AsterMainPanel extends JPanel {
 
+    static JStatusBar mStatus = new JStatusBar();
+
+    public static void status(String msg) {
+        mStatus.setStatus(msg);
+    }
+
+    public static void message(String msg) {
+        mStatus.message(msg);
+    }
+
     private enum ExecutionState { NORMAL, EXECUTION }
 
     private AsterWorkspace mWorkspace;
@@ -86,6 +96,15 @@ public class AsterMainPanel extends JPanel {
         c.weightx = 0.5;
         c.weighty = 0.5;
         add(mWorkspace, c);
+
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 4;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        add(mStatus, c);
+
         setPreferredSize(new Dimension(800, 600));
 
         mCmdConn = new CmdConn();
@@ -175,6 +194,7 @@ public class AsterMainPanel extends JPanel {
                     updateScreen();
                 } else {
                     System.err.printf("Staring command execution...\n");
+                    AsterMainPanel.message("Staring command execution...");
                     try {
                         for (AsterCommand c: mCmds) {
                             System.err.println(c.toScript());
@@ -190,6 +210,7 @@ public class AsterMainPanel extends JPanel {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
                     System.err.println("Update Screen thread is interrupted");
+                    AsterMainPanel.message("Update Screen thread is interrupted");
                     e.printStackTrace();
                 }
             }
