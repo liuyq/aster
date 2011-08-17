@@ -205,7 +205,9 @@ public class AsterMainPanel extends JPanel {
 
         public void run() {
             mState = ExecutionState.NORMAL;
+            AsterMainPanel.message("Connecting to device...");
             AsterCommandManager.connect();
+            AsterMainPanel.message("Connected");
 
             while(mKeepWalking) {
                 if (mState == ExecutionState.NORMAL) {
