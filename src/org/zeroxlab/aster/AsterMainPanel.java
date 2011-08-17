@@ -36,12 +36,20 @@ public class AsterMainPanel extends JPanel {
 
     static JStatusBar mStatus = new JStatusBar();
 
-    public static void status(String msg) {
-        mStatus.setStatus(msg);
+    public static void status(final String msg) {
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    mStatus.setStatus(msg);
+                }
+            });
     }
 
-    public static void message(String msg) {
-        mStatus.message(msg);
+    public static void message(final String msg) {
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    mStatus.message(msg);
+                }
+            });
     }
 
     private enum ExecutionState { NORMAL, EXECUTION }
