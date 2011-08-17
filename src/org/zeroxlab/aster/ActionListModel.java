@@ -54,6 +54,11 @@ public interface ActionListModel {
     public void clear();
 
     /**
+     * Trigger change event
+     */
+    public void trigger();
+
+    /**
      * Get command list
      */
     public Iterable<AsterCommand> getCommands();

@@ -143,6 +143,7 @@ public class AsterMainPanel extends JPanel {
 
     class MyListener implements CommandListener {
         public void commandFinished(AsterCommand whichOne) {
+            mActionList.getModel().trigger();
             System.out.println("Complete cmd: " + whichOne.getName());
         }
     }
