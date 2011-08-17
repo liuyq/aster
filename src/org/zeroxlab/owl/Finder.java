@@ -23,7 +23,9 @@ import com.googlecode.javacv.*;
 import static com.googlecode.javacv.cpp.opencv_core.*;
 import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+
 import java.util.logging.Logger;
 
 public class Finder {
@@ -32,8 +34,9 @@ public class Finder {
                                        String haystack,
                                        String needle)
         throws FileNotFoundException, TemplateNotFoundException {
+        String pre = System.getProperty("user.dir");
         IplImage img = cvLoadImage(haystack);
-        IplImage tmpl = cvLoadImage(needle);
+        IplImage tmpl = cvLoadImage(new File(pre, needle).getAbsolutePath());
 
         if (img == null)
             throw new FileNotFoundException("can't open `" + haystack +"'");

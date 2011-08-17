@@ -20,9 +20,37 @@ package org.zeroxlab.aster;
 
 import javax.swing.*;
 
+import java.io.IOException;
+
+import java.lang.ArrayIndexOutOfBoundsException;
+
 public class AsterMain {
 
     public static void main(String[] args) {
+        if (args.length > 0) {
+            try {
+                if ("-run".equals(args[0])) {
+                    startCLI(args[1]);
+                }
+            } catch(ArrayIndexOutOfBoundsException e) {
+                usage();
+            }
+        } else {
+            startGUI();
+        }
+    }
+
+    public static void startCLI(String script) {
+        try {
+            AsterCommandManager.run(script);
+        } catch(IOException e) {
+            System.err.printf(e.toString());
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
+    public static void startGUI() {
         trySetupLookFeel();
         JFrame f = new JFrame("Aster");
         AsterMainPanel p = new AsterMainPanel();
@@ -33,7 +61,7 @@ public class AsterMain {
         f.setVisible(true);
     }
 
-    static void trySetupLookFeel() {
+    private static void trySetupLookFeel() {
         System.setProperty("awt.useSystemAAFontSettings","on");
         System.setProperty("swing.aatext", "true");
         try {
@@ -49,5 +77,9 @@ public class AsterMain {
         } catch (IllegalAccessException e) {
             // handle exception
         }
+    }
+
+    private static void usage() {
+        System.out.printf("Usage: aster [-run TEST.ast]\n\n");
     }
 }

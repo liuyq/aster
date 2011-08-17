@@ -159,6 +159,7 @@ public class AsterMainPanel extends JPanel {
                                                      file.getAbsolutePath());
                         }
                     } catch (IOException e) {
+                        System.err.println(e.toString());
                     }
                 }
             });

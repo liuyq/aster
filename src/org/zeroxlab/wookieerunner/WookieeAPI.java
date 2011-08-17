@@ -31,6 +31,7 @@ import com.android.chimpchat.core.ChimpImageBase;
 import com.android.chimpchat.core.TouchPressType;
 import com.android.chimpchat.hierarchyviewer.HierarchyViewer;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.util.Collection;
@@ -53,8 +54,10 @@ public class WookieeAPI {
 
     private String getCurrentSnapshot() {
         IChimpImage image = impl.takeSnapshot();
-        image.writeToFile("/tmp/owl.png", "png");
-        return "/tmp/owl.png";
+        String tmpdir = System.getProperty("java.io.tmpdir");
+        String output = (new File(tmpdir, "owl.png").getAbsolutePath());
+        image.writeToFile(output, "png");
+        return output;
     }
 
     public IChimpDevice getImpl() {
