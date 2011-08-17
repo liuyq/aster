@@ -72,16 +72,20 @@ public class Drag extends AsterCommand {
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;
+            } catch (IOException e) {
+                throw new IllegalArgumentException(e.toString());
+            } catch (NumberFormatException e) {
+                mSerial = mSeqNext++;
+            }
+            try {
                 mEndPosition = new Point(Integer.parseInt(args[1]),
                                            Integer.parseInt(args[2]));
                 mDuration = Double.parseDouble(args[3]);
                 mSteps = Integer.parseInt(args[4]);
                 mTimeout = Double.parseDouble(args[5]);
                 mLandscape = Boolean.parseBoolean(args[6]);
-            } catch (IOException e) {
-                throw new IllegalArgumentException(e.toString());
             } catch (NumberFormatException e) {
-                mSerial = mSeqNext++;
+                throw new IllegalArgumentException(e.toString());
             }
         } else if (args.length == 8) {
             try {

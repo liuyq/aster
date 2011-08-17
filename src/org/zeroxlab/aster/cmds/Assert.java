@@ -54,8 +54,14 @@ public class Assert extends AsterCommand {
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;
-                mTimeout = Double.parseDouble(args[1]);
             } catch (IOException e) {
+                throw new IllegalArgumentException(e.toString());
+            } catch (NumberFormatException e) {
+                mSerial = mSeqNext++;
+            }
+            try {
+                mTimeout = Double.parseDouble(args[1]);
+            } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
         } else {
@@ -93,7 +99,6 @@ public class Assert extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("iassert('%s.png', %d)\n",
-                             mSerial, mTimeout);
+        return String.format("iassert('%d.png', %f)\n", mSerial, mTimeout);
     }
 }

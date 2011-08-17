@@ -92,13 +92,17 @@ public class Touch extends AsterCommand {
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;
-                mTouchType = TouchType.parse(args[1]);
-                mTimeout = Double.parseDouble(args[2]);
-                mLandscape = Boolean.parseBoolean(args[3]);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             } catch (NumberFormatException e) {
                 mSerial = mSeqNext++;
+            }
+            try {
+                mTouchType = TouchType.parse(args[1]);
+                mTimeout = Double.parseDouble(args[2]);
+                mLandscape = Boolean.parseBoolean(args[3]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(e.toString());
             }
         } else if (args.length == 5) {
             try {
