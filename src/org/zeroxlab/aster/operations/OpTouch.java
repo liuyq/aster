@@ -25,9 +25,10 @@ import java.awt.Point;
 public abstract class OpTouch implements AsterOperation {
 
     protected Point mPoint;
+    public final static int INVALID = -1;
 
     public OpTouch() {
-        mPoint = new Point();
+        mPoint = new Point(INVALID, INVALID);
     }
 
     public Point getPoint() {
@@ -44,5 +45,9 @@ public abstract class OpTouch implements AsterOperation {
 
     public void set(int x, int y) {
         mPoint.setLocation(x, y);
+    }
+
+    public boolean isValid() {
+        return (getX() != INVALID && getY() != INVALID);
     }
 }

@@ -32,7 +32,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.script.SimpleBindings;
 
-public class AsterMainPanel extends JPanel {
+public class AsterMainPanel extends JPanel implements AsterCommand.CommandListener {
 
     static JStatusBar mStatus = new JStatusBar();
 
@@ -85,14 +85,15 @@ public class AsterMainPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
-        mWorkspace = new AsterWorkspace();
+        mWorkspace = AsterWorkspace.getInstance();
+        mWorkspace.setCommandListener(this);
         mActionList.getModel().setRecall(new Recall());
+        mActionList.getModel().addChangeListener(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
                 public void mouseClicked(MouseEvent e) {
                     AsterCommand cmd = CmdSelector.selectCommand((Component)e.getSource());
                     if (cmd != null) {
                         mActionList.getModel().pushCmd(cmd);
-                        mWorkspace.fillCmd(cmd, mCmdListener);
                     }
                 }
             });
@@ -242,5 +243,9 @@ public class AsterMainPanel extends JPanel {
             mWorkspace.setImage(snapshot.createBufferedImage());
             mWorkspace.repaint(mWorkspace.getBounds());
         }
+    }
+
+    public void commandFinished(AsterCommand cmd) {
+        mActionList.getModel().trigger();
     }
 }

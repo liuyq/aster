@@ -36,12 +36,16 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.Iterator;
 import java.util.Vector;
 import javax.script.SimpleBindings;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import org.zeroxlab.aster.ActionListModel;
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterCommand.CommandListener;
 import org.zeroxlab.aster.AsterOperation.OperationListener;
@@ -51,6 +55,7 @@ import org.zeroxlab.aster.OpTouch;
 public class AsterWorkspace extends JComponent implements ComponentListener
                                                          , MouseListener
                                                          , MouseMotionListener
+                                                         , ChangeListener
                                                          , AsterOperation.OperationListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
@@ -88,8 +93,6 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private final int POINT_D = 4;
     private int mMoving = NONE;
     private static ClipRegion sRegion;
-    private static MyDrag sOpDrag;
-    private static MyTouch sOpTouch;
 
     private static MainKeyListener sMainKeyListener;
     private static CommandListener sCmdListener;
@@ -97,16 +100,24 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private static AsterCommand sRecordingCmd;
     private static AsterOperation sRecordingOp;
 
-    public AsterWorkspace() {
+    private static AsterWorkspace sMyself = null;
+
+    public static AsterWorkspace getInstance() {
+        if (sMyself == null) {
+            sMyself = new AsterWorkspace();
+        }
+
+        return sMyself;
+    }
+
+    private AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
-    public AsterWorkspace(BufferedImage img) {
+    private AsterWorkspace(BufferedImage img) {
         initJComponents();
 
         sRegion = new ClipRegion();
-        sOpDrag  = new MyDrag();
-        sOpTouch = new MyTouch();
         mImgRect = new Rectangle();
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
@@ -221,6 +232,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
     public void setTouchListener(TouchListener listener) {
         mTouchListener = listener;
+    }
+
+    public void setCommandListener(CommandListener listener) {
+        sCmdListener = listener;
     }
 
     public void paintComponent(Graphics g) {
@@ -384,6 +399,29 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
     }
 
+    public void stateChanged(ChangeEvent e) {
+        if (!(e.getSource() instanceof ActionListModel)) {
+            System.err.println("The source is not an ActionListModel");
+            return;
+        }
+
+        ActionListModel model = (ActionListModel) e.getSource();
+
+        if (model.empty()) {
+            sRegion.setVisible(false);
+            repaint();
+            return;
+        }
+
+        Iterator<AsterCommand> iterator = model.getCommands().iterator();
+        AsterCommand last = null;
+        while(iterator.hasNext()) {
+            last = iterator.next();
+        }
+
+        fillCmd(last, sCmdListener);
+    }
+
     private void updateDrawingBuffer(BufferedImage source) {
         mSourceWidth  = source.getWidth();
         mSourceHeight = source.getHeight();
@@ -422,12 +460,18 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         public void onClickSearch();
     }
 
-    public static OpTouch getOpTouch() {
-        return sOpTouch;
+    public OpTouch getOpTouch() {
+        return new MyTouch();
     }
 
-    public static OpDrag getOpDrag() {
-        return sOpDrag;
+    public OpDrag getOpDrag() {
+        return new MyDrag();
+    }
+
+    private static int valid(int now, int min, int max) {
+        now = Math.max(min, now);
+        now = Math.min(now, max);
+        return now;
     }
 
     class ClipRegion {
@@ -530,8 +574,17 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     }
 
     class MyTouch extends OpTouch implements TouchListener {
+        int mLTX, mLTY, mRBX, mRBY;
+
         public void clicked(int x, int y) {
             setPoint(x, y);
+        }
+
+        public void setClip(int x1, int y1, int x2, int y2) {
+            mLTX = valid(x1, 0, mSourceWidth);
+            mLTY = valid(y1, 0, mSourceHeight);
+            mRBX = valid(x2, 0, mSourceWidth);
+            mRBY = valid(y2, 0, mSourceHeight);
         }
 
         public void setPoint(int x, int y) {
@@ -539,7 +592,6 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             y = Math.max(0, y);
             x = Math.min(x, mSourceWidth);
             y = Math.min(y, mSourceHeight);
-            System.out.println("Set point:" + x + "," + y);
             super.set(x, y);
             sDone.setEnabled(true);
             sRegion.setVisible(true);
@@ -555,17 +607,33 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             sOpListener = listener;
             int x = super.getX();
             int y = super.getY();
-            if (x > 0 && y > 0 && x < mSourceWidth && y < mSourceHeight) {
-                // valid location
-                x = (int)((x / mSourceWidth) * mImgRect.width);
-                y = (int)((y / mSourceHeight) * mImgRect.height);
+            int ltx = mLTX;
+            int lty = mLTY;
+            int rbx = mRBX;
+            int rby = mRBY;
+
+            if (super.isValid()) {
+                x = (int)((x * mImgRect.width) / mSourceWidth) ;
+                y = (int)((y * mImgRect.height ) / mSourceHeight);
+                ltx = (int)((ltx * mImgRect.width)  / mSourceWidth);
+                lty = (int)((lty * mImgRect.height) / mSourceHeight);
+                rbx = (int)((rbx * mImgRect.width)  / mSourceWidth);
+                rby = (int)((rby * mImgRect.height) / mSourceHeight);
+                sRegion.setVisible(true);
             } else {
                 // move to center by default
                 x = (int)(mImgRect.width / 2);
                 y = (int)(mImgRect.height / 2);
+                ltx = x - 42;
+                lty = y - 42;
+                rbx = x + 50;
+                rby = y + 50;
+                sRegion.setVisible(false);
             }
+
             sRegion.moveC(x + mImgRect.x, y + mImgRect.y);
-            sRegion.setVisible(false);
+            sRegion.moveL(ltx + mImgRect.x, lty + mImgRect.y);
+            sRegion.moveR(rbx + mImgRect.x, rby + mImgRect.y);
             repaint();
             setTouchListener(this);
         }
@@ -574,12 +642,24 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             SimpleBindings settings = new SimpleBindings();
             settings.put("Pos", super.getPoint());
             BufferedImage buf = createClipImage();
+            Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
+            Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
+            this.setClip(lt.x, lt.y, rb.x, rb.y);
             settings.put("Image", buf);
             return settings;
         }
     }
 
     class MyDrag extends OpDrag implements DragListener {
+        int mLTX, mLTY, mRBX, mRBY;
+
+        public void setClip(int x1, int y1, int x2, int y2) {
+            mLTX = valid(x1, 0, mSourceWidth);
+            mLTY = valid(y1, 0, mSourceHeight);
+            mRBX = valid(x2, 0, mSourceWidth);
+            mRBY = valid(y2, 0, mSourceHeight);
+        }
+
         public String getName() {
             return "Drag";
         }
@@ -591,23 +671,40 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             int sY = super.getStartY();
             int eX = super.getEndX();
             int eY = super.getEndY();
+            int ltx = mLTX;
+            int lty = mLTY;
+            int rbx = mRBX;
+            int rby = mRBY;
+
             Rectangle r = new Rectangle(0, 0, mSourceWidth, mSourceHeight);
-            if (r.contains(sX, sY) && r.contains(eX, eY)) {
+            if (r.contains(sX, sY) && r.contains(eX, eY)
+                    && sX != 0 && sY != 0) {
                 // valid location
-                sX = (int)((sX / mSourceWidth) * mImgRect.width);
-                sY = (int)((sY / mSourceHeight) * mImgRect.height);
-                eX = (int)((eX / mSourceWidth) * mImgRect.width);
-                eY = (int)((eY / mSourceHeight) * mImgRect.height);
+                sX = (int)((sX * mImgRect.width)  / mSourceWidth);
+                sY = (int)((sY * mImgRect.height) / mSourceHeight);
+                eX = (int)((eX * mImgRect.width)  / mSourceWidth);
+                eY = (int)((eY * mImgRect.height) / mSourceHeight);
+                ltx = (int)((ltx * mImgRect.width)  / mSourceWidth);
+                lty = (int)((lty * mImgRect.height) / mSourceHeight);
+                rbx = (int)((rbx * mImgRect.width)  / mSourceWidth);
+                rby = (int)((rby * mImgRect.height) / mSourceHeight);
+                sRegion.setVisible(true);
             } else {
                 // move to center by default
                 sX = (int)(mImgRect.width / 2);
                 sY = (int)(mImgRect.height / 2);
                 eX = sX + 100;
                 eY = sY;
+                ltx = sX - 42;
+                lty = sY - 42;
+                rbx = sX + 50;
+                rby = sY + 50;
+                sRegion.setVisible(false);
             }
             sRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
             sRegion.moveD(eX + mImgRect.x, eY + mImgRect.y);
-            sRegion.setVisible(false);
+            sRegion.moveL(ltx + mImgRect.x, lty + mImgRect.y);
+            sRegion.moveR(rbx + mImgRect.x, rby + mImgRect.y);
             repaint();
             setDragListener(this);
         }
@@ -621,8 +718,6 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             ey = Math.max(0, ey);
             ex = Math.min(ex, mSourceWidth);
             ey = Math.min(ey, mSourceHeight);
-            System.out.println("Set point:(" + sx + "," + sy
-                    + ") to (" + ex + "," + ey + ")");
             super.set(sx, sy, ex, ey);
             sDone.setEnabled(true);
             sRegion.setVisible(true);
@@ -634,6 +729,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             settings.put("EndPos", super.getEnd());
             BufferedImage buf = createClipImage();
             settings.put("Image", buf);
+            Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
+            Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
+            this.setClip(lt.x, lt.y, rb.x, rb.y);
             return settings;
         }
     }

@@ -35,13 +35,13 @@ public class Assert extends AsterCommand {
 
     public Assert() {
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpTouch();
+        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
 
     public Assert(SimpleBindings settings) {
         fillSettings(settings);
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpTouch();
+        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
 
     public Assert(String prefix, String argline)
@@ -68,7 +68,7 @@ public class Assert extends AsterCommand {
             throw new IllegalArgumentException();
         }
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpTouch();
+        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
 
     @Override
