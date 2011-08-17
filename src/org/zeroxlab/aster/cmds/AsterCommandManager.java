@@ -22,6 +22,7 @@ import org.zeroxlab.wookieerunner.WookieeAPI;
 import org.zeroxlab.wookieerunner.WookieeRunner;
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
+import com.android.monkeyrunner.MonkeyFormatter;
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
@@ -45,6 +46,12 @@ import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
+
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.python.core.PyException;
 
@@ -123,7 +130,22 @@ public class AsterCommandManager {
         return dir.delete();
     }
 
+    private static final void replaceAllLogFormatters(Formatter form, Level level) {
+        LogManager mgr = LogManager.getLogManager();
+        Enumeration<String> loggerNames = mgr.getLoggerNames();
+        while (loggerNames.hasMoreElements()) {
+            String loggerName = loggerNames.nextElement();
+            Logger logger = mgr.getLogger(loggerName);
+            for (Handler handler : logger.getHandlers()) {
+                handler.setFormatter(form);
+                handler.setLevel(level);
+            }
+        }
+    }
+
     static public void connect() {
+        replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
+
         mChimpChat = ChimpChat.getInstance();
         WookieeRunner.setChimpChat(mChimpChat);
 
@@ -156,7 +178,7 @@ public class AsterCommandManager {
         System.out.printf("Staring command execution...\n");
         try {
             for (AsterCommand c: cmds) {
-                System.err.println(c.toScript());
+                System.err.printf("%s", c.toScript());
                 c.execute();
             }
         } catch (PyException e) {

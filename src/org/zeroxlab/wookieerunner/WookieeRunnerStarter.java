@@ -200,7 +200,7 @@ public class WookieeRunnerStarter {
         }
 
         // logging property files are difficult
-        //replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, options.getLogLevel());
+        replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, options.getLogLevel());
 
         WookieeRunnerStarter runner = new WookieeRunnerStarter(options);
         int error = runner.run();

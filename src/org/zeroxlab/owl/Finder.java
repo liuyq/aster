@@ -34,9 +34,12 @@ public class Finder {
                                        String haystack,
                                        String needle)
         throws FileNotFoundException, TemplateNotFoundException {
+
         String pre = System.getProperty("user.dir");
+        needle = (new File(pre, needle)).getAbsolutePath();
+
         IplImage img = cvLoadImage(haystack);
-        IplImage tmpl = cvLoadImage(new File(pre, needle).getAbsolutePath());
+        IplImage tmpl = cvLoadImage(needle);
 
         if (img == null)
             throw new FileNotFoundException("can't open `" + haystack +"'");
