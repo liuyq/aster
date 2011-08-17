@@ -82,6 +82,7 @@ public class Assert extends AsterCommand {
         settings.put("Name", "Assert");
         if (mImage != null) {
             settings.put("Image", mImage);
+            mSerial = mSeqNext++;
         }
         settings.put("Timeout", mTimeout);
         return settings;
