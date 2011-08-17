@@ -28,6 +28,8 @@ import com.android.chimpchat.core.IChimpImage;
 
 import java.util.ArrayList;
 
+import com.google.common.io.Files;
+
 import java.io.BufferedOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,6 +50,7 @@ import org.python.core.PyException;
 
 public class AsterCommandManager {
 
+    private static File mCwd;
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
@@ -147,10 +150,9 @@ public class AsterCommandManager {
     static public void run(String astfile)
         throws IOException {
         AsterCommand[] cmds = AsterCommandManager.load(astfile);
-        String prefix = astfile.substring(0, astfile.length() -4);
 
         AsterCommandManager.connect();
-        System.setProperty("user.dir", prefix);
+        System.setProperty("user.dir", mCwd.getAbsolutePath());
         System.out.printf("Staring command execution...\n");
         try {
             for (AsterCommand c: cmds) {
@@ -167,26 +169,20 @@ public class AsterCommandManager {
         if (!filename.endsWith(".ast"))
             filename += ".ast";
 
-        String dirname = filename.substring(0, filename.length() - 4);
-        File root = new File(dirname);
-        if (!root.mkdirs())
-            throw new IOException(String.format("can not mkdir for '%s'",
-                                                dirname));
+        File root = Files.createTempDir();
 
-        FileOutputStream out = new FileOutputStream(new File(dirname,
-                                                    root.getName() + ".py"));
+        FileOutputStream out = new FileOutputStream(new File(root, "script.py"));
         for (AsterCommand c: cmds) {
             out.write(c.toScript().getBytes());
-            c.saveImage(dirname);
+            c.saveImage(root.getAbsolutePath());
         }
         out.close();
 
         try {
-            ZipOutputStream zos = new ZipOutputStream
-                                        (new FileOutputStream(filename));
-            zipDir(new File(dirname), dirname, zos);
+            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filename));
+            zipDir(root, root.getAbsolutePath(), zos);
             zos.close();
-            deleteDir(new File(dirname));
+            deleteDir(root);
         } catch(FileNotFoundException e) {
             throw new IOException(e);
         }
@@ -194,14 +190,14 @@ public class AsterCommandManager {
 
     static public AsterCommand[] load(String zipfile)
         throws IOException {
-        String dirname = zipfile.substring(0, zipfile.length() -4);
-        File zipdir = new File(dirname);
-        String filename = zipdir.getName() + ".py";
-        unzipDir(zipfile, dirname);
+        String filename = "script.py";
+        mCwd = Files.createTempDir();
+        String rootpath = mCwd.getAbsolutePath();
+        unzipDir(zipfile, rootpath);
 
         ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
         try {
-            FileInputStream ist = new FileInputStream(new File(dirname, filename));
+            FileInputStream ist = new FileInputStream(new File(mCwd, filename));
 
             byte[] buf = new byte[4096];
             String data = new String();
@@ -217,9 +213,9 @@ public class AsterCommandManager {
 
             for (String s: data.split("\n")) {
                 if (s.startsWith("drag")) {
-                    cmds.add(new Drag(dirname, s.substring(4, s.length())));
+                    cmds.add(new Drag(rootpath, s.substring(4, s.length())));
                 } else if (s.startsWith("touch")) {
-                    cmds.add(new Touch(dirname, s.substring(5, s.length())));
+                    cmds.add(new Touch(rootpath, s.substring(5, s.length())));
                 } else if (s.startsWith("press")) {
                     cmds.add(new Press(s.substring(5, s.length())));
                 } else if (s.startsWith("type")) {
