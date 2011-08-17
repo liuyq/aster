@@ -34,6 +34,8 @@ import com.android.chimpchat.hierarchyviewer.HierarchyViewer;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import java.lang.Math;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -42,14 +44,15 @@ import java.util.Map;
 public class WookieeAPI {
     private IChimpDevice impl;
     private IMatcher matcher;
-    private int width;
-    private int height;
+    private int shortside;
 
     public WookieeAPI(IChimpDevice impl) {
         this.impl = impl;
         this.matcher = new PyramidTemplateMatcher();
-        this.width = Integer.parseInt(getProperty("display.width"));
-        this.height = Integer.parseInt(getProperty("display.height"));
+        this.shortside = Math.min(
+                Integer.parseInt(getProperty("display.width")),
+                Integer.parseInt(getProperty("display.height"))
+        );
     }
 
     private String getCurrentSnapshot() {
@@ -102,8 +105,9 @@ public class WookieeAPI {
             }
             break;
         }
+
         if (landscape) {
-            touch(r.cy(), height - r.cx(), typestr);
+            touch(r.cy(), shortside - r.cx(), typestr);
         } else {
             touch(r.cx(), r.cy(), typestr);
         }
@@ -134,8 +138,8 @@ public class WookieeAPI {
             break;
         }
         if (landscape) {
-            drag(rs.cy(), height - rs.cx(),
-                 rs.cy() + dx, height - rs.cx() + dy, steps, sec);
+            drag(rs.cy(), shortside - rs.cx(),
+                 rs.cy() + dx, shortside - rs.cx() + dy, steps, sec);
         } else {
             drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
         }
