@@ -84,7 +84,8 @@ public class WookieeAPI {
         impl.touch(x, y, type);
     }
 
-    public void touch(String name, String typestr, double timeout, boolean landscape)
+    public void touch(String name, String typestr, double timeout,
+                      boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();

@@ -92,21 +92,25 @@ public class Touch extends AsterCommand {
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;
+                mTouchType = TouchType.parse(args[1]);
+                mTimeout = Double.parseDouble(args[2]);
+                mLandscape = Boolean.parseBoolean(args[3]);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             } catch (NumberFormatException e) {
                 mSerial = mSeqNext++;
             }
-            mTouchType = TouchType.parse(args[1]);
-            mTimeout = Double.parseDouble(args[2]);
-            mLandscape = Boolean.parseBoolean(args[3]);
         } else if (args.length == 5) {
-            mCoordType = CoordType.FIXED;
-            mPosition = new Point(Integer.parseInt(args[0]),
-                                  Integer.parseInt(args[1]));
-            mTouchType = TouchType.parse(args[2]);
-            mTimeout = Double.parseDouble(args[3]);
-            mLandscape = Boolean.parseBoolean(args[4]);
+            try {
+                mCoordType = CoordType.FIXED;
+                mPosition = new Point(Integer.parseInt(args[0]),
+                                      Integer.parseInt(args[1]));
+                mTouchType = TouchType.parse(args[2]);
+                mTimeout = Double.parseDouble(args[3]);
+                mLandscape = Boolean.parseBoolean(args[4]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(e.toString());
+            }
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }

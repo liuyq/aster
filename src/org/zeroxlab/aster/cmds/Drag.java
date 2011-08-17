@@ -72,27 +72,31 @@ public class Drag extends AsterCommand {
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));
                 mSeqNext = mSerial + 1;
+                mEndPosition = new Point(Integer.parseInt(args[1]),
+                                           Integer.parseInt(args[2]));
+                mDuration = Double.parseDouble(args[3]);
+                mSteps = Integer.parseInt(args[4]);
+                mTimeout = Double.parseDouble(args[5]);
+                mLandscape = Boolean.parseBoolean(args[6]);
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
             } catch (NumberFormatException e) {
                 mSerial = mSeqNext++;
             }
-            mEndPosition = new Point(Integer.parseInt(args[1]),
-                                       Integer.parseInt(args[2]));
-            mDuration = Double.parseDouble(args[3]);
-            mSteps = Integer.parseInt(args[4]);
-            mTimeout = Double.parseDouble(args[5]);
-            mLandscape = Boolean.parseBoolean(args[6]);
         } else if (args.length == 8) {
-            mCoordType = CoordType.FIXED;
-            mStartPosition = new Point(Integer.parseInt(args[0]),
-                                       Integer.parseInt(args[1]));
-            mEndPosition = new Point(Integer.parseInt(args[2]),
-                                     Integer.parseInt(args[3]));
-            mDuration = Double.parseDouble(args[4]);
-            mSteps = Integer.parseInt(args[5]);
-            mTimeout = Double.parseDouble(args[6]);
-            mLandscape = Boolean.parseBoolean(args[7]);
+            try {
+                mCoordType = CoordType.FIXED;
+                mStartPosition = new Point(Integer.parseInt(args[0]),
+                                           Integer.parseInt(args[1]));
+                mEndPosition = new Point(Integer.parseInt(args[2]),
+                                         Integer.parseInt(args[3]));
+                mDuration = Double.parseDouble(args[4]);
+                mSteps = Integer.parseInt(args[5]);
+                mTimeout = Double.parseDouble(args[6]);
+                mLandscape = Boolean.parseBoolean(args[7]);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(e.toString());
+            }
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
