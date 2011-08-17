@@ -157,6 +157,15 @@ public class AsterMainPanel extends JPanel {
         saveItem.setText("Save...");
         saveItem.setMnemonic(KeyEvent.VK_S);
         fileMenu.add(saveItem);
+        JMenuItem quitItem = new JMenuItem();
+        quitItem.setAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent ev) {
+                    System.exit(0);
+                }
+            });
+        quitItem.setText("Quit");
+        quitItem.setMnemonic(KeyEvent.VK_Q);
+        fileMenu.add(quitItem);
         return menu;
     }
 
