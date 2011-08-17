@@ -46,9 +46,9 @@ public class PyramidTemplateMatcher implements IMatcher {
     private PlainTemplateMatcher plainmatcher;
     private double factor;
     private int levels;
-    private final int target_min_side = 5;
+    private final int target_min_side = 10;
     private final int margin = 10;
-    private final int margin_min = 30;
+    private final int margin_min = 50;
 
     public PyramidTemplateMatcher() {
         this.factor = 2.0;
@@ -139,7 +139,7 @@ public class PyramidTemplateMatcher implements IMatcher {
         MatchResult match = plainmatcher.find(layer.source, layer.target);
 
         for (int i = levels - 2; i >= 0; --i) {
-            int div = 10;                  /* Number of divisions */
+            int div = 50;                  /* Number of divisions */
             int x = (int)(match.x * factor);
             int y = (int)(match.y * factor);
 
