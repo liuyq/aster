@@ -166,7 +166,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
                 wookiee.touch(((PyString) arg1).asString(),
                               ((PyString) arg2).asString(),
                               JythonUtils.getFloat(ap, 2, default_timeout),
-                              (Boolean)(ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
+                              (Boolean)((PyBoolean)ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
@@ -215,7 +215,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
                 wookiee.drag(((PyString) startObject).asString(), endx, endy,
                              steps, seconds,
                              JythonUtils.getFloat(ap, 4, default_timeout),
-                             (Boolean)(ap.getPyObject(5, new PyBoolean(false))).__tojava__(Boolean.class));
+                             (Boolean)((PyBoolean)ap.getPyObject(5, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {

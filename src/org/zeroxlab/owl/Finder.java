@@ -43,7 +43,7 @@ public class Finder {
 
         if (img == null)
             throw new FileNotFoundException("can't open `" + haystack +"'");
-        else if (tmpl == null)
+        if (tmpl == null)
             throw new FileNotFoundException("can't open `" + needle +"'");
         MatchResult result = matcher.find(img, tmpl);
         LOG.info(String.format("MatchResut: %s", result));
