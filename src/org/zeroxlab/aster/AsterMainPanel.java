@@ -77,7 +77,7 @@ public class AsterMainPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
-        mWorkspace = new AsterWorkspace();
+        mWorkspace = AsterWorkspace.getInstance();
         mActionList.getModel().setRecall(new Touch());
         mActionList.getModel().addChangeListener(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {

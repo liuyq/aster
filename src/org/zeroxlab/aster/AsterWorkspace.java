@@ -93,8 +93,6 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private final int POINT_D = 4;
     private int mMoving = NONE;
     private static ClipRegion sRegion;
-    private static MyDrag sOpDrag;
-    private static MyTouch sOpTouch;
 
     private static MainKeyListener sMainKeyListener;
     private static CommandListener sCmdListener;
@@ -102,16 +100,24 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private static AsterCommand sRecordingCmd;
     private static AsterOperation sRecordingOp;
 
-    public AsterWorkspace() {
+    private static AsterWorkspace sMyself = null;
+
+    public static AsterWorkspace getInstance() {
+        if (sMyself == null) {
+            sMyself = new AsterWorkspace();
+        }
+
+        return sMyself;
+    }
+
+    private AsterWorkspace() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
-    public AsterWorkspace(BufferedImage img) {
+    private AsterWorkspace(BufferedImage img) {
         initJComponents();
 
         sRegion = new ClipRegion();
-        sOpDrag  = new MyDrag();
-        sOpTouch = new MyTouch();
         mImgRect = new Rectangle();
         mDrawingBuffer = new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         addComponentListener(this);
@@ -448,12 +454,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         public void onClickSearch();
     }
 
-    public static OpTouch getOpTouch() {
-        return sOpTouch;
+    public OpTouch getOpTouch() {
+        return new MyTouch();
     }
 
-    public static OpDrag getOpDrag() {
-        return sOpDrag;
+    public OpDrag getOpDrag() {
+        return new MyDrag();
     }
 
     class ClipRegion {

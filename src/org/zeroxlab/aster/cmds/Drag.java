@@ -52,13 +52,13 @@ public class Drag extends AsterCommand {
         mStartPosition = new Point();
         mEndPosition = new Point();
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpDrag();
+        mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
 
     public Drag(SimpleBindings settings) {
         fillSettings(settings);
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpDrag();
+        mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
 
     public Drag(String prefix, String argline) throws IllegalArgumentException {
@@ -97,7 +97,7 @@ public class Drag extends AsterCommand {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getOpDrag();
+        mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
 
     public Point getStartPos() {
