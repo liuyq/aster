@@ -71,7 +71,9 @@ public class Type extends AsterCommand {
 
     @Override
     public void fillSettings(SimpleBindings settings) {
-        mText = (String)settings.get("Text");
+        if (settings.containsKey("Text")) {
+            mText = (String)settings.get("Text");
+        }
     }
 
     @Override

@@ -57,6 +57,10 @@ def type(*args, **kwargs):
     return DEVICE.type(*args, **kwargs)
 
 
+def iassert(*args, **kwargs):
+    return DEVICE.iassert(*args, **kwargs)
+
+
 def shell(*args, **kwargs):
     return DEVICE.shell(*args, **kwargs)
 

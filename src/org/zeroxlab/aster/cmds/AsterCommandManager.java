@@ -220,6 +220,8 @@ public class AsterCommandManager {
                     cmds.add(new Press(s.substring(5, s.length())));
                 } else if (s.startsWith("type")) {
                     cmds.add(new Type(s.substring(4, s.length())));
+                } else if (s.startsWith("iassert")) {
+                    cmds.add(new Assert(rootpath, s.substring(7, s.length())));
                 }
             }
         } catch (FileNotFoundException e) {

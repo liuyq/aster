@@ -66,7 +66,9 @@ public class Recall extends AsterCommand {
 
     @Override
     public void fillSettings(SimpleBindings settings) {
-        mScript = (String)settings.get("Script");
+        if (settings.containsKey("Script")) {
+            mScript = (String)settings.get("Script");
+        }
     }
 
     @Override
