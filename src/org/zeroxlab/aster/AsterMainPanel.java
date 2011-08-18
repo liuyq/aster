@@ -88,8 +88,10 @@ public class AsterMainPanel extends JPanel {
         scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
+        MainKeyMonitor mkmonitor = new MainKeyMonitor();
         mWorkspace = AsterWorkspace.getInstance();
         mWorkspace.setFillListener(mCmdFillListener);
+        mWorkspace.setMainKeyListener(mkmonitor);
         mActionList.getModel().setRecall(new Recall());
         mActionList.getModel().addChangeListener(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
@@ -199,6 +201,29 @@ public class AsterMainPanel extends JPanel {
         public void commandFilled(AsterCommand whichOne) {
             mActionList.getModel().trigger();
             System.out.println("Complete cmd: " + whichOne.getName());
+        }
+    }
+
+    class MainKeyMonitor implements AsterWorkspace.MainKeyListener {
+        public void onClickHome() {
+            AsterOperation op = new OpSelectKey("KEYCODE_HOME");
+            AsterCommand cmd = new Press(op);
+            mCmdConn.runCommand(cmd);
+        }
+        public void onClickMenu() {
+            AsterOperation op = new OpSelectKey("KEYCODE_MENU");
+            AsterCommand cmd = new Press(op);
+            mCmdConn.runCommand(cmd);
+        }
+        public void onClickBack() {
+            AsterOperation op = new OpSelectKey("KEYCODE_BACK");
+            AsterCommand cmd = new Press(op);
+            mCmdConn.runCommand(cmd);
+        }
+        public void onClickSearch() {
+            AsterOperation op = new OpSelectKey("KEYCODE_SEARCH");
+            AsterCommand cmd = new Press(op);
+            mCmdConn.runCommand(cmd);
         }
     }
 
