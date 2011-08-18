@@ -38,7 +38,7 @@ public class Recall extends AsterCommand {
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
-            mScript = args[0];
+            mScript = stripQuote(args[0]);
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
@@ -67,7 +67,21 @@ public class Recall extends AsterCommand {
     }
 
     @Override
+    public ExecutionResult execute() {
+        setExecuting(true);
+        ExecutionResult result = new ExecutionResult(true, "");
+        try {
+            if (mScript.length() != 0)
+                result = AsterCommandManager.runLocal(mScript);
+        } catch(IOException e) {
+            result.mSuccess = false;
+            result.mMessage = e.toString();
+        }
+        return result;
+    }
+
+    @Override
     protected String toScript() {
-        return new String();
+        return String.format("recall('%s')\n", mScript);
     }
 }

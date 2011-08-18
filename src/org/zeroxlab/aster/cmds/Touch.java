@@ -78,7 +78,7 @@ public class Touch extends AsterCommand {
         if (args.length == 4) {
             mCoordType = CoordType.AUTO;
             try {
-                args[0] = args[0].replaceAll("'", "").replaceAll("\"", "");
+                args[0] = stripQuote(args[0]);
                 mImage = ImageIO.read(new File(prefix, args[0]));
                 mSerial = Integer.parseInt(args[0].substring(0,
                                            args[0].length() -4));

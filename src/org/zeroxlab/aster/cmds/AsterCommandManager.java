@@ -169,9 +169,14 @@ public class AsterCommandManager {
 
     static public void run(String astfile)
         throws IOException {
+        AsterCommandManager.connect();
+        runLocal(astfile);
+    }
+
+    static public AsterCommand.ExecutionResult runLocal(String astfile)
+        throws IOException {
         AsterCommand[] cmds = AsterCommandManager.load(astfile);
 
-        AsterCommandManager.connect();
         System.setProperty("user.dir", mCwd.getAbsolutePath());
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
@@ -179,9 +184,10 @@ public class AsterCommandManager {
             AsterCommand.ExecutionResult result = c.execute();
             if (result.mSuccess != true) {
                 System.err.println(result.mMessage);
-                break;
+                return result;
             }
         }
+        return new AsterCommand.ExecutionResult(true, "");
     }
     
     static public void dump(AsterCommand[] cmds, String filename)
@@ -242,6 +248,8 @@ public class AsterCommandManager {
                     cmds.add(new Type(s.substring(4, s.length())));
                 } else if (s.startsWith("iassert")) {
                     cmds.add(new Assert(rootpath, s.substring(7, s.length())));
+                } else if (s.startsWith("recall")) {
+                    cmds.add(new Recall(s.substring(6, s.length())));
                 }
             }
         } catch (FileNotFoundException e) {

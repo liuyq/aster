@@ -41,7 +41,7 @@ public abstract class AsterCommand {
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
 
-    public class ExecutionResult {
+    public static class ExecutionResult {
         public boolean mSuccess;
         public String mMessage;
 
