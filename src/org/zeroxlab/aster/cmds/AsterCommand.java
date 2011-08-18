@@ -39,6 +39,7 @@ public abstract class AsterCommand {
     protected boolean mLandscape = false;
     protected BufferedImage mImage = null;
     protected AsterOperation[] mOps;
+    protected boolean mExecuting = false;
 
     public class ExecutionResult {
         public boolean mSuccess;
@@ -55,6 +56,14 @@ public abstract class AsterCommand {
 
     static public void setScriptRunner(ScriptRunner runner) {
         mRunner = runner;
+    }
+
+    synchronized public void setExecuting(boolean status) {
+        mExecuting = status;
+    }
+
+    synchronized public boolean isExecuting() {
+        return mExecuting;
     }
 
     protected String[] splitArgs(String argline) {
@@ -92,22 +101,29 @@ public abstract class AsterCommand {
     public abstract SimpleBindings getSettings();
 
     /* Set settings of a command */
-    public abstract void fillSettings(SimpleBindings settings);
+    public abstract void fillSettings(SimpleBindings settings) throws IOException;
 
     /* Dump command to script text */
     protected abstract String toScript();
 
     /* Execute command */
     public ExecutionResult execute() {
+        setExecuting(true);
         try {
             mRunner.runStringLocal(toScript());
         } catch (PyException e) {
+            setExecuting(false);
             return new ExecutionResult(false, e.toString());
         }
+        setExecuting(false);
         return new ExecutionResult(true, "");
     }
 
     public interface CommandListener {
         public void commandFinished(AsterCommand whichOne);
+    }
+
+    public interface CommandExecutionLister {
+        public void processResult(ExecutionResult result);
     }
 }
