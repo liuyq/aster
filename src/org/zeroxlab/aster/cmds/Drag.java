@@ -90,8 +90,7 @@ public class Drag extends AsterCommand {
                 mDuration = Double.parseDouble(args[4]);
                 mSteps = Integer.parseInt(args[5]);
                 mTimeout = Double.parseDouble(args[6]);
-                mSimilarity = Double.parseDouble(args[7]);
-                mLandscape = Boolean.parseBoolean(args[8]);
+                mLandscape = Boolean.parseBoolean(args[7]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }

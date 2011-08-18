@@ -104,8 +104,7 @@ public class Touch extends AsterCommand {
                                       Integer.parseInt(args[1]));
                 mTouchType = TouchType.parse(args[2]);
                 mTimeout = Double.parseDouble(args[3]);
-                mSimilarity = Double.parseDouble(args[4]);
-                mLandscape = Boolean.parseBoolean(args[5]);
+                mLandscape = Boolean.parseBoolean(args[4]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
