@@ -197,13 +197,15 @@ public class AsterMainPanel extends JPanel {
         private boolean mKeepWalking = true;
         private AsterCommand mCmd;
         private ExecutionState mState;
+        private AsterCommand.CommandExecutionLister mListener;
 
         public void finish() {
             mKeepWalking = false;
         }
 
-        synchronized public void runCommands(AsterCommand cmd) {
+        synchronized public void runCommands(AsterCommand cmd, AsterCommand.CommandExecutionLister listener) {
             mCmd = cmd;
+            mListener = listener;
             switchState(ExecutionState.EXECUTION);
         }
 
@@ -225,12 +227,9 @@ public class AsterMainPanel extends JPanel {
                     AsterMainPanel.message("Staring command execution...");
                     System.err.println(mCmd.toScript());
                     AsterCommand.ExecutionResult result = mCmd.execute();
-                    updateScreen();
-                    if (result.mSuccess != true) {
-                        System.err.println(result.mMessage);
-                        break;
-                    }
+                    mListener.processResult(result);
                     switchState(ExecutionState.NORMAL);
+                    updateScreen();
                 }
                 try {
                     Thread.sleep(100);
