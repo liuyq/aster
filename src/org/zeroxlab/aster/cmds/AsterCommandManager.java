@@ -52,13 +52,13 @@ import java.util.logging.Logger;
 
 public class AsterCommandManager {
 
-    private static File mCwd;
+    private File mCwd;
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
     public static boolean mConnected = false;
 
-    static private void zipDir(File prefix, String dir, ZipOutputStream zos)
+    private void zipDir(File prefix, String dir, ZipOutputStream zos)
         throws FileNotFoundException, IOException {
         File dirfile = new File(dir);
         String[] dirlist = dirfile.list();
@@ -84,7 +84,7 @@ public class AsterCommandManager {
         }
     }
 
-    static private void unzipDir(String zipfile, String prefix)
+    private void unzipDir(String zipfile, String prefix)
         throws IOException {
         Enumeration entries;
         ZipFile zipFile = new ZipFile(zipfile);
@@ -113,7 +113,7 @@ public class AsterCommandManager {
         zipFile.close();
     }
 
-    static private boolean deleteDir(File dir) {
+    private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
             for (int i = 0; i < children.length; i++) {
@@ -126,7 +126,7 @@ public class AsterCommandManager {
         return dir.delete();
     }
 
-    private static final void replaceAllLogFormatters(Formatter form, Level level) {
+    private final void replaceAllLogFormatters(Formatter form, Level level) {
         LogManager mgr = LogManager.getLogManager();
         Enumeration<String> loggerNames = mgr.getLoggerNames();
         while (loggerNames.hasMoreElements()) {
@@ -139,7 +139,7 @@ public class AsterCommandManager {
         }
     }
 
-    static public void connect() {
+    public void connect() {
         replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
 
         mChimpChat = ChimpChat.getInstance();
@@ -163,24 +163,24 @@ public class AsterCommandManager {
         mConnected = true;
     }
 
-    static public IChimpImage takeSnapshot() {
+    public IChimpImage takeSnapshot() {
         return mImpl.takeSnapshot();
     }
 
-    static public void run(String astfile)
+    public void run(String astfile)
         throws IOException {
-        AsterCommandManager.connect();
+        connect();
         runLocal(astfile);
     }
 
-    static public AsterCommand.ExecutionResult runLocal(String astfile)
+    public AsterCommand.ExecutionResult runLocal(String astfile)
         throws IOException {
-        AsterCommand[] cmds = AsterCommandManager.load(astfile);
+        AsterCommand[] cmds = load(astfile);
 
-        System.setProperty("user.dir", mCwd.getAbsolutePath());
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
             System.err.printf("%s", c.toScript());
+            System.setProperty("user.dir", mCwd.getAbsolutePath());
             AsterCommand.ExecutionResult result = c.execute();
             if (result.mSuccess != true) {
                 System.err.println(result.mMessage);
@@ -190,7 +190,7 @@ public class AsterCommandManager {
         return new AsterCommand.ExecutionResult(true, "");
     }
     
-    static public void dump(AsterCommand[] cmds, String filename)
+    public void dump(AsterCommand[] cmds, String filename)
         throws IOException {
         if (!filename.endsWith(".ast"))
             filename += ".ast";
@@ -214,7 +214,7 @@ public class AsterCommandManager {
         }
     }
 
-    static public AsterCommand[] load(String zipfile)
+    public AsterCommand[] load(String zipfile)
         throws IOException {
         String filename = "script.py";
         mCwd = Files.createTempDir();

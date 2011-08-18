@@ -34,14 +34,15 @@ class CmdTest {
 
         AsterCommand[] cmds = { drag1, drag2, touch1, touch2, press, type };
 
-        AsterCommandManager.connect();
+        AsterCommandManager manager = new AsterCommandManager();
+        manager.connect();
         for (AsterCommand c: cmds) {
             c.execute();
         }
 
         try {
-            AsterCommandManager.dump(cmds, "cmds.ast");
-            cmds = AsterCommandManager.load("cmds.ast");
+            manager.dump(cmds, "cmds.ast");
+            cmds = manager.load("cmds.ast");
             for (AsterCommand c: cmds) {
                 System.out.printf("%s", c.toScript());
             }

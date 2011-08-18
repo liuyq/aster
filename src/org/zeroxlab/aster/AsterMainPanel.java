@@ -56,6 +56,7 @@ public class AsterMainPanel extends JPanel {
 
     private AsterWorkspace mWorkspace;
     private JActionList mActionList;
+    private AsterCommandManager mCmdManager;
 
     private CmdConn mCmdConn;
 
@@ -118,8 +119,12 @@ public class AsterMainPanel extends JPanel {
 
         setPreferredSize(new Dimension(800, 600));
 
+        // Initialize command Manager
+        mCmdManager = new AsterCommandManager();
+
         // Set working dir and cd to it
         mCwd = Files.createTempDir();
+        System.setProperty("user.dir", mCwd.getAbsolutePath());
 
         mCmdConn = new CmdConn();
         Thread thread = new Thread(mCmdConn);
@@ -131,6 +136,8 @@ public class AsterMainPanel extends JPanel {
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         menu.add(fileMenu);
+
+        // Open
         JMenuItem openItem = new JMenuItem();
         openItem.setAction(new AbstractAction() {
                 public void actionPerformed(ActionEvent ev) {
@@ -139,7 +146,7 @@ public class AsterMainPanel extends JPanel {
                         int returnVal = fc.showOpenDialog(AsterMainPanel.this);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
-                            AsterCommand[] cmds = AsterCommandManager.load(file.getAbsolutePath());
+                            AsterCommand[] cmds = mCmdManager.load(file.getAbsolutePath());
                             mActionList.getModel().clear();
                             mActionList.getModel().setRecall(cmds[0]);
                             for (int i = 1; i < cmds.length; i++) {
@@ -153,6 +160,8 @@ public class AsterMainPanel extends JPanel {
         openItem.setText("Open...");
         openItem.setMnemonic(KeyEvent.VK_O);
         fileMenu.add(openItem);
+
+        // Save
         JMenuItem saveItem = new JMenuItem();
         saveItem.setAction(new AbstractAction() {
                 public void actionPerformed(ActionEvent ev) {
@@ -161,7 +170,7 @@ public class AsterMainPanel extends JPanel {
                         int returnVal = fc.showSaveDialog(AsterMainPanel.this);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
-                            AsterCommandManager.dump(mActionList.getModel().toArray(),
+                            mCmdManager.dump(mActionList.getModel().toArray(),
                                                      file.getAbsolutePath());
                         }
                     } catch (IOException e) {
@@ -172,6 +181,8 @@ public class AsterMainPanel extends JPanel {
         saveItem.setText("Save...");
         saveItem.setMnemonic(KeyEvent.VK_S);
         fileMenu.add(saveItem);
+
+        // Quit
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAction(new AbstractAction() {
                 public void actionPerformed(ActionEvent ev) {
@@ -206,7 +217,7 @@ public class AsterMainPanel extends JPanel {
             mListener = listener;
         }
 
-        synchronized public void runCommands(AsterCommand cmd) {
+        synchronized public void runCommand(AsterCommand cmd) {
             mCmd = cmd;
             switchState(ExecutionState.EXECUTION);
         }
@@ -218,7 +229,7 @@ public class AsterMainPanel extends JPanel {
         public void run() {
             mState = ExecutionState.NORMAL;
             AsterMainPanel.message("Connecting to device...");
-            AsterCommandManager.connect();
+            mCmdManager.connect();
             AsterMainPanel.message("Connected");
 
             while (mKeepWalking) {
@@ -248,7 +259,7 @@ public class AsterMainPanel extends JPanel {
         }
 
         private void updateScreen() {
-            IChimpImage snapshot = AsterCommandManager.takeSnapshot();
+            IChimpImage snapshot = mCmdManager.takeSnapshot();
             mWorkspace.setImage(snapshot.createBufferedImage());
             mWorkspace.repaint(mWorkspace.getBounds());
         }

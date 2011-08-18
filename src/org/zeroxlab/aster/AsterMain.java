@@ -42,7 +42,7 @@ public class AsterMain {
 
     public static void startCLI(String script) {
         try {
-            AsterCommandManager.run(script);
+            (new AsterCommandManager()).run(script);
         } catch(IOException e) {
             System.err.printf(e.toString());
             System.exit(1);
