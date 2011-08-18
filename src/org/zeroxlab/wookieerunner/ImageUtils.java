@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authored by Kan-Ru Chen <kanru@0xlab.org>
+ * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 package org.zeroxlab.wookieerunner;
 

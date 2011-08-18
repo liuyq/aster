@@ -335,8 +335,9 @@ public class AsterMainPanel extends JPanel {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    System.err.println("Update Screen thread is interrupted");
-                    AsterMainPanel.message("Update Screen thread is interrupted");
+                    String msg = "Update Screen thread is interrupted";
+                    System.err.println(msg);
+                    AsterMainPanel.message(msg);
                     e.printStackTrace();
                 }
             }
