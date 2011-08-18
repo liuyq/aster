@@ -121,7 +121,7 @@ public abstract class AsterCommand {
         public void commandFinished(AsterCommand whichOne);
     }
 
-    public interface CommandExecutionLister {
+    public interface CommandExecutionListener {
         public void processResult(ExecutionResult result);
     }
 }
