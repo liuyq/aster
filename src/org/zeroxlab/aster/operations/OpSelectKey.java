@@ -50,8 +50,12 @@ public class OpSelectKey implements AsterOperation {
     protected String mKey;
 
     public OpSelectKey() {
+        this(sKeys[0]);
+    }
+
+    public OpSelectKey(String key) {
         mKey = new String();
-        this.set(sKeys[0]);
+        this.set(key);
     }
 
     public String getKey() {
