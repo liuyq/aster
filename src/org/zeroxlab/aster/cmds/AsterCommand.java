@@ -88,10 +88,6 @@ public abstract class AsterCommand {
         return mOps;
     }
 
-    /* uncomment these abstract methods and implement them
-    public abstract void drawHint(Graphics g);
-    */
-
     /* Get name of command */
     public abstract String getName();
 
@@ -112,11 +108,6 @@ public abstract class AsterCommand {
             return new ExecutionResult(false, e.toString());
         }
         return new ExecutionResult(true, "");
-    }
-
-    /* Get regex for matching command from script */
-    static protected String[] getKeys() {
-        return null;
     }
 
     public interface CommandListener {

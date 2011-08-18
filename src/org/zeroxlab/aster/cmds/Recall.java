@@ -75,10 +75,4 @@ public class Recall extends AsterCommand {
     protected String toScript() {
         return new String();
     }
-
-    static protected String[] getKeys() {
-        String[] keys = {
-        };
-        return keys;
-    }
 }

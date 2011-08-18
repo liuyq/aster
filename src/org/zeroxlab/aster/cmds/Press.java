@@ -109,10 +109,4 @@ public class Press extends AsterCommand {
         return String.format("press('%s', '%s')\n",
                              mKeyCode, mPressType.getTypeStr());
     }
-
-    static protected String[] getKeys() {
-        String[] keys = {
-        };
-        return keys;
-    }
 }

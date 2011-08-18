@@ -80,10 +80,4 @@ public class Type extends AsterCommand {
     protected String toScript() {
         return String.format("type('%s')\n", mText);
     }
-
-    static protected String[] getKeys() {
-        String[] keys = {
-        };
-        return keys;
-    }
 }

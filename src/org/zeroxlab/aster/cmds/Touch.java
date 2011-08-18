@@ -194,10 +194,4 @@ public class Touch extends AsterCommand {
                                  mLandscape? "True": "False");
         }
     }
-
-    static protected String[] getKeys() {
-        String[] keys = {
-        };
-        return keys;
-    }
 }
