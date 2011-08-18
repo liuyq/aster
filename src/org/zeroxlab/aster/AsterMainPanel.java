@@ -30,6 +30,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import javax.swing.*;
+import javax.swing.event.EventListenerList;
 import javax.script.SimpleBindings;
 
 public class AsterMainPanel extends JPanel {
@@ -52,6 +53,10 @@ public class AsterMainPanel extends JPanel {
             });
     }
 
+    public final static int MENU_ROTATE = 1;
+    public final static int MENU_NOT_ROTATE = 2;
+    private static boolean sRotate;
+
     private enum ExecutionState { NORMAL, EXECUTION }
 
     private AsterWorkspace mWorkspace;
@@ -61,6 +66,7 @@ public class AsterMainPanel extends JPanel {
     private CmdConn mCmdConn;
 
     private MyListener mCmdFillListener;
+    private RotationStateListener mRSListener;
 
     private File mCwd;
 
@@ -194,7 +200,53 @@ public class AsterMainPanel extends JPanel {
         quitItem.setText("Quit");
         quitItem.setMnemonic(KeyEvent.VK_Q);
         fileMenu.add(quitItem);
+
+        JMenu viewMenu = new JMenu("View");
+        ButtonGroup group = new ButtonGroup();
+        RotationMenuListener rListener = new RotationMenuListener();
+        JRadioButtonMenuItem rb;
+        rb = new JRadioButtonMenuItem("Rotate Image");
+        rb.addActionListener(rListener);
+        rb.setMnemonic(MENU_ROTATE);
+        group.add(rb);
+        viewMenu.add(rb);
+
+        rb = new JRadioButtonMenuItem("Not Rotate Image");
+        rb.addActionListener(rListener);
+        rb.setMnemonic(MENU_NOT_ROTATE);
+        rb.setSelected(true);
+        group.add(rb);
+        viewMenu.add(rb);
+        menu.add(viewMenu);
         return menu;
+    }
+
+    public boolean needRotate() {
+        return sRotate;
+    }
+
+    public void setRotationStateListener(RotationStateListener l) {
+        mRSListener = l;
+    }
+
+    interface RotationStateListener {
+        public void rotationUpdated(boolean needRotate);
+    }
+
+    class RotationMenuListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() instanceof AbstractButton) {
+                AbstractButton button = (AbstractButton)e.getSource();
+                boolean state = (button.getMnemonic() == MENU_ROTATE);
+                if (state != sRotate) {
+                    if (mRSListener!= null) {
+                        mRSListener.rotationUpdated(state);
+                    }
+                }
+
+                sRotate = state;
+            }
+        }
     }
 
     class MyListener implements FillListener {
