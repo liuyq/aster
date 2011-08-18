@@ -120,7 +120,6 @@ public class AsterMainPanel extends JPanel {
 
         // Set working dir and cd to it
         mCwd = Files.createTempDir();
-        System.setProperty("user.dir", mCwd.getAbsolutePath());
 
         mCmdConn = new CmdConn();
         Thread thread = new Thread(mCmdConn);
@@ -226,6 +225,8 @@ public class AsterMainPanel extends JPanel {
                 if (mState == ExecutionState.NORMAL) {
                     updateScreen();
                 } else {
+                    // Reset user.dir everytime
+                    System.setProperty("user.dir", mCwd.getAbsolutePath());
                     System.err.printf("Staring command execution...\n");
                     AsterMainPanel.message("Staring command execution...");
                     System.err.println(mCmd.toScript());
