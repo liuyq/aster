@@ -55,10 +55,19 @@ public class Press extends AsterCommand {
     String mKeyCode;
 
     public Press() {
+        this(new OpSelectKey());
+    }
+
+    public Press(AsterOperation op) {
         mPressType = PressType.DOWN_AND_UP;
         mKeyCode = new String();
         super.mOps = new AsterOperation[1];
-        super.mOps[0] = new OpSelectKey();
+        super.mOps[0] = op;
+        try {
+            fillSettings(op.getSettings());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Press(String argline) throws IllegalArgumentException {
