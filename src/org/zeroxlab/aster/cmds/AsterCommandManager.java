@@ -37,6 +37,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.lang.Thread;
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
@@ -193,6 +195,10 @@ public class AsterCommandManager {
             if (result.mSuccess != true) {
                 System.err.println(result.mMessage);
                 return result;
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
             }
         }
         return new AsterCommand.ExecutionResult(true, "");
