@@ -53,8 +53,6 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import org.python.core.PyException;
-
 public class AsterCommandManager {
 
     private static File mCwd;
@@ -176,13 +174,13 @@ public class AsterCommandManager {
         AsterCommandManager.connect();
         System.setProperty("user.dir", mCwd.getAbsolutePath());
         System.out.printf("Staring command execution...\n");
-        try {
-            for (AsterCommand c: cmds) {
-                System.err.printf("%s", c.toScript());
-                c.execute();
+        for (AsterCommand c: cmds) {
+            System.err.printf("%s", c.toScript());
+            AsterCommand.ExecutionResult result = c.execute();
+            if (result.mSuccess != true) {
+                System.err.println(result.mMessage);
+                break;
             }
-        } catch (PyException e) {
-            System.out.printf("%s\n", e);
         }
     }
     

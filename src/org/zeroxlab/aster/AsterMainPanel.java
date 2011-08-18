@@ -23,8 +23,6 @@ import org.zeroxlab.aster.AsterCommand.CommandListener;
 
 import com.android.chimpchat.core.IChimpImage;
 
-import org.python.core.PyException;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -196,12 +194,12 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
             mKeepWalking = false;
         }
 
-        public void runCommands(AsterCommand[] cmds) {
+        synchronized public void runCommands(AsterCommand[] cmds) {
             mCmds = cmds;
             switchState(ExecutionState.EXECUTION);
         }
 
-        synchronized void switchState(ExecutionState state) {
+        synchronized private void switchState(ExecutionState state) {
             mState = state;
         }
 
@@ -211,20 +209,20 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
             AsterCommandManager.connect();
             AsterMainPanel.message("Connected");
 
-            while(mKeepWalking) {
+            while (mKeepWalking) {
                 if (mState == ExecutionState.NORMAL) {
                     updateScreen();
                 } else {
                     System.err.printf("Staring command execution...\n");
                     AsterMainPanel.message("Staring command execution...");
-                    try {
-                        for (AsterCommand c: mCmds) {
-                            System.err.println(c.toScript());
-                            c.execute();
-                            updateScreen();
+                    for (AsterCommand c: mCmds) {
+                        System.err.println(c.toScript());
+                        AsterCommand.ExecutionResult result = c.execute();
+                        updateScreen();
+                        if (result.mSuccess != true) {
+                            System.err.println(result.mMessage);
+                            break;
                         }
-                    } catch (PyException e) {
-                        System.out.printf("%s\n", e);
                     }
                     switchState(ExecutionState.NORMAL);
                 }

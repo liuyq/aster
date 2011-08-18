@@ -34,6 +34,8 @@ import javax.imageio.ImageIO;
 
 import javax.script.SimpleBindings;
 
+import org.python.core.PyException;
+
 public abstract class AsterCommand {
     private static ScriptRunner mRunner;
     protected static int mSeqNext = 0;
@@ -41,6 +43,19 @@ public abstract class AsterCommand {
     protected boolean mLandscape = false;
     protected BufferedImage mImage = null;
     protected AsterOperation[] mOps;
+
+    public class ExecutionResult {
+        public boolean mSuccess;
+        public String mMessage;
+
+        public ExecutionResult() {
+        }
+
+        public ExecutionResult(boolean success, String message) {
+            mSuccess = success;
+            mMessage = message;
+        }
+    }
 
     static public void setScriptRunner(ScriptRunner runner) {
         mRunner = runner;
@@ -90,8 +105,13 @@ public abstract class AsterCommand {
     protected abstract String toScript();
 
     /* Execute command */
-    public void execute() {
-        mRunner.runStringLocal(toScript());
+    public ExecutionResult execute() {
+        try {
+            mRunner.runStringLocal(toScript());
+        } catch (PyException e) {
+            return new ExecutionResult(false, e.toString());
+        }
+        return new ExecutionResult(true, "");
     }
 
     /* Get regex for matching command from script */

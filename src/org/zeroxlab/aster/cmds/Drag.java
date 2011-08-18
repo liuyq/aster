@@ -43,7 +43,7 @@ public class Drag extends AsterCommand {
     Point mStartPosition;
     Point mEndPosition;
 
-    double mDuration = 1;
+    double mDuration = 0.5;
     int mSteps = 10;
     double mTimeout = 3;
 
