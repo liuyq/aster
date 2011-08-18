@@ -39,12 +39,13 @@ public class Type extends AsterCommand {
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
+            // type(text)
             mText = stripQuote(args[0]);
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpType();
+        mOps[0] = new OpGetInput();
     }
 
     public String getText() {

@@ -73,6 +73,7 @@ public class Press extends AsterCommand {
     public Press(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
         if (args.length == 2) {
+            // press(keycode, type)
             mKeyCode = stripQuote(args[0]);
             mPressType = PressType.parse(args[1]);
         } else {

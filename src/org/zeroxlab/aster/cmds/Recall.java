@@ -38,6 +38,7 @@ public class Recall extends AsterCommand {
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
+            // recall(script)
             mScript = stripQuote(args[0]);
         } else {
             throw new IllegalArgumentException("Invalid argument line.");

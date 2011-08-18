@@ -39,6 +39,7 @@ public class Drag extends AsterCommand {
     CoordType mCoordType;
     Point mStartPosition;
     Point mEndPosition;
+    Point mShiftDistance;
 
     int mSteps = 10;
     double mDuration = 0.5;
@@ -49,6 +50,7 @@ public class Drag extends AsterCommand {
         mCoordType = CoordType.FIXED;
         mStartPosition = new Point();
         mEndPosition = new Point();
+        mShiftDistance = new Point();
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
@@ -57,6 +59,8 @@ public class Drag extends AsterCommand {
         String[] args = splitArgs(argline);
 
         if (args.length == 8) {
+            // drag(start_image, (dx, dy), duration, steps, timeout, similarity,
+            // landscape)
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
@@ -70,7 +74,7 @@ public class Drag extends AsterCommand {
                 mSerial = mSeqNext++;
             }
             try {
-                mEndPosition = new Point(Integer.parseInt(args[1]),
+                mShiftDistance = new Point(Integer.parseInt(args[1]),
                                            Integer.parseInt(args[2]));
                 mDuration = Double.parseDouble(args[3]);
                 mSteps = Integer.parseInt(args[4]);
@@ -80,7 +84,8 @@ public class Drag extends AsterCommand {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 9) {
+        } else if (args.length == 6) {
+            // drag(start_image, (dx, dy), duration, steps)
             try {
                 mCoordType = CoordType.FIXED;
                 mStartPosition = new Point(Integer.parseInt(args[0]),
@@ -89,8 +94,6 @@ public class Drag extends AsterCommand {
                                          Integer.parseInt(args[3]));
                 mDuration = Double.parseDouble(args[4]);
                 mSteps = Integer.parseInt(args[5]);
-                mTimeout = Double.parseDouble(args[6]);
-                mLandscape = Boolean.parseBoolean(args[7]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -164,6 +167,10 @@ public class Drag extends AsterCommand {
             if (settings.containsKey("EndPos")) {
                 mEndPosition = (Point)settings.get("EndPos");
             }
+            mShiftDistance.setLocation(
+                    mEndPosition.getX() - mStartPosition.getX(),
+                    mEndPosition.getY() - mStartPosition.getY()
+            );
         }
 
         if (settings.containsKey("Duration")) {
@@ -188,18 +195,17 @@ public class Drag extends AsterCommand {
         if (isAuto()) {
             return String.format("drag('%d.png', (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
                                  mSerial,
-                                 (int)mEndPosition.getX(),
-                                 (int)mEndPosition.getY(),
+                                 (int)mShiftDistance.getX(),
+                                 (int)mShiftDistance.getY(),
                                  mDuration, mSteps, mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         } else {
-            return String.format("drag((%d, %d), (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
+            return String.format("drag((%d, %d), (%d, %d), %.1f, %d)\n",
                                  (int)mStartPosition.getX(),
                                  (int)mStartPosition.getY(),
                                  (int)mEndPosition.getX(),
                                  (int)mEndPosition.getY(),
-                                 mDuration, mSteps, mTimeout, mSimilarity,
-                                 mLandscape? "True": "False");
+                                 mDuration, mSteps);
         }
     }
 }

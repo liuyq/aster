@@ -29,6 +29,7 @@ import javax.script.SimpleBindings;
 
 public class Assert extends AsterCommand {
     double mTimeout = 3;
+    double mSimilarity = 0.9;
 
     public Assert() {
         mOps = new AsterOperation[1];
@@ -39,6 +40,7 @@ public class Assert extends AsterCommand {
         throws IllegalArgumentException {
         String[] args = splitArgs(argline);
         if (args.length == 3) {
+            // iassert(image, timeout, similarity, landscape)
             try {
                 args[0] = stripQuote(args[0]);
                 mImage = ImageIO.read(new File(prefix, args[0]));
@@ -52,7 +54,8 @@ public class Assert extends AsterCommand {
             }
             try {
                 mTimeout = Double.parseDouble(args[1]);
-                mLandscape = Boolean.parseBoolean(args[2]);
+                mSimilarity = Double.parseDouble(args[2]);
+                mLandscape = Boolean.parseBoolean(args[3]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -77,6 +80,7 @@ public class Assert extends AsterCommand {
             mSerial = mSeqNext++;
         }
         settings.put("Timeout", mTimeout);
+        settings.put("Similarity", mSimilarity);
         settings.put("Landscape", mLandscape);
         return settings;
     }
@@ -89,6 +93,9 @@ public class Assert extends AsterCommand {
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");
         }
+        if (settings.containsKey("Similarity")) {
+            mSimilarity = (Double)settings.get("Similarity");
+        }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
         }
@@ -96,7 +103,7 @@ public class Assert extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("iassert('%d.png', %f, %s)\n", mSerial, mTimeout,
-                             mLandscape? "True": "False");
+        return String.format("iassert('%d.png', %.1f, %.2f, %s)\n", mSerial,
+                             mTimeout, mLandscape? "True": "False");
     }
 }

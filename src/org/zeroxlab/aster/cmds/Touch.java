@@ -77,6 +77,7 @@ public class Touch extends AsterCommand {
         String[] args = splitArgs(argline);
 
         if (args.length == 5) {
+            // touch(image, type, timeout, similarity, landscape)
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
@@ -97,14 +98,13 @@ public class Touch extends AsterCommand {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 6) {
+        } else if (args.length == 3) {
+            // touch(x, y, type)
             try {
                 mCoordType = CoordType.FIXED;
                 mPosition = new Point(Integer.parseInt(args[0]),
                                       Integer.parseInt(args[1]));
                 mTouchType = TouchType.parse(args[2]);
-                mTimeout = Double.parseDouble(args[3]);
-                mLandscape = Boolean.parseBoolean(args[4]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -186,10 +186,9 @@ public class Touch extends AsterCommand {
                                  mTouchType.getTypeStr(), mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         } else {
-            return String.format("touch(%d, %d, '%s', %.1f, %.2f, %s)\n",
+            return String.format("touch(%d, %d, '%s')\n",
                                  (int)mPosition.getX(), (int)mPosition.getY(),
-                                 mTouchType.getTypeStr(), mTimeout, mSimilarity,
-                                 mLandscape? "True": "False");
+                                 mTouchType.getTypeStr());
         }
     }
 }
