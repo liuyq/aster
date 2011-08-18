@@ -195,15 +195,15 @@ public class AsterMainPanel extends JPanel {
     class CmdConn implements Runnable {
 
         private boolean mKeepWalking = true;
-        private AsterCommand[] mCmds;
+        private AsterCommand mCmd;
         private ExecutionState mState;
 
         public void finish() {
             mKeepWalking = false;
         }
 
-        synchronized public void runCommands(AsterCommand[] cmds) {
-            mCmds = cmds;
+        synchronized public void runCommands(AsterCommand cmd) {
+            mCmd = cmd;
             switchState(ExecutionState.EXECUTION);
         }
 
@@ -223,14 +223,12 @@ public class AsterMainPanel extends JPanel {
                 } else {
                     System.err.printf("Staring command execution...\n");
                     AsterMainPanel.message("Staring command execution...");
-                    for (AsterCommand c: mCmds) {
-                        System.err.println(c.toScript());
-                        AsterCommand.ExecutionResult result = c.execute();
-                        updateScreen();
-                        if (result.mSuccess != true) {
-                            System.err.println(result.mMessage);
-                            break;
-                        }
+                    System.err.println(mCmd.toScript());
+                    AsterCommand.ExecutionResult result = mCmd.execute();
+                    updateScreen();
+                    if (result.mSuccess != true) {
+                        System.err.println(result.mMessage);
+                        break;
                     }
                     switchState(ExecutionState.NORMAL);
                 }
