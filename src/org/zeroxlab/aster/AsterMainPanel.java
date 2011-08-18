@@ -137,6 +137,7 @@ public class AsterMainPanel extends JPanel {
         System.setProperty("user.dir", mCwd.getAbsolutePath());
 
         mCmdConn = new CmdConn();
+        setRotationStateListener(mCmdConn);
         Thread thread = new Thread(mCmdConn);
         thread.start();
     }
@@ -282,11 +283,12 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    class CmdConn implements Runnable {
+    class CmdConn implements Runnable, RotationStateListener {
 
         private boolean mKeepWalking = true;
         private AsterCommand mCmd;
         private ExecutionState mState;
+        private boolean mLandscape = false;
         private AsterCommand.CommandExecutionLister mListener = null;
 
         public void finish() {
@@ -343,10 +345,14 @@ public class AsterMainPanel extends JPanel {
         private void updateScreen() {
             IChimpImage snapshot = mCmdManager.takeSnapshot();
             BufferedImage image = snapshot.createBufferedImage();
-            if (true)
+            if (mLandscape)
                 image = ImageUtils.rotate(image);
             mWorkspace.setImage(image);
             mWorkspace.repaint(mWorkspace.getBounds());
+        }
+
+        public void rotationUpdated(boolean needRotate) {
+            mLandscape = needRotate;
         }
     }
 }
