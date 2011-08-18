@@ -53,6 +53,7 @@ import java.util.logging.Logger;
 public class AsterCommandManager {
 
     private File mCwd;
+    private static String mPrefix;
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
@@ -170,11 +171,18 @@ public class AsterCommandManager {
     public void run(String astfile)
         throws IOException {
         connect();
-        runLocal(astfile);
+        runLocal(astfile, true);
     }
 
-    public AsterCommand.ExecutionResult runLocal(String astfile)
+    public AsterCommand.ExecutionResult runLocal(String astfile, boolean isroot)
         throws IOException {
+        if (isroot) {
+            mPrefix = (new File(astfile)).getParent();
+        } else {
+            astfile = (new File(mPrefix, astfile)).getAbsolutePath();
+            System.out.printf("%s\n", astfile);
+        }
+
         AsterCommand[] cmds = load(astfile);
 
         System.out.printf("Staring command execution...\n");

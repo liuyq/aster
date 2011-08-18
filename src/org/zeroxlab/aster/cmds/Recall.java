@@ -72,7 +72,7 @@ public class Recall extends AsterCommand {
         ExecutionResult result = new ExecutionResult(true, "");
         try {
             if (mScript.length() != 0)
-                result = (new AsterCommandManager()).runLocal(mScript);
+                result = (new AsterCommandManager()).runLocal(mScript, false);
         } catch(IOException e) {
             result.mSuccess = false;
             result.mMessage = e.toString();
