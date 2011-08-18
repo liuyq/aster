@@ -38,7 +38,7 @@ public class Assert extends AsterCommand {
     public Assert(String prefix, String argline)
         throws IllegalArgumentException {
         String[] args = splitArgs(argline);
-        if (args.length == 2) {
+        if (args.length == 3) {
             try {
                 args[0] = stripQuote(args[0]);
                 mImage = ImageIO.read(new File(prefix, args[0]));

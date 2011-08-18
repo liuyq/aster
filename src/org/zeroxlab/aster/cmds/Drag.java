@@ -56,7 +56,7 @@ public class Drag extends AsterCommand {
     public Drag(String prefix, String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
 
-        if (args.length == 7) {
+        if (args.length == 8) {
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
@@ -80,7 +80,7 @@ public class Drag extends AsterCommand {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 8) {
+        } else if (args.length == 9) {
             try {
                 mCoordType = CoordType.FIXED;
                 mStartPosition = new Point(Integer.parseInt(args[0]),
