@@ -21,6 +21,7 @@
 package org.zeroxlab.aster;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
@@ -29,12 +30,6 @@ public class Recall extends AsterCommand {
 
     public Recall() {
         mScript = new String();
-        mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpRecall();
-    }
-
-    public Recall(SimpleBindings settings) {
-        fillSettings(settings);
         mOps = new AsterOperation[1];
         //mOps[0] = AsterWorkspace.getOpRecall();
     }
@@ -65,7 +60,7 @@ public class Recall extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("Script")) {
             mScript = (String)settings.get("Script");
         }

@@ -19,27 +19,18 @@
 package org.zeroxlab.aster;
 
 import java.awt.image.BufferedImage;
-
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
-
+import java.io.File;
 import java.io.IOException;
 
-import java.io.File;
 import javax.imageio.ImageIO;
-
 import javax.script.SimpleBindings;
 
 public class Assert extends AsterCommand {
     double mTimeout = 3;
 
     public Assert() {
-        mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
-    }
-
-    public Assert(SimpleBindings settings) {
-        fillSettings(settings);
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
@@ -89,7 +80,7 @@ public class Assert extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("Image")) {
             mImage = (BufferedImage)settings.get("Image");
         }

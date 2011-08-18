@@ -23,6 +23,8 @@ import org.zeroxlab.aster.AsterWorkspace.FillListener;
 
 import com.android.chimpchat.core.IChimpImage;
 
+import com.google.common.io.Files;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -58,6 +60,8 @@ public class AsterMainPanel extends JPanel {
     private CmdConn mCmdConn;
 
     private MyListener mCmdFillListener;
+
+    private File mCwd;
 
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
@@ -113,6 +117,10 @@ public class AsterMainPanel extends JPanel {
         add(mStatus, c);
 
         setPreferredSize(new Dimension(800, 600));
+
+        // Set working dir and cd to it
+        mCwd = Files.createTempDir();
+        System.setProperty("user.dir", mCwd.getAbsolutePath());
 
         mCmdConn = new CmdConn();
         Thread thread = new Thread(mCmdConn);

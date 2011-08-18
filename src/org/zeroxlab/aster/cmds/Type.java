@@ -20,6 +20,7 @@ package org.zeroxlab.aster;
 
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
+import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
@@ -28,13 +29,6 @@ public class Type extends AsterCommand {
     String mText;
 
     public Type() {
-        mText = new String();
-        mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpType();
-    }
-
-    public Type(SimpleBindings settings) {
-        fillSettings(settings);
         mText = new String();
         mOps = new AsterOperation[1];
         //mOps[0] = AsterWorkspace.getOpType();
@@ -70,7 +64,7 @@ public class Type extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("Text")) {
             mText = (String)settings.get("Text");
         }

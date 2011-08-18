@@ -27,8 +27,6 @@ import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
 
-import java.util.ArrayList;
-
 import com.google.common.io.Files;
 
 import java.io.BufferedOutputStream;
@@ -39,14 +37,13 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
-
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -118,7 +115,7 @@ public class AsterCommandManager {
     static private boolean deleteDir(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i=0; i<children.length; i++) {
+            for (int i = 0; i < children.length; i++) {
                 boolean success = deleteDir(new File(dir, children[i]));
                 if (!success) {
                     return false;

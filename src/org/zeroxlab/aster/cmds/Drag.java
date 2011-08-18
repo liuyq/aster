@@ -20,15 +20,12 @@ package org.zeroxlab.aster;
 
 import java.awt.image.BufferedImage;
 import java.awt.Point;
-
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
-
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
-
 import javax.script.SimpleBindings;
 
 import org.zeroxlab.aster.AsterOperation;
@@ -51,12 +48,6 @@ public class Drag extends AsterCommand {
         mCoordType = CoordType.FIXED;
         mStartPosition = new Point();
         mEndPosition = new Point();
-        mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getInstance().getOpDrag();
-    }
-
-    public Drag(SimpleBindings settings) {
-        fillSettings(settings);
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
@@ -149,7 +140,7 @@ public class Drag extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("CoordType")) {
             mCoordType = (CoordType)settings.get("CoordType");
         }
@@ -158,6 +149,7 @@ public class Drag extends AsterCommand {
             if (settings.containsKey("Image")) {
                 mImage = (BufferedImage)settings.get("Image");
                 mSerial = mSeqNext++;
+                saveImage(System.getProperty("user.dir"));
             }
             if (settings.containsKey("Offset")) {
                 mEndPosition = (Point)settings.get("Offset");

@@ -19,19 +19,15 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterOperation;
-
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
 import com.android.monkeyrunner.MonkeyRunnerOptions;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-
 import java.io.File;
 import java.io.IOException;
-
 import javax.imageio.ImageIO;
-
 import javax.script.SimpleBindings;
 
 import org.python.core.PyException;
@@ -79,6 +75,7 @@ public abstract class AsterCommand {
     public void saveImage(String prefix) throws IOException {
         if (mImage != null) {
             File pngfile = new File(prefix, String.format("%d.png", mSerial));
+            pngfile.delete();
             ImageIO.write(mImage, "png", pngfile);
         }
     }

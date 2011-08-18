@@ -20,6 +20,7 @@ package org.zeroxlab.aster;
 
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
+import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
@@ -58,12 +59,6 @@ public class Press extends AsterCommand {
         //mOps[0] = AsterWorkspace.getOpPress();
     }
 
-    public Press(SimpleBindings settings) {
-        fillSettings(settings);
-        mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpPress();
-    }
-
     public Press(String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
         if (args.length == 2) {
@@ -95,7 +90,7 @@ public class Press extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) {
+    public void fillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("KeyCode")) {
             mKeyCode = (String)settings.get("KeyCode");
         }

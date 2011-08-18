@@ -36,6 +36,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.script.SimpleBindings;
@@ -203,7 +204,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
         if (now == ops.length -1) { // tail
             for (int i = 0; i < ops.length; i++) {
+                try {
                 sRecordingCmd.fillSettings(ops[i].getSettings());
+                } catch (IOException e) {
+                    // Can't save Image, GUI notify
+                    System.err.printf(e.toString());
+                }
             }
 
             if (sFillListener != null) {
