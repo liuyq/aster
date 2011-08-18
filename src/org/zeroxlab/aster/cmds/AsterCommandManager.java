@@ -40,6 +40,7 @@ import java.io.FileNotFoundException;
 import java.lang.Thread;
 import java.lang.InterruptedException;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.TreeMap;
@@ -55,7 +56,7 @@ import java.util.logging.Logger;
 public class AsterCommandManager {
 
     private File mCwd;
-    private static String mPrefix;
+    private static Stack<String> mPathStack = new Stack<String>();
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
@@ -173,19 +174,17 @@ public class AsterCommandManager {
     public void run(String astfile)
         throws IOException {
         connect();
-        runLocal(astfile, true);
+        runLocal(astfile);
     }
 
-    public AsterCommand.ExecutionResult runLocal(String astfile, boolean isroot)
+    public AsterCommand.ExecutionResult runLocal(String astfile)
         throws IOException {
-        if (isroot) {
-            mPrefix = (new File(astfile)).getParent();
-        } else {
-            astfile = (new File(mPrefix, astfile)).getAbsolutePath();
-            System.out.printf("%s\n", astfile);
+        if (!mPathStack.empty()) {
+            astfile = (new File(mPathStack.peek(), astfile)).getAbsolutePath();
         }
-
         AsterCommand[] cmds = load(astfile);
+
+        mPathStack.push((new File(astfile)).getParent());
 
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
@@ -194,6 +193,7 @@ public class AsterCommandManager {
             AsterCommand.ExecutionResult result = c.execute();
             if (result.mSuccess != true) {
                 System.err.println(result.mMessage);
+                mPathStack.pop();
                 return result;
             }
             try {
@@ -201,6 +201,7 @@ public class AsterCommandManager {
             } catch (InterruptedException e) {
             }
         }
+        mPathStack.pop();
         return new AsterCommand.ExecutionResult(true, "");
     }
     
