@@ -293,7 +293,10 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         double similarity = JythonUtils.getFloat(ap, 2, default_similarity);
 
         try {
-            wookiee.iassert(name, timeout, similarity);
+            wookiee.iassert(ap.getString(0),
+                            JythonUtils.getFloat(ap, 1, default_timeout),
+                            JythonUtils.getFloat(ap, 2, default_similarity),
+                            (Boolean)((PyBoolean)ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
         } catch (FileNotFoundException e) {
             throw new PyException(Py.IOError, e.toString());
         } catch (TemplateNotFoundException e) {

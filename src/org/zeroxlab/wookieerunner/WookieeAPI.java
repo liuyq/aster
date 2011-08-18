@@ -31,15 +31,16 @@ import com.android.chimpchat.core.ChimpImageBase;
 import com.android.chimpchat.core.TouchPressType;
 import com.android.chimpchat.hierarchyviewer.HierarchyViewer;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-
+import java.io.IOException;
 import java.lang.Math;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 
 public class WookieeAPI {
     private IChimpDevice impl;
@@ -55,12 +56,23 @@ public class WookieeAPI {
         );
     }
 
-    private String getCurrentSnapshot() {
+    private String getCurrentSnapshot(boolean landscape) {
         IChimpImage image = impl.takeSnapshot();
         String tmpdir = System.getProperty("java.io.tmpdir");
-        String output = (new File(tmpdir, "owl.png").getAbsolutePath());
-        image.writeToFile(output, "png");
-        return output;
+        File output = new File(tmpdir, "owl.png");
+
+        if (landscape) {
+            BufferedImage bimage = image.createBufferedImage();
+            bimage = ImageUtils.rotate(bimage);
+            try {
+                ImageIO.write(bimage, "png", output);
+            } catch(IOException e) {
+                System.err.printf("Fatal error: %s", e.toString());
+            }
+        } else {
+            image.writeToFile(output.getAbsolutePath(), "png");
+        }
+        return output.getAbsolutePath();
     }
 
     public IChimpDevice getImpl() {
@@ -97,7 +109,8 @@ public class WookieeAPI {
         MatchResult r = new MatchResult();
         while (true) {
             try {
-                r = Finder.dispatch(matcher, getCurrentSnapshot(), name, similarity);
+                r = Finder.dispatch(matcher, getCurrentSnapshot(landscape),
+                                    name, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;
@@ -106,11 +119,7 @@ public class WookieeAPI {
             break;
         }
 
-        if (landscape) {
-            touch(r.cy(), shortside - r.cx(), typestr);
-        } else {
-            touch(r.cx(), r.cy(), typestr);
-        }
+        touch(r.cx(), r.cy(), typestr);
     }
 
     public void drag(int x0, int y0, int x1, int y1, int steps, double sec) {
@@ -128,7 +137,7 @@ public class WookieeAPI {
 
         while (true) {
             try {
-                current = getCurrentSnapshot();
+                current = getCurrentSnapshot(landscape);
                 rs = Finder.dispatch(matcher, current, start_img, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
@@ -137,12 +146,7 @@ public class WookieeAPI {
             }
             break;
         }
-        if (landscape) {
-            drag(rs.cy(), shortside - rs.cx(),
-                 rs.cy() + dx, shortside - rs.cx() + dy, steps, sec);
-        } else {
-            drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
-        }
+        drag(rs.cx(), rs.cy(), rs.cx() + dx, rs.cy() + dy, steps, sec);
     }
 
     public void drag(String start_img, String end_img, int steps, double sec,
@@ -155,7 +159,7 @@ public class WookieeAPI {
 
         while (true) {
             try {
-                current = getCurrentSnapshot();
+                current = getCurrentSnapshot(landscape);
                 rs = Finder.dispatch(matcher, current, start_img, similarity);
                 re = Finder.dispatch(matcher, current, end_img, similarity);
             } catch (TemplateNotFoundException e) {
@@ -165,12 +169,7 @@ public class WookieeAPI {
             }
             break;
         }
-        if (landscape) {
-            drag(rs.cy(), shortside - rs.cx(),
-                 re.cy(), shortside - re.cx(), steps, sec);
-        } else {
-            drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, sec);
-        }
+        drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, sec);
     }
 
     public void press(String name, String typestr) {
@@ -184,13 +183,15 @@ public class WookieeAPI {
         impl.type(text);
     }
 
-    public void iassert(String name, double timeout, double similarity)
+    public void iassert(String name, double timeout, double similarity,
+                        boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();
         while (true) {
             try {
-                r = Finder.dispatch(matcher, getCurrentSnapshot(), name, similarity);
+                r = Finder.dispatch(matcher, getCurrentSnapshot(landscape),
+                                    name, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;

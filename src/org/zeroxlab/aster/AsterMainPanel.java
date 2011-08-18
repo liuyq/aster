@@ -20,11 +20,13 @@ package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
 import org.zeroxlab.aster.AsterWorkspace.FillListener;
+import org.zeroxlab.wookieerunner.ImageUtils;
 
 import com.android.chimpchat.core.IChimpImage;
 
 import com.google.common.io.Files;
 
+import java.awt.image.BufferedImage;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
@@ -288,7 +290,10 @@ public class AsterMainPanel extends JPanel {
 
         private void updateScreen() {
             IChimpImage snapshot = mCmdManager.takeSnapshot();
-            mWorkspace.setImage(snapshot.createBufferedImage());
+            BufferedImage image = snapshot.createBufferedImage();
+            if (true)
+                image = ImageUtils.rotate(image);
+            mWorkspace.setImage(image);
             mWorkspace.repaint(mWorkspace.getBounds());
         }
     }

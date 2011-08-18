@@ -182,6 +182,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public void setImage(BufferedImage img) {
         mSourceImage = img;
         if (mSourceImage != null) {
+            generateDrawingBuffer();
             updateDrawingBuffer(mSourceImage);
         }
     }

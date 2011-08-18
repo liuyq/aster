@@ -52,6 +52,7 @@ public class Assert extends AsterCommand {
             }
             try {
                 mTimeout = Double.parseDouble(args[1]);
+                mLandscape = Boolean.parseBoolean(args[2]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -76,6 +77,7 @@ public class Assert extends AsterCommand {
             mSerial = mSeqNext++;
         }
         settings.put("Timeout", mTimeout);
+        settings.put("Landscape", mLandscape);
         return settings;
     }
 
@@ -87,10 +89,14 @@ public class Assert extends AsterCommand {
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");
         }
+        if (settings.containsKey("Landscape")) {
+            mLandscape = (Boolean)settings.get("Landscape");
+        }
     }
 
     @Override
     protected String toScript() {
-        return String.format("iassert('%d.png', %f)\n", mSerial, mTimeout);
+        return String.format("iassert('%d.png', %f, %s)\n", mSerial, mTimeout,
+                             mLandscape? "True": "False");
     }
 }
