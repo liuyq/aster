@@ -19,7 +19,7 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
-import org.zeroxlab.aster.AsterCommand.CommandListener;
+import org.zeroxlab.aster.AsterWorkspace.FillListener;
 
 import com.android.chimpchat.core.IChimpImage;
 
@@ -30,7 +30,7 @@ import java.io.*;
 import javax.swing.*;
 import javax.script.SimpleBindings;
 
-public class AsterMainPanel extends JPanel implements AsterCommand.CommandListener {
+public class AsterMainPanel extends JPanel {
 
     static JStatusBar mStatus = new JStatusBar();
 
@@ -57,12 +57,12 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
 
     private CmdConn mCmdConn;
 
-    private MyListener mCmdListener;
+    private MyListener mCmdFillListener;
 
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
-        mCmdListener = new MyListener();
+        mCmdFillListener = new MyListener();
 
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
@@ -84,7 +84,7 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
         mWorkspace = AsterWorkspace.getInstance();
-        mWorkspace.setCommandListener(this);
+        mWorkspace.setFillListener(mCmdFillListener);
         mActionList.getModel().setRecall(new Recall());
         mActionList.getModel().addChangeListener(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
@@ -177,8 +177,8 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
         return menu;
     }
 
-    class MyListener implements CommandListener {
-        public void commandFinished(AsterCommand whichOne) {
+    class MyListener implements FillListener {
+        public void commandFilled(AsterCommand whichOne) {
             mActionList.getModel().trigger();
             System.out.println("Complete cmd: " + whichOne.getName());
         }
@@ -241,9 +241,5 @@ public class AsterMainPanel extends JPanel implements AsterCommand.CommandListen
             mWorkspace.setImage(snapshot.createBufferedImage());
             mWorkspace.repaint(mWorkspace.getBounds());
         }
-    }
-
-    public void commandFinished(AsterCommand cmd) {
-        mActionList.getModel().trigger();
     }
 }

@@ -95,7 +95,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     private static ClipRegion sRegion;
 
     private static MainKeyListener sMainKeyListener;
-    private static CommandListener sCmdListener;
+    private static FillListener sFillListener;
     private static OperationListener sOpListener;
     private static AsterCommand sRecordingCmd;
     private static AsterOperation sRecordingOp;
@@ -176,9 +176,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
     }
 
-    public void fillCmd(AsterCommand cmd, CommandListener listener) {
+    public void fillCmd(AsterCommand cmd, FillListener listener) {
         sRecordingCmd = cmd;
-        sCmdListener = listener;
+        sFillListener = listener;
         AsterOperation[] ops = sRecordingCmd.getOperations();
         if (ops == null || ops.length == 0) {
             System.err.println("You are asking me to fill an empty command");
@@ -206,8 +206,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 sRecordingCmd.fillSettings(ops[i].getSettings());
             }
 
-            if (sCmdListener != null) {
-                sCmdListener.commandFinished(sRecordingCmd);
+            if (sFillListener != null) {
+                sFillListener.commandFilled(sRecordingCmd);
             }
 
             return;
@@ -234,8 +234,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         mTouchListener = listener;
     }
 
-    public void setCommandListener(CommandListener listener) {
-        sCmdListener = listener;
+    public void setFillListener(FillListener listener) {
+        sFillListener = listener;
     }
 
     public void paintComponent(Graphics g) {
@@ -419,7 +419,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             last = iterator.next();
         }
 
-        fillCmd(last, sCmdListener);
+        fillCmd(last, sFillListener);
     }
 
     private void updateDrawingBuffer(BufferedImage source) {
@@ -451,6 +451,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
     public interface TouchListener {
         public void clicked(int x, int y);
+    }
+
+    public interface FillListener {
+        public void commandFilled(AsterCommand cmd);
     }
 
     public interface MainKeyListener {
