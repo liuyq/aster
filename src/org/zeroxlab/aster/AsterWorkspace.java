@@ -284,14 +284,12 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
 
         sRegion.moveC(x, y);
-        x = (int)((mSourceWidth * (x - mImgRect.x)) / mImgRect.width);
-        y = (int)((mSourceHeight * (y - mImgRect.y)) / mImgRect.height);
+        Point start = convertPointW2Img(x, y);
         if (mMoving == NONE && mTouchListener != null) {
-            mTouchListener.clicked(x, y);
+            mTouchListener.clicked(start.x, start.y);
         } else if (mDragListener != null) {
-            int ex = sRegion.pD.x;
-            int ey = sRegion.pD.y;
-            mDragListener.dragged(x, y, ex, ey);
+            Point end = convertPointW2Img(sRegion.pD.x, sRegion.pD.y);
+            mDragListener.dragged(start.x, start.y, end.x, end.y);
         }
     }
 
