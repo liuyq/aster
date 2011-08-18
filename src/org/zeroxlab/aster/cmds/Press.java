@@ -24,6 +24,8 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.zeroxlab.aster.OpSelectKey;
+
 public class Press extends AsterCommand {
 
     private enum PressType {
@@ -53,10 +55,19 @@ public class Press extends AsterCommand {
     String mKeyCode;
 
     public Press() {
+        this(new OpSelectKey());
+    }
+
+    public Press(AsterOperation op) {
         mPressType = PressType.DOWN_AND_UP;
         mKeyCode = new String();
-        mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpPress();
+        super.mOps = new AsterOperation[1];
+        super.mOps[0] = op;
+        try {
+            fillSettings(op.getSettings());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public Press(String argline) throws IllegalArgumentException {
@@ -67,8 +78,8 @@ public class Press extends AsterCommand {
         } else {
             throw new IllegalArgumentException();
         }
-        mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpPress();
+        super.mOps = new AsterOperation[1];
+        super.mOps[0] = new OpSelectKey();
     }
 
     public String getKeyCode() {

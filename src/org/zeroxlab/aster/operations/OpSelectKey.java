@@ -20,12 +20,42 @@
 
 package org.zeroxlab.aster;
 
-public abstract class OpSelectKey implements AsterOperation {
+import javax.script.SimpleBindings;
+import javax.swing.JOptionPane;
+
+public class OpSelectKey implements AsterOperation {
+
+    public final static String[] sKeys = {
+        "KEYCODE_BACK",
+        "KEYCODE_MENU",
+        "KEYCODE_HOME",
+        "KEYCODE_SEARCH",
+        "KEYCODE_CLEAR",
+        "KEYCODE_DEL",
+        "KEYCODE_ENTER",
+        "KEYCODE_SPACE",
+        "KEYCODE_DPAD_UP",
+        "KEYCODE_DPAD_DOWN",
+        "KEYCODE_DPAD_LEFT",
+        "KEYCODE_DPAD_RIGHT",
+        "KEYCODE_DPAD_CENTER",
+        "KEYCODE_VOLUME_UP",
+        "KEYCODE_VOLUME_DOWN",
+        "KEYCODE_VOLUME_MUTE",
+        "KEYCODE_ZOOM_IN",
+        "KEYCODE_ZOOM_OUT",
+        "KEYCODE_CAMERA",
+    };
 
     protected String mKey;
 
     public OpSelectKey() {
+        this(sKeys[0]);
+    }
+
+    public OpSelectKey(String key) {
         mKey = new String();
+        this.set(key);
     }
 
     public String getKey() {
@@ -33,6 +63,43 @@ public abstract class OpSelectKey implements AsterOperation {
     }
 
     public void set(String key) {
-        mKey = key;
+        for (int i = 0; i < sKeys.length; i++) {
+            if (key.equals(sKeys[i])) {
+                mKey = key;
+            }
+        }
+    }
+
+    @Override
+    public String getName() {
+        return "Select Key";
+    }
+
+    @Override
+    public void record(OperationListener listener) {
+        Object selection = JOptionPane.showInputDialog(
+                null
+                , "Please choose a name"
+                , "Example 1"
+                , JOptionPane.QUESTION_MESSAGE
+                , null
+                , sKeys
+                , mKey
+                );
+
+        if (selection != null) {
+            set(selection.toString());
+        } else  {
+            System.out.println("Pressed Cancl, still using " +mKey);
+        }
+
+        listener.operationFinished(this);
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        SimpleBindings settings = new SimpleBindings();
+        settings.put("KeyCode", mKey);
+        return settings;
     }
 }

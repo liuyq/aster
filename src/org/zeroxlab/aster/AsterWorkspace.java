@@ -140,10 +140,19 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                         mDragListener = null;
                         mTouchListener = null;
                         repaint();
-                        if (sOpListener != null) {
-                            sOpListener.operationFinished(sRecordingOp);
-                        } else {
-                            System.out.println("There is no OperationListener");
+
+                        AsterOperation[] ops = sRecordingCmd.getOperations();
+                        for (int i = 0; i < ops.length; i++) {
+                            try {
+                                sRecordingCmd.fillSettings(ops[i].getSettings());
+                            } catch (IOException exception) {
+                                // Can't save Image, GUI notify
+                                System.err.printf(exception.toString());
+                            }
+                        }
+
+                        if (sFillListener != null) {
+                            sFillListener.commandFilled(sRecordingCmd);
                         }
                     }
                 });
@@ -203,22 +212,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         }
 
         if (now == ops.length -1) { // tail
-            for (int i = 0; i < ops.length; i++) {
-                try {
-                sRecordingCmd.fillSettings(ops[i].getSettings());
-                } catch (IOException e) {
-                    // Can't save Image, GUI notify
-                    System.err.printf(e.toString());
-                }
-            }
-
-            if (sFillListener != null) {
-                sFillListener.commandFilled(sRecordingCmd);
-            }
-
+            sDone.setEnabled(true);
             return;
         }
 
+        sDone.setEnabled(false);
         sRegion.setVisible(false);
         sRegion.moveD(-1, -1); // hide
         setDragListener(null);
@@ -425,7 +423,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             last = iterator.next();
         }
 
-        fillCmd(last, sFillListener);
+        if (last != sRecordingCmd) {
+            fillCmd(last, sFillListener);
+        }
     }
 
     private void updateDrawingBuffer(BufferedImage source) {
@@ -585,6 +585,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
     class MyTouch extends OpTouch implements TouchListener {
         int mLTX, mLTY, mRBX, mRBY;
+        OperationListener mListener;
 
         public void clicked(int x, int y) {
             setPoint(x, y);
@@ -603,8 +604,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             x = Math.min(x, mSourceWidth);
             y = Math.min(y, mSourceHeight);
             super.set(x, y);
-            sDone.setEnabled(true);
             sRegion.setVisible(true);
+            if (mListener != null) {
+                mListener.operationFinished(this);
+            }
             repaint();
         }
 
@@ -614,7 +617,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
         public void record(AsterOperation.OperationListener listener) {
             sDone.setEnabled(false);
-            sOpListener = listener;
+            mListener = listener;
             int x = super.getX();
             int y = super.getY();
             int ltx = mLTX;
@@ -662,6 +665,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
     class MyDrag extends OpDrag implements DragListener {
         int mLTX, mLTY, mRBX, mRBY;
+        OperationListener mListener;
 
         public void setClip(int x1, int y1, int x2, int y2) {
             mLTX = valid(x1, 0, mSourceWidth);
@@ -676,6 +680,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
 
         public void record(AsterOperation.OperationListener listener) {
             sDone.setEnabled(false);
+            mListener = listener;
             sOpListener = listener;
             int sX = super.getStartX();
             int sY = super.getStartY();
@@ -729,8 +734,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             ex = Math.min(ex, mSourceWidth);
             ey = Math.min(ey, mSourceHeight);
             super.set(sx, sy, ex, ey);
-            sDone.setEnabled(true);
             sRegion.setVisible(true);
+            if (mListener != null) {
+                mListener.operationFinished(this);
+            }
         }
 
         public SimpleBindings getSettings() {
