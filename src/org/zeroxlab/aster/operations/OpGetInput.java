@@ -20,19 +20,50 @@
 
 package org.zeroxlab.aster;
 
-public abstract class OpGetInput implements AsterOperation {
+import javax.script.SimpleBindings;
+import javax.swing.JOptionPane;
+import org.zeroxlab.aster.AsterOperation;
 
+public class OpGetInput implements AsterOperation {
+
+    public final static String sName = "Get Input";
     protected String mInput;
 
     public OpGetInput() {
-        mInput = new String();
+        mInput = new String("");
+    }
+
+    @Override
+    public String getName() {
+        return sName;
+    }
+
+    @Override
+    public void record(OperationListener listener) {
+        String input = JOptionPane.showInputDialog(
+                null
+                ,"Input string to send to device"
+                , mInput);
+        if (input != null) {
+            setInput(input);
+        }
+        listener.operationFinished(this);
+    }
+
+    @Override
+    public SimpleBindings getSettings() {
+        SimpleBindings settings = new SimpleBindings();
+        if (!mInput.equals("")) {
+            settings.put("Text", mInput);
+        }
+        return settings;
     }
 
     public String getInput() {
         return mInput;
     }
 
-    public void set(String input) {
+    public void setInput(String input) {
         mInput = input;
     }
 }
