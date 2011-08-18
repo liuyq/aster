@@ -56,7 +56,7 @@ public class Owl {
         try {
             start = System.nanoTime();
             r = Finder.dispatch(matcher, "test-images/Haystack.png",
-                                         "test-images/Needle.png");
+                                         "test-images/Needle.png", 0.9);
             end = System.nanoTime();
         } catch (Exception e) {
             System.out.println(e);

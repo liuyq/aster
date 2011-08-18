@@ -46,6 +46,7 @@ public class PyramidTemplateMatcher implements IMatcher {
     private PlainTemplateMatcher plainmatcher;
     private double factor;
     private int levels;
+    private double similarity;
     private final int target_min_side = 10;
     private final int margin = 10;
     private final int margin_min = 50;
@@ -57,8 +58,9 @@ public class PyramidTemplateMatcher implements IMatcher {
     }
 
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle)
+    public MatchResult find(IplImage haystack, IplImage needle, double similarity)
         throws TemplateNotFoundException {
+        this.similarity = similarity;
         try {
             /* Search the image with margin cropped */
             if (needle.width() < margin_min || needle.height() < margin_min)
@@ -136,7 +138,7 @@ public class PyramidTemplateMatcher implements IMatcher {
 
     private MatchResult findImpl() throws TemplateNotFoundException {
         PyramidTemplateMatcherLayer layer = layers.get(levels - 1);
-        MatchResult match = plainmatcher.find(layer.source, layer.target);
+        MatchResult match = plainmatcher.find(layer.source, layer.target, similarity);
 
         for (int i = levels - 2; i >= 0; --i) {
             int div = 50;                  /* Number of divisions */
@@ -159,7 +161,7 @@ public class PyramidTemplateMatcher implements IMatcher {
             cvCopy(layer.source, n_src, null);
             cvResetImageROI(layer.source);
 
-            match = plainmatcher.find(n_src, layer.target);
+            match = plainmatcher.find(n_src, layer.target, similarity);
             match.x += x0;
             match.y += y0;
         }

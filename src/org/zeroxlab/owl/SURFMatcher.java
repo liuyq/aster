@@ -27,7 +27,7 @@ import static com.googlecode.javacv.cpp.opencv_highgui.*;
 
 public class SURFMatcher implements IMatcher {
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle)
+    public MatchResult find(IplImage haystack, IplImage needle, double similarity)
         throws TemplateNotFoundException {
         IplImage img = IplImage.create(haystack.width(), haystack.height(),
                                         IPL_DEPTH_8U, 1);

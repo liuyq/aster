@@ -61,7 +61,8 @@ public class Touch extends AsterCommand {
     CoordType mCoordType;
     Point mPosition;
     TouchType mTouchType;
-    double mTimeout = 3;
+    double mTimeout = 3.0;
+    double mSimilarity = 0.9;
 
     public Touch() {
         mCoordType = CoordType.AUTO;
@@ -75,7 +76,7 @@ public class Touch extends AsterCommand {
         throws IllegalArgumentException {
         String[] args = splitArgs(argline);
 
-        if (args.length == 4) {
+        if (args.length == 5) {
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
@@ -91,18 +92,20 @@ public class Touch extends AsterCommand {
             try {
                 mTouchType = TouchType.parse(args[1]);
                 mTimeout = Double.parseDouble(args[2]);
-                mLandscape = Boolean.parseBoolean(args[3]);
+                mSimilarity = Double.parseDouble(args[3]);
+                mLandscape = Boolean.parseBoolean(args[4]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 5) {
+        } else if (args.length == 6) {
             try {
                 mCoordType = CoordType.FIXED;
                 mPosition = new Point(Integer.parseInt(args[0]),
                                       Integer.parseInt(args[1]));
                 mTouchType = TouchType.parse(args[2]);
                 mTimeout = Double.parseDouble(args[3]);
-                mLandscape = Boolean.parseBoolean(args[4]);
+                mSimilarity = Double.parseDouble(args[4]);
+                mLandscape = Boolean.parseBoolean(args[5]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -141,6 +144,7 @@ public class Touch extends AsterCommand {
             settings.put("Image", mImage);
         }
         settings.put("Timeout", mTimeout);
+        settings.put("Similarity", mSimilarity);
         settings.put("Type", mTouchType.getTypeStr());
         settings.put("Landscape", mLandscape);
         return settings;
@@ -168,6 +172,9 @@ public class Touch extends AsterCommand {
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");
         }
+        if (settings.containsKey("Similarity")) {
+            mTimeout = (Double)settings.get("Similarity");
+        }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
         }
@@ -176,13 +183,13 @@ public class Touch extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("touch('%d.png', '%s', %.1f, %s)\n", mSerial,
-                                 mTouchType.getTypeStr(), mTimeout,
+            return String.format("touch('%d.png', '%s', %.1f, %.2f, %s)\n", mSerial,
+                                 mTouchType.getTypeStr(), mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         } else {
-            return String.format("touch(%d, %d, '%s', %.1f, %s)\n",
+            return String.format("touch(%d, %d, '%s', %.1f, %.2f, %s)\n",
                                  (int)mPosition.getX(), (int)mPosition.getY(),
-                                 mTouchType.getTypeStr(), mTimeout,
+                                 mTouchType.getTypeStr(), mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         }
     }

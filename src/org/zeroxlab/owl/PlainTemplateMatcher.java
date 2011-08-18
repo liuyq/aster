@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 
 public class PlainTemplateMatcher implements IMatcher {
     @Override
-    public MatchResult find(IplImage haystack, IplImage needle)
+    public MatchResult find(IplImage haystack, IplImage needle, double similarity)
         throws TemplateNotFoundException {
         CvSize rsize = cvSize(abs(haystack.width() - needle.width()) + 1,
                               abs(haystack.height() - needle.height()) + 1);
@@ -43,7 +43,7 @@ public class PlainTemplateMatcher implements IMatcher {
         CvPoint max_pos = new CvPoint();
         cvMinMaxLoc(result, min, max, min_pos, max_pos, null);
 
-        if (1.0 - min[0] < min_similarity)
+        if (1.0 - min[0] < similarity)
             throw new TemplateNotFoundException();
 
         return new MatchResult(min_pos.x(), min_pos.y(),

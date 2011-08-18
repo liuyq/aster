@@ -91,13 +91,13 @@ public class WookieeAPI {
     }
 
     public void touch(String name, String typestr, double timeout,
-                      boolean landscape)
+                      double similarity, boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();
         while (true) {
             try {
-                r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
+                r = Finder.dispatch(matcher, getCurrentSnapshot(), name, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;
@@ -119,7 +119,7 @@ public class WookieeAPI {
     }
 
     public void drag(String start_img, int dx, int dy, int steps, double sec,
-                     double timeout, boolean landscape)
+                     double timeout, double similarity, boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         MatchResult rs = new MatchResult();
         String current;
@@ -129,7 +129,7 @@ public class WookieeAPI {
         while (true) {
             try {
                 current = getCurrentSnapshot();
-                rs = Finder.dispatch(matcher, current, start_img);
+                rs = Finder.dispatch(matcher, current, start_img, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;
@@ -146,7 +146,7 @@ public class WookieeAPI {
     }
 
     public void drag(String start_img, String end_img, int steps, double sec,
-                     double timeout)
+                     double timeout, double similarity, boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         MatchResult rs = new MatchResult();
         MatchResult re = new MatchResult();
@@ -156,8 +156,8 @@ public class WookieeAPI {
         while (true) {
             try {
                 current = getCurrentSnapshot();
-                rs = Finder.dispatch(matcher, current, start_img);
-                re = Finder.dispatch(matcher, current, end_img);
+                rs = Finder.dispatch(matcher, current, start_img, similarity);
+                re = Finder.dispatch(matcher, current, end_img, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;
@@ -165,7 +165,12 @@ public class WookieeAPI {
             }
             break;
         }
-        drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, sec);
+        if (landscape) {
+            drag(rs.cy(), shortside - rs.cx(),
+                 re.cy(), shortside - re.cx(), steps, sec);
+        } else {
+            drag(rs.cx(), rs.cy(), re.cx(), rs.cy(), steps, sec);
+        }
     }
 
     public void press(String name, String typestr) {
@@ -179,13 +184,13 @@ public class WookieeAPI {
         impl.type(text);
     }
 
-    public void iassert(String name, double timeout)
+    public void iassert(String name, double timeout, double similarity)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();
         MatchResult r = new MatchResult();
         while (true) {
             try {
-                r = Finder.dispatch(matcher, getCurrentSnapshot(), name);
+                r = Finder.dispatch(matcher, getCurrentSnapshot(), name, similarity);
             } catch (TemplateNotFoundException e) {
                 if (((System.nanoTime() - st) / 1000000000.0) >= timeout)
                     throw e;

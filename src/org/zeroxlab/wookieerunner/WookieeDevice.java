@@ -70,6 +70,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
     private IMatcher matcher;
     private WookieeAPI wookiee;
     private final double default_timeout = 3;
+    private final double default_similarity = 0.9;
 
     public static void classDictInit(PyObject dict) {
         JythonUtils.convertDocAnnotationsForClass(WookieeDevice.class, dict);
@@ -166,7 +167,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
                 wookiee.touch(((PyString) arg1).asString(),
                               ((PyString) arg2).asString(),
                               JythonUtils.getFloat(ap, 2, default_timeout),
-                              (Boolean)((PyBoolean)ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
+                              JythonUtils.getFloat(ap, 3, default_similarity),
+                              (Boolean)((PyBoolean)ap.getPyObject(4, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
@@ -176,12 +178,13 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
     }
 
     @MonkeyRunnerExported(doc = "Simulates dragging (touch, hold, and move) on the device screen.",
-            args = { "start", "end", "duration", "steps", "timeout", "landscape"},
+            args = { "start", "end", "duration", "steps", "timeout", "similarity", "landscape"},
             argDocs = { "The starting point for the drag (a tuple (x,y) in pixels, or a filename that specifies the target template)",
             "The end point for the drag (a tuple (x,y) in pixels",
             "Duration of the drag in seconds (default is 1.0 seconds)",
             "The number of steps to take when interpolating points. (default is 10)",
             "Timeout when using a template",
+            "Mininum similarity to determine found",
             "True if in landscape mode"})
     public void drag(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
@@ -215,7 +218,8 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
                 wookiee.drag(((PyString) startObject).asString(), endx, endy,
                              steps, seconds,
                              JythonUtils.getFloat(ap, 4, default_timeout),
-                             (Boolean)((PyBoolean)ap.getPyObject(5, new PyBoolean(false))).__tojava__(Boolean.class));
+                             JythonUtils.getFloat(ap, 5, default_similarity),
+                             (Boolean)((PyBoolean)ap.getPyObject(6, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
@@ -226,7 +230,9 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
                 wookiee.drag(((PyString) startObject).asString(),
                              ((PyString) endObject).asString(),
                              steps, seconds,
-                             JythonUtils.getFloat(ap, 4, default_timeout));
+                             JythonUtils.getFloat(ap, 5, default_timeout),
+                             JythonUtils.getFloat(ap, 4, default_similarity),
+                             (Boolean)((PyBoolean)ap.getPyObject(6, new PyBoolean(false))).__tojava__(Boolean.class));
             } catch (FileNotFoundException e) {
                 throw new PyException(Py.IOError, e.toString());
             } catch (TemplateNotFoundException e) {
@@ -284,9 +290,10 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
 
         String name = ap.getString(0);
         double timeout = JythonUtils.getFloat(ap, 1, default_timeout);
+        double similarity = JythonUtils.getFloat(ap, 2, default_similarity);
 
         try {
-            wookiee.iassert(name, timeout);
+            wookiee.iassert(name, timeout, similarity);
         } catch (FileNotFoundException e) {
             throw new PyException(Py.IOError, e.toString());
         } catch (TemplateNotFoundException e) {

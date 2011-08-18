@@ -254,6 +254,7 @@ public class AsterCommandManager {
             }
         } catch (FileNotFoundException e) {
             System.out.println(e);
+            e.printStackTrace();
         }
         AsterCommand[] cmd_array = new AsterCommand[cmds.size()];
         return cmds.toArray(cmd_array);

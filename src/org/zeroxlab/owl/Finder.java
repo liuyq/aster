@@ -30,9 +30,8 @@ import java.util.logging.Logger;
 
 public class Finder {
     private static final Logger LOG = Logger.getLogger(Finder.class.getName());
-    public static MatchResult dispatch(IMatcher matcher,
-                                       String haystack,
-                                       String needle)
+    public static MatchResult dispatch(IMatcher matcher, String haystack,
+                                       String needle, double similarity)
         throws FileNotFoundException, TemplateNotFoundException {
 
         String pre = System.getProperty("user.dir");
@@ -45,7 +44,7 @@ public class Finder {
             throw new FileNotFoundException("can't open `" + haystack +"'");
         if (tmpl == null)
             throw new FileNotFoundException("can't open `" + needle +"'");
-        MatchResult result = matcher.find(img, tmpl);
+        MatchResult result = matcher.find(img, tmpl, similarity);
         LOG.info(String.format("MatchResut: %s", result));
         return result;
     }

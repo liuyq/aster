@@ -40,9 +40,10 @@ public class Drag extends AsterCommand {
     Point mStartPosition;
     Point mEndPosition;
 
-    double mDuration = 0.5;
     int mSteps = 10;
-    double mTimeout = 3;
+    double mDuration = 0.5;
+    double mTimeout = 3.0;
+    double mSimilarity = 0.9;
 
     public Drag() {
         mCoordType = CoordType.FIXED;
@@ -74,7 +75,8 @@ public class Drag extends AsterCommand {
                 mDuration = Double.parseDouble(args[3]);
                 mSteps = Integer.parseInt(args[4]);
                 mTimeout = Double.parseDouble(args[5]);
-                mLandscape = Boolean.parseBoolean(args[6]);
+                mSimilarity = Double.parseDouble(args[6]);
+                mLandscape = Boolean.parseBoolean(args[7]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -88,7 +90,8 @@ public class Drag extends AsterCommand {
                 mDuration = Double.parseDouble(args[4]);
                 mSteps = Integer.parseInt(args[5]);
                 mTimeout = Double.parseDouble(args[6]);
-                mLandscape = Boolean.parseBoolean(args[7]);
+                mSimilarity = Double.parseDouble(args[7]);
+                mLandscape = Boolean.parseBoolean(args[8]);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
@@ -135,6 +138,7 @@ public class Drag extends AsterCommand {
         settings.put("Duration", mDuration);
         settings.put("Steps", mSteps);
         settings.put("Timeout", mTimeout);
+        settings.put("Similarity", mSimilarity);
         settings.put("Landscape", mLandscape);
         return settings;
     }
@@ -172,6 +176,9 @@ public class Drag extends AsterCommand {
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");
         }
+        if (settings.containsKey("Similarity")) {
+            mTimeout = (Double)settings.get("Similarity");
+        }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
         }
@@ -180,19 +187,19 @@ public class Drag extends AsterCommand {
     @Override
     protected String toScript() {
         if (isAuto()) {
-            return String.format("drag('%d.png', (%d, %d), %.1f, %d, %.1f, %s)\n",
+            return String.format("drag('%d.png', (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
                                  mSerial,
                                  (int)mEndPosition.getX(),
                                  (int)mEndPosition.getY(),
-                                 mDuration, mSteps, mTimeout,
+                                 mDuration, mSteps, mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         } else {
-            return String.format("drag((%d, %d), (%d, %d), %.1f, %d, %.1f, %s)\n",
+            return String.format("drag((%d, %d), (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
                                  (int)mStartPosition.getX(),
                                  (int)mStartPosition.getY(),
                                  (int)mEndPosition.getX(),
                                  (int)mEndPosition.getY(),
-                                 mDuration, mSteps, mTimeout,
+                                 mDuration, mSteps, mTimeout, mSimilarity,
                                  mLandscape? "True": "False");
         }
     }
