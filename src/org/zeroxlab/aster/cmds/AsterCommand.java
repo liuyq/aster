@@ -112,10 +112,8 @@ public abstract class AsterCommand {
         try {
             mRunner.runStringLocal(toScript());
         } catch (PyException e) {
-            setExecuting(false);
             return new ExecutionResult(false, e.toString());
         }
-        setExecuting(false);
         return new ExecutionResult(true, "");
     }
 
