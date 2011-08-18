@@ -199,6 +199,7 @@ public class AsterMainPanel extends JPanel {
         public void commandFilled(AsterCommand whichOne) {
             mActionList.getModel().trigger();
             System.out.println("Complete cmd: " + whichOne.getName());
+            mCmdConn.runCommand(whichOne);
         }
     }
 
@@ -238,8 +239,10 @@ public class AsterMainPanel extends JPanel {
                 } else {
                     // Reset user.dir everytime
                     System.setProperty("user.dir", mCwd.getAbsolutePath());
-                    System.err.printf("Staring command execution...\n");
-                    AsterMainPanel.message("Staring command execution...");
+                    String msg = String.format("Executing %s command ...\n",
+                                               mCmd.getName());
+                    System.err.printf(msg);
+                    AsterMainPanel.message(msg);
                     System.err.println(mCmd.toScript());
                     AsterCommand.ExecutionResult result = mCmd.execute();
                     if (mListener != null) {
