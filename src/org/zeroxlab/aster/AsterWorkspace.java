@@ -660,6 +660,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
             this.setClip(lt.x, lt.y, rb.x, rb.y);
             settings.put("Image", buf);
+            if (AsterMainPanel.needRotate()) {
+                settings.put("Landscape", true);
+            }
             return settings;
         }
     }
@@ -750,6 +753,9 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
             Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
             this.setClip(lt.x, lt.y, rb.x, rb.y);
+            if (AsterMainPanel.needRotate()) {
+                settings.put("Landscape", true);
+            }
             return settings;
         }
     }

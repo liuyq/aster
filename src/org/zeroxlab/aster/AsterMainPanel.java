@@ -224,7 +224,7 @@ public class AsterMainPanel extends JPanel {
         return menu;
     }
 
-    public boolean needRotate() {
+    public static  boolean needRotate() {
         return sRotate;
     }
 
