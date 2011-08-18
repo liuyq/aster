@@ -56,6 +56,7 @@ public class AsterCommandManager {
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
+    public static boolean mConnected = false;
 
     static private void zipDir(File prefix, String dir, ZipOutputStream zos)
         throws FileNotFoundException, IOException {
@@ -158,6 +159,8 @@ public class AsterCommandManager {
         // Connect to the device and get IChimpDevice
         mScriptRunner.runStringLocal("connect()");
         mImpl = WookieeRunner.getLastChimpDevice();
+
+        mConnected = true;
     }
 
     static public IChimpImage takeSnapshot() {
