@@ -43,7 +43,7 @@ public class Drag extends AsterCommand {
 
     int mSteps = 10;
     double mDuration = 0.5;
-    double mTimeout = 3.0;
+    double mTimeout = 30.0;
     double mSimilarity = 0.9;
 
     public Drag() {

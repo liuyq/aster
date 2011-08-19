@@ -32,7 +32,7 @@ public class Wait extends AsterCommand {
     private enum WaitType { IMAGE, TIME }
 
     WaitType mWaitType;
-    double mTimeout = 3.0;
+    double mTimeout = 30.0;
     double mSimilarity = 0.9;
     double mWaitDuration = 10.0;
 

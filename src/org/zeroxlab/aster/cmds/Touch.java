@@ -61,7 +61,7 @@ public class Touch extends AsterCommand {
     CoordType mCoordType;
     Point mPosition;
     TouchType mTouchType;
-    double mTimeout = 3.0;
+    double mTimeout = 30.0;
     double mSimilarity = 0.9;
 
     public Touch() {
