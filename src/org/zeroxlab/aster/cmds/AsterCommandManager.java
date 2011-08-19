@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 
 public class AsterCommandManager {
 
-    public File mCwd;
+    private File mCwd;
     private static Stack<String> mPathStack = new Stack<String>();
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
@@ -64,6 +64,10 @@ public class AsterCommandManager {
 
     public AsterCommandManager() {
         mCwd = Files.createTempDir();
+    }
+
+    public void cdCwd() {
+        System.setProperty("user.dir", mCwd.getAbsolutePath());
     }
 
     private void zipDir(File prefix, String dir, ZipOutputStream zos)
@@ -204,7 +208,7 @@ public class AsterCommandManager {
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
             System.err.printf("%s", c.toScript());
-            System.setProperty("user.dir", mCwd.getAbsolutePath());
+            cdCwd();
             AsterCommand.ExecutionResult result = c.execute();
             if (result.mSuccess != true) {
                 System.err.println(result.mMessage);
@@ -250,7 +254,9 @@ public class AsterCommandManager {
         String rootpath = mCwd.getAbsolutePath();
         unzipDir(zipfile, rootpath);
 
+        cdCwd();
         ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
+
         try {
             FileInputStream ist = new FileInputStream(new File(mCwd, filename));
 

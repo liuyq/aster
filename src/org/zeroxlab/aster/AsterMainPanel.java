@@ -199,9 +199,30 @@ public class AsterMainPanel extends JPanel {
                     }
                 }
             });
-        saveItem.setText("Save...");
+        saveItem.setText("Save");
         saveItem.setMnemonic(KeyEvent.VK_S);
         fileMenu.add(saveItem);
+
+        // Save As
+        //JMenuItem saveItem = new JMenuItem();
+        //saveItem.setAction(new AbstractAction() {
+        //        public void actionPerformed(ActionEvent ev) {
+        //            try {
+        //                final JFileChooser fc = new JFileChooser();
+        //                int returnVal = fc.showSaveDialog(AsterMainPanel.this);
+        //                if (returnVal == JFileChooser.APPROVE_OPTION) {
+        //                    File file = fc.getSelectedFile();
+        //                    mCmdManager.dump(mActionList.getModel().toArray(),
+        //                                             file.getAbsolutePath());
+        //                }
+        //            } catch (IOException e) {
+        //                System.err.println(e.toString());
+        //            }
+        //        }
+        //    });
+        //saveItem.setText("Save As...");
+        //saveItem.setMnemonic(KeyEvent.VK_S);
+        //fileMenu.add(saveItem);
 
         // Quit
         JMenuItem quitItem = new JMenuItem();
@@ -409,7 +430,7 @@ public class AsterMainPanel extends JPanel {
                     updateScreen();
                 } else {
                     // Reset user.dir everytime
-                    System.setProperty("user.dir", mCmdManager.mCwd.getAbsolutePath());
+                    mCmdManager.cdCwd();
                     String msg = String.format("Executing %s command ...\n",
                                                mCmd.getName());
                     System.err.printf(msg);
