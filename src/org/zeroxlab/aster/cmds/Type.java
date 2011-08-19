@@ -78,6 +78,6 @@ public class Type extends AsterCommand {
 
     @Override
     protected String toScript() {
-        return String.format("type('%s')\n", mText);
+        return String.format("typet('%s')\n", mText);
     }
 }

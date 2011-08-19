@@ -53,12 +53,15 @@ def press(*args, **kwargs):
     return DEVICE.press(*args, **kwargs)
 
 
-def type(*args, **kwargs):
+def typet(*args, **kwargs):
     return DEVICE.type(*args, **kwargs)
 
 
-def iassert(*args, **kwargs):
-    return DEVICE.iassert(*args, **kwargs)
+def wait(*arg, **kwargs):
+    if type(arg[0]) == str:
+        return DEVICE.wait(*arg, **kwargs)
+    else:
+        return sleep(*arg, **kwargs);
 
 
 def shell(*args, **kwargs):

@@ -166,7 +166,7 @@ public class Touch extends AsterCommand {
             }
         }
         if (settings.containsKey("Type")) {
-            mTouchType = (TouchType)settings.get("Type");
+            mTouchType = TouchType.parse((String)settings.get("Type"));
         }
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");

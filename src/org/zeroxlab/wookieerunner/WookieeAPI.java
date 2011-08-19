@@ -183,7 +183,7 @@ public class WookieeAPI {
         impl.type(text);
     }
 
-    public void iassert(String name, double timeout, double similarity,
+    public void wait(String name, double timeout, double similarity,
                         boolean landscape)
         throws FileNotFoundException, TemplateNotFoundException {
         long st = System.nanoTime();

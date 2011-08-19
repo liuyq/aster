@@ -284,7 +284,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
             args = { "name", "timeout" },
             argDocs = { "name name of the image",
                         "timeout timeout before assertion failed"})
-    public void iassert(PyObject[] args, String[] kws) {
+    public void wait(PyObject[] args, String[] kws) {
         ArgParser ap = JythonUtils.createArgParser(args, kws);
         Preconditions.checkNotNull(ap);
 
@@ -293,7 +293,7 @@ public class WookieeDevice extends PyObject implements ClassDictInit {
         double similarity = JythonUtils.getFloat(ap, 2, default_similarity);
 
         try {
-            wookiee.iassert(ap.getString(0),
+            wookiee.wait(ap.getString(0),
                             JythonUtils.getFloat(ap, 1, default_timeout),
                             JythonUtils.getFloat(ap, 2, default_similarity),
                             (Boolean)((PyBoolean)ap.getPyObject(3, new PyBoolean(false))).__tojava__(Boolean.class));
