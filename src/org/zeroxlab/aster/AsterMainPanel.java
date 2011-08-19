@@ -405,10 +405,10 @@ public class AsterMainPanel extends JPanel {
                     AsterMainPanel.message(msg);
                     System.err.println(mCmd.toScript());
                     AsterCommand.ExecutionResult result = mCmd.execute();
+                    switchState(ExecutionState.NORMAL);
                     if (mListener != null) {
                         mListener.processResult(result);
                     }
-                    switchState(ExecutionState.NORMAL);
                     updateScreen();
                 }
                 try {
