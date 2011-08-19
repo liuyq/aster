@@ -89,7 +89,6 @@ public class Wait extends AsterCommand {
         settings.put("WaitType", mWaitType);
         if (mImage != null) {
             settings.put("Image", mImage);
-            mSerial = mSeqNext++;
         }
         settings.put("Timeout", mTimeout);
         settings.put("Similarity", mSimilarity);
