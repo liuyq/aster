@@ -33,7 +33,7 @@ import javax.script.SimpleBindings;
 import org.python.core.PyException;
 
 public abstract class AsterCommand {
-    private static ScriptRunner mRunner;
+    protected static ScriptRunner mRunner;
     protected static int mSeqNext = 0;
     protected int mSerial = 0;
     protected boolean mLandscape = false;

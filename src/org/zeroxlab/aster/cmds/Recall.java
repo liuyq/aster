@@ -70,6 +70,7 @@ public class Recall extends AsterCommand {
     @Override
     public ExecutionResult execute() {
         ExecutionResult result = new ExecutionResult(true, "");
+        mRunner.runStringLocal("wake()\n");
         try {
             if (mScript.length() != 0) {
                 result = (new AsterCommandManager()).runLocal(mScript);
