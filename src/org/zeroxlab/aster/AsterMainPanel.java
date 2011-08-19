@@ -33,6 +33,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.io.*;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
 import javax.script.SimpleBindings;
@@ -43,6 +44,17 @@ public class AsterMainPanel extends JPanel {
 
     private final static String RECALL = "recall.ast";
     private static String sRecall = RECALL;
+    private static ImageIcon logoIcon = null;
+
+    static {
+        try {
+            InputStream stream = Class.class.getResourceAsStream("/logo.png");
+            BufferedImage img = ImageIO.read(stream);
+            stream.close();
+            logoIcon = new ImageIcon(img);
+        } catch (IOException e) {
+        }
+    }
 
     public static void status(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -329,7 +341,11 @@ public class AsterMainPanel extends JPanel {
         JMenuItem aboutItem = new JMenuItem();
         aboutItem.setAction(new AbstractAction() {
             public void actionPerformed(ActionEvent ev) {
-                JOptionPane.showMessageDialog(null, new AboutMsg());
+                JOptionPane.showMessageDialog(null,
+                                              new AboutMsg(),
+                                              "About",
+                                              JOptionPane.INFORMATION_MESSAGE,
+                                              logoIcon);
             }
         });
         aboutItem.setText("About");
