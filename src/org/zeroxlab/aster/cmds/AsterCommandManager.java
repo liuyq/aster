@@ -55,7 +55,7 @@ import java.util.logging.Logger;
 
 public class AsterCommandManager {
 
-    private File mCwd;
+    public File mCwd;
     private static Stack<String> mPathStack = new Stack<String>();
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;

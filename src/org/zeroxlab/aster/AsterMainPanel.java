@@ -72,8 +72,6 @@ public class AsterMainPanel extends JPanel {
     private MyListener mCmdFillListener;
     private RotationStateListener mRSListener;
 
-    private File mCwd;
-
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
@@ -141,10 +139,6 @@ public class AsterMainPanel extends JPanel {
 
         // Initialize command Manager
         mCmdManager = new AsterCommandManager();
-
-        // Set working dir and cd to it
-        mCwd = Files.createTempDir();
-        System.setProperty("user.dir", mCwd.getAbsolutePath());
 
         ActionExecutor executor = new ActionExecutor();
         ActionDashboard.getInstance().setListener(executor);
@@ -379,7 +373,7 @@ public class AsterMainPanel extends JPanel {
                     updateScreen();
                 } else {
                     // Reset user.dir everytime
-                    System.setProperty("user.dir", mCwd.getAbsolutePath());
+                    System.setProperty("user.dir", mCmdManager.mCwd.getAbsolutePath());
                     String msg = String.format("Executing %s command ...\n",
                                                mCmd.getName());
                     System.err.printf(msg);
