@@ -25,6 +25,11 @@ public class DefaultActionListModel implements ActionListModel {
     /** The listeners waiting for model changes. */
     protected EventListenerList listenerList = new EventListenerList();
 
+    /** The listeners waiting for command changes. */
+    protected EventListenerList cmdListenerList = new EventListenerList();
+
+    protected boolean mChangeEnabled = true;
+
     public void addChangeListener(ChangeListener l) {
         listenerList.add(ChangeListener.class, l);
     }
@@ -33,13 +38,48 @@ public class DefaultActionListModel implements ActionListModel {
         listenerList.remove(ChangeListener.class, l);
     }
 
+    public void addCommandChangeListener(ChangeListener l) {
+        cmdListenerList.add(ChangeListener.class, l);
+    }
+
+    public void removeCommandChangeListener(ChangeListener l) {
+        cmdListenerList.remove(ChangeListener.class, l);
+    }
+
+    public void disableChangeListener() {
+        mChangeEnabled = false;
+    }
+
+    public void enableChangeListener() {
+        mChangeEnabled = true;
+    }
+
     /**
      * Run each <code>ChangeListener</code>'s <code>stateChanged</code>
      * method.
      */
     protected void fireStateChanged() {
+        if (!mChangeEnabled)
+            return;
         ChangeEvent ev = null;
         Object[] listeners = listenerList.getListenerList();
+        for (int i = listeners.length-2; i >= 0; i -= 2) {
+            if (listeners[i] == ChangeListener.class) {
+                // Lazily create the event:
+                if (ev == null)
+                    ev = new ChangeEvent(this);
+                ((ChangeListener)listeners[i+1]).stateChanged(ev);
+            }
+        }
+    }
+
+    /**
+     * Run each <code>ChangeListener</code>'s <code>stateChanged</code>
+     * method.
+     */
+    protected void fireCommandChanged() {
+        ChangeEvent ev = null;
+        Object[] listeners = cmdListenerList.getListenerList();
         for (int i = listeners.length-2; i >= 0; i -= 2) {
             if (listeners[i] == ChangeListener.class) {
                 // Lazily create the event:
@@ -62,6 +102,20 @@ public class DefaultActionListModel implements ActionListModel {
      */
     public ChangeListener[] getChangeListeners() {
         return (ChangeListener[]) listenerList.getListeners(ChangeListener.class);
+    }
+
+    /**
+     * Returns an array of all the change listeners registered on this
+     * <code>DefaultActionListModel</code>.
+     *
+     * @return all of this model's <code>ChangeListener</code>s or an empty
+     *         arrary if no change listeners are currently registered
+     *
+     * @see #addchangeListener
+     * @see #removeChangeListener
+     */
+    public ChangeListener[] getCommandChangeListeners() {
+        return (ChangeListener[]) cmdListenerList.getListeners(ChangeListener.class);
     }
 
     /** The command stack */
@@ -108,7 +162,7 @@ public class DefaultActionListModel implements ActionListModel {
     }
 
     public void trigger() {
-        fireStateChanged();
+        fireCommandChanged();
     }
 
     public AsterCommand[] toArray() {

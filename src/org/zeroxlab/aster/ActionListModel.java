@@ -69,6 +69,16 @@ public interface ActionListModel {
     public AsterCommand[] toArray();
 
     /**
+     * Disable global change listener
+     */
+    public void disableChangeListener();
+
+    /**
+     * Enable global change listener
+     */
+    public void enableChangeListener();
+
+    /**
      * Adds a ChangeListener to the model's listener list.
      *
      * @param x
@@ -85,4 +95,28 @@ public interface ActionListModel {
      * @see #addChangeListener
      */
     public void removeChangeListener(ChangeListener x);
+
+    /**
+     * Add a ChangeListener to the model's listener list.
+     *
+     * The listener will only receive event on command change
+     * triggered by trigger()
+     *
+     * @param x
+     *            the ChangeListener to add
+     * @see #removeCommandChangeListener
+     */
+    public void addCommandChangeListener(ChangeListener x);
+
+    /**
+     * Remove a ChangeListener from the model's listener list.
+     *
+     * The listener will only receive event on command change
+     * triggered by trigger()
+     *
+     * @param x
+     *            the ChangeListener to remove
+     * @see #addCommandChangeListener
+     */
+    public void removeCommandChangeListener(ChangeListener x);
 }

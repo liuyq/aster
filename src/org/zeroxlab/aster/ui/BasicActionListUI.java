@@ -117,6 +117,8 @@ public class BasicActionListUI extends ActionListUI {
             };
         this.actionList.getModel().addChangeListener(
             this.actionListChangeListener);
+        this.actionList.getModel().addCommandChangeListener(
+            this.actionListChangeListener);
     }
 
     public void uninstallDefaults() {
@@ -130,6 +132,8 @@ public class BasicActionListUI extends ActionListUI {
         this.mouseMotionListener = null;
 
         this.actionList.getModel().removeChangeListener(
+            this.actionListChangeListener);
+        this.actionList.getModel().removeCommandChangeListener(
             this.actionListChangeListener);
         this.actionListChangeListener = null;
     }

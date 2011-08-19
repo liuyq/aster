@@ -165,11 +165,14 @@ public class AsterMainPanel extends JPanel {
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
                             AsterCommand[] cmds = mCmdManager.load(file.getAbsolutePath());
+                            mActionList.getModel().disableChangeListener();
                             mActionList.getModel().clear();
                             mActionList.getModel().setRecall(cmds[0]);
                             for (int i = 1; i < cmds.length; i++) {
                                 mActionList.getModel().pushCmd(cmds[i]);
                             }
+                            mActionList.getModel().enableChangeListener();
+                            mActionList.getModel().trigger();
                         }
                     } catch (IOException e) {
                     }
