@@ -216,16 +216,17 @@ public class BasicActionListUI extends ActionListUI {
     protected void updateLayout() {
         int offset_y = BUTTON_MARGIN;
         int width = actionList.getPreferredSize().width;
+        Component focused = null;
         Component[] cs = actionList.getComponents();
         for (int i = 0; i < cs.length; i++) {
-            Component btn = null;
+            ActionButton btn = null;
             Component cls = null;
             if (cs[i] instanceof CloseButton) {
                 cls = cs[i];
                 i++;
             }
             if (cs[i] instanceof ActionButton) {
-                btn = cs[i];
+                btn = (ActionButton)cs[i];
                 Dimension size =  btn.getPreferredSize();
                 int offset_x = (width - size.width) / 2;
                 btn.setBounds(offset_x, offset_y, size.width, size.height);
@@ -235,7 +236,8 @@ public class BasicActionListUI extends ActionListUI {
                     cls.setLocation(btn.getX() + btn.getWidth() - 15,
                                     btn.getY() - 5);
                 }
-
+                if (btn.isExecuting())
+                    focused = btn;
             }
             if (i+1 < cs.length && cs[i+1] instanceof LittleArrow) {
                 // TODO: How to calculate?
@@ -247,9 +249,13 @@ public class BasicActionListUI extends ActionListUI {
                 i++;
                 cs[i].setSize(cs[i].getPreferredSize());
                 cs[i].setLocation((width - cs[i].getWidth())/2, offset_y);
-                actionList.scrollRectToVisible(cs[i].getBounds());
+                if (focused == null) {
+                    focused = cs[i];
+                }
             }
         }
+        if (focused != null)
+            actionList.scrollRectToVisible(focused.getBounds());
     }
 
     public Dimension getMinimumSize(JComponent c) {
@@ -311,6 +317,10 @@ public class BasicActionListUI extends ActionListUI {
             mFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
             mFontBox = new Rectangle();
             mClipImage = mCommand.getImage();
+        }
+
+        public boolean isExecuting() {
+            return mCommand.isExecuting();
         }
 
         public Dimension getMinimumSize() {
