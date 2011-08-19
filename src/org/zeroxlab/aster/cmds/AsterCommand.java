@@ -108,7 +108,6 @@ public abstract class AsterCommand {
 
     /* Execute command */
     public ExecutionResult execute() {
-        setExecuting(true);
         try {
             mRunner.runStringLocal(toScript());
         } catch (PyException e) {

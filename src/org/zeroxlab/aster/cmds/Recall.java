@@ -69,7 +69,6 @@ public class Recall extends AsterCommand {
 
     @Override
     public ExecutionResult execute() {
-        setExecuting(true);
         ExecutionResult result = new ExecutionResult(true, "");
         try {
             if (mScript.length() != 0)
