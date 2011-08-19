@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.io.IOException;
 
 import java.lang.ArrayIndexOutOfBoundsException;
+import org.zeroxlab.aster.AsterCommand.ExecutionResult;
 
 public class AsterMain {
 
@@ -41,13 +42,20 @@ public class AsterMain {
     }
 
     public static void startCLI(String script) {
+        ExecutionResult result = null;
         try {
-            (new AsterCommandManager()).run(script);
+            result = (new AsterCommandManager()).run(script);
         } catch(IOException e) {
             System.err.printf(e.toString());
             System.exit(1);
         }
-        System.exit(0);
+        if (result.mSuccess) {
+            System.out.println("\nFinished\n");
+            System.exit(0);
+        } else {
+            System.out.println("\nFailed\n");
+            System.exit(1);
+        }
     }
 
     public static void startGUI() {

@@ -469,6 +469,7 @@ public class AsterMainPanel extends JPanel {
                 reset();
                 mDashboard.resetButtons();
                 if (!result.mSuccess) {
+                    System.out.println("\nFailed\n");
                     JOptionPane.showMessageDialog(null
                             , result.mMessage
                             , "Execution failed"

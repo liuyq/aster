@@ -189,10 +189,10 @@ public class AsterCommandManager {
         return mImpl.takeSnapshot();
     }
 
-    public void run(String astfile)
+    public AsterCommand.ExecutionResult run(String astfile)
         throws IOException {
         connect();
-        runLocal(astfile);
+        return runLocal(astfile);
     }
 
     public File findFile(String cwd, String astfile)
