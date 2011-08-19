@@ -31,7 +31,7 @@ public class ActionDashboard extends JPanel {
     private final static ActionDashboard sDashboard = new ActionDashboard();
 
     JButton mPlay;
-    JButton mNext;
+    JButton mStep;
     JButton mStop;
 
     ClickListener mListener;
@@ -43,14 +43,14 @@ public class ActionDashboard extends JPanel {
     private ActionDashboard () {
         ButtonListener listener = new ButtonListener();
         mPlay = new JButton("Play");
-        mNext = new JButton("Next");
+        mStep = new JButton("Step");
         mStop = new JButton("Stop");
         setLayout(new GridLayout(1, 3));
         add(mPlay);
-        add(mNext);
+        add(mStep);
         add(mStop);
         mPlay.addActionListener(listener);
-        mNext.addActionListener(listener);
+        mStep.addActionListener(listener);
         mStop.addActionListener(listener);
         resetButtons();
     }
@@ -61,19 +61,19 @@ public class ActionDashboard extends JPanel {
 
     public void resetButtons() {
         mPlay.setEnabled(true);
-        mNext.setEnabled(false);
+        mStep.setEnabled(true);
         mStop.setEnabled(false);
     }
 
-    public void disableButtons() {
+    public void setRunning() {
         mPlay.setEnabled(false);
-        mNext.setEnabled(false);
-        mStop.setEnabled(false);
+        mStep.setEnabled(false);
+        mStop.setEnabled(true);
     }
 
-    public void enableButtons() {
-        mPlay.setEnabled(false);
-        mNext.setEnabled(true);
+    public void setStep() {
+        mPlay.setEnabled(true);
+        mStep.setEnabled(true);
         mStop.setEnabled(true);
     }
 
@@ -83,9 +83,9 @@ public class ActionDashboard extends JPanel {
         }
     }
 
-    private void nextClicked() {
+    private void StepClicked() {
         if (mListener != null) {
-            mListener.onNextClicked();
+            mListener.onStepClicked();
         }
     }
 
@@ -99,8 +99,8 @@ public class ActionDashboard extends JPanel {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == mPlay) {
                 playClicked();
-            } else if (e.getSource() == mNext) {
-                nextClicked();
+            } else if (e.getSource() == mStep) {
+                StepClicked();
             } else if (e.getSource() == mStop) {
                 stopClicked();
             }
@@ -109,7 +109,7 @@ public class ActionDashboard extends JPanel {
 
     interface ClickListener {
         public void onPlayClicked();
-        public void onNextClicked();
+        public void onStepClicked();
         public void onStopClicked();
     }
 }

@@ -140,11 +140,11 @@ public class AsterMainPanel extends JPanel {
         // Initialize command Manager
         mCmdManager = new AsterCommandManager();
 
+        mCmdConn = new CmdConn();
+        setRotationStateListener(mCmdConn);
         ActionExecutor executor = new ActionExecutor();
         ActionDashboard.getInstance().setListener(executor);
 
-        mCmdConn = new CmdConn();
-        setRotationStateListener(mCmdConn);
         Thread thread = new Thread(mCmdConn);
         thread.start();
     }
@@ -294,45 +294,70 @@ public class AsterMainPanel extends JPanel {
                                     , CommandExecutionListener {
         AsterCommand[] mList;
         ActionDashboard mDashboard;
-        int mIndex;
+        int mIndex; // refer to a command which is going to be executed
+                    // but not happen yet
+        boolean mInPlaying = false;
 
         ActionExecutor() {
             mDashboard = ActionDashboard.getInstance();
+            reset();
         }
 
-        private void reset() {
+        private void set() {
             ActionListModel model = mActionList.getModel();
             mList = model.toArray();
-            mIndex = 0; // execute Recall first
+            mIndex = 0;
             mCmdConn.setListener(this);
         }
 
-        public void onPlayClicked() {
-            reset();
-            mDashboard.disableButtons();
-            mCmdConn.runCommand(mList[mIndex]);
+        private void reset() {
+            mList = null;
+            mIndex = -1;
+            mInPlaying = false;
+            mCmdConn.setListener(null);
         }
 
-        public void onNextClicked() {
-            mIndex++;
-            if (mList != null && mIndex < mList.length) {
-                mDashboard.disableButtons();
+        public void onPlayClicked() {
+            mInPlaying = true;
+            onStepClicked();
+        }
+
+        public void onStepClicked() {
+            if (mIndex == -1 || mList == null) {
+                set();
+            }
+
+            if (mIndex < mList.length) {
+                mDashboard.setRunning();
                 mCmdConn.runCommand(mList[mIndex]);
+                mIndex++;
             } else {
-                mDashboard.resetButtons();
+                onStopClicked();
             }
         }
 
         public void onStopClicked() {
+            reset();
             mDashboard.resetButtons();
         }
 
         public void processResult(ExecutionResult result) {
-            /* process success and is not in the end. (1 for Recall)*/
-            if(result.mSuccess && mIndex < mList.length - 1) {
-                mDashboard.enableButtons();
+            if(result.mSuccess && mIndex < mList.length) {
+                // process success and is not in the end. (1 for Recall)
+                if (mInPlaying) {
+                    this.onStepClicked(); // go to next step automatically
+                } else {
+                    mDashboard.setStep();
+                }
             } else {
+                reset();
                 mDashboard.resetButtons();
+                if (!result.mSuccess) {
+                    JOptionPane.showMessageDialog(null
+                            , result.mMessage
+                            , "Execution failed"
+                            , JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
