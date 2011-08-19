@@ -41,6 +41,9 @@ public class AsterMainPanel extends JPanel {
 
     static JStatusBar mStatus = new JStatusBar();
 
+    private final static String RECALL = "recall.ast";
+    private static String sRecall = RECALL;
+
     public static void status(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -224,6 +227,25 @@ public class AsterMainPanel extends JPanel {
         //saveItem.setMnemonic(KeyEvent.VK_S);
         //fileMenu.add(saveItem);
 
+        // Recall
+        JMenuItem recallItem = new JMenuItem();
+        recallItem.setAction(new AbstractAction() {
+            public void actionPerformed(ActionEvent ev) {
+                String input = JOptionPane.showInputDialog(
+                    null
+                    ,"Input filename for recall, such as: " + RECALL
+                    , sRecall);
+                if (input != null) {
+                    sRecall = input;
+                }
+                System.out.println("use recall:" + sRecall);
+                resetRecall(sRecall);
+            }
+        });
+        recallItem.setText("Set Recall...");
+        recallItem.setMnemonic(KeyEvent.VK_R);
+        fileMenu.add(recallItem);
+
         // Quit
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAction(new AbstractAction() {
@@ -261,6 +283,20 @@ public class AsterMainPanel extends JPanel {
 
     public void setRotationStateListener(RotationStateListener l) {
         mRSListener = l;
+    }
+
+    private void resetRecall(String fileName) {
+        AsterCommand oldRecall = mActionList.getModel().getRecall();
+        AsterCommand newRecall = new Recall();
+        SimpleBindings settings = oldRecall.getSettings();
+        try {
+            settings.put("Script", fileName);
+            newRecall.fillSettings(settings);
+            mActionList.getModel().setRecall(newRecall);
+        } catch (IOException e) {
+            e.printStackTrace();
+            mActionList.getModel().setRecall(oldRecall);
+        }
     }
 
     interface RotationStateListener {
