@@ -278,16 +278,25 @@ public class BasicActionListUI extends ActionListUI {
         Rectangle mFontBox;
         static NinePatch mPatch;
         static NinePatch mInnerPatch;
+        static NinePatch mActivePatch;
+        static NinePatch mActiveInnerPatch;
         static BufferedImage mCloseButton;
         BufferedImage mClipImage;
 
         static {
             try {
-                InputStream stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
+                InputStream stream;
+                stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
                 mPatch = NinePatch.load(stream, true, false);
                 stream.close();
                 stream = ActionButton.class.getResourceAsStream("/inner_border.9.png");
                 mInnerPatch = NinePatch.load(stream, true, false);
+                stream.close();
+                stream = ActionButton.class.getResourceAsStream("/yellow_border.9.png");
+                mActivePatch = NinePatch.load(stream, true, false);
+                stream.close();
+                stream = ActionButton.class.getResourceAsStream("/inner_yellow_border.9.png");
+                mActiveInnerPatch = NinePatch.load(stream, true, false);
                 stream.close();
             } catch (IOException e) {
             }
@@ -327,8 +336,17 @@ public class BasicActionListUI extends ActionListUI {
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
-            if (mPatch != null) {
-                mPatch.draw((Graphics2D)g,
+            NinePatch borderPatch;
+            NinePatch innerPatch;
+            if (mCommand.isExecuting()) {
+                borderPatch = mActivePatch;
+                innerPatch = mActiveInnerPatch;
+            } else {
+                borderPatch = mPatch;
+                innerPatch = mInnerPatch;
+            }
+            if (borderPatch != null) {
+                borderPatch.draw((Graphics2D)g,
                             bbox.x,
                             bbox.y,
                             bbox.width,
@@ -343,8 +361,8 @@ public class BasicActionListUI extends ActionListUI {
                 int clip_x = bbox.x + (bbox.width - CLIP_WIDTH)/2;
                 int clip_y = bbox.y + (bbox.height - TEXT_MARGIN - CLIP_WIDTH);
                 g.drawImage(mClipImage, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH, null);
-                if (mInnerPatch != null) {
-                    mInnerPatch.draw((Graphics2D)g, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH);
+                if (innerPatch != null) {
+                    innerPatch.draw((Graphics2D)g, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH);
                 }
             }
         }
