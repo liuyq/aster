@@ -37,6 +37,7 @@ public class Wait extends AsterCommand {
     double mWaitDuration = 10.0;
 
     public Wait() {
+        mWaitType = WaitType.IMAGE;
         mOps = new AsterOperation[1];
         mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
@@ -104,6 +105,8 @@ public class Wait extends AsterCommand {
         }
         if (settings.containsKey("Image")) {
             mImage = (BufferedImage)settings.get("Image");
+            mSerial = mSeqNext++;
+            saveImage(System.getProperty("user.dir"));
         }
         if (settings.containsKey("Timeout")) {
             mTimeout = (Double)settings.get("Timeout");

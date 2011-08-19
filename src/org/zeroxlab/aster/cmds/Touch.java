@@ -154,16 +154,13 @@ public class Touch extends AsterCommand {
         if (settings.containsKey("CoordType")) {
             mCoordType = (CoordType)settings.get("CoordType");
         }
-        if (mCoordType == CoordType.AUTO) {
-            if (settings.containsKey("Image")) {
-                mImage = (BufferedImage)settings.get("Image");
-                mSerial = mSeqNext++;
-                saveImage(System.getProperty("user.dir"));
-            }
-        } else {
-            if (settings.containsKey("Pos")) {
-                mPosition = (Point)settings.get("Pos");
-            }
+        if (settings.containsKey("Image")) {
+            mImage = (BufferedImage)settings.get("Image");
+            mSerial = mSeqNext++;
+            saveImage(System.getProperty("user.dir"));
+        }
+        if (settings.containsKey("Pos")) {
+            mPosition = (Point)settings.get("Pos");
         }
         if (settings.containsKey("Type")) {
             mTouchType = TouchType.parse((String)settings.get("Type"));

@@ -151,27 +151,21 @@ public class Drag extends AsterCommand {
             mCoordType = (CoordType)settings.get("CoordType");
         }
 
-        if (mCoordType == CoordType.AUTO) {
-            if (settings.containsKey("Image")) {
-                mImage = (BufferedImage)settings.get("Image");
-                mSerial = mSeqNext++;
-                saveImage(System.getProperty("user.dir"));
-            }
-            if (settings.containsKey("Offset")) {
-                mEndPosition = (Point)settings.get("Offset");
-            }
-        } else {
-            if (settings.containsKey("StartPos")) {
-                mStartPosition = (Point)settings.get("StartPos");
-            }
-            if (settings.containsKey("EndPos")) {
-                mEndPosition = (Point)settings.get("EndPos");
-            }
-            mShiftDistance.setLocation(
-                    mEndPosition.getX() - mStartPosition.getX(),
-                    mEndPosition.getY() - mStartPosition.getY()
-            );
+        if (settings.containsKey("Image")) {
+            mImage = (BufferedImage)settings.get("Image");
+            mSerial = mSeqNext++;
+            saveImage(System.getProperty("user.dir"));
         }
+        if (settings.containsKey("StartPos")) {
+            mStartPosition = (Point)settings.get("StartPos");
+        }
+        if (settings.containsKey("EndPos")) {
+            mEndPosition = (Point)settings.get("EndPos");
+        }
+        mShiftDistance.setLocation(
+                mEndPosition.getX() - mStartPosition.getX(),
+                mEndPosition.getY() - mStartPosition.getY()
+        );
 
         if (settings.containsKey("Duration")) {
             mDuration = (Double)settings.get("Duration");
