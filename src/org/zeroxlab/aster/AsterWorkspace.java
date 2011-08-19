@@ -304,6 +304,11 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         mPressY = e.getY();
         mDragged = false;
 
+        if (sRegion.isHide()) {
+            mMoving = NONE;
+            return;
+        }
+
         if (sRegion.inLT(mPressX, mPressY)) {
             mMoving = POINT_L;
         } else if (sRegion.inRB(mPressX, mPressY)) {
@@ -498,6 +503,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             pR = new Point(60, 60);
             pD = new Point(-1, -1);
             mVisible = false;
+        }
+
+        public boolean isHide() {
+            return (mVisible == false);
         }
 
         public void setVisible(boolean visible) {
