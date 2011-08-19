@@ -34,14 +34,18 @@ import java.awt.GridLayout;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -53,7 +57,7 @@ import org.zeroxlab.aster.AsterOperation.OperationListener;
 import org.zeroxlab.aster.OpDrag;
 import org.zeroxlab.aster.OpTouch;
 
-public class AsterWorkspace extends JComponent implements ComponentListener
+public class AsterWorkspace extends JPanel implements ComponentListener
                                                          , MouseListener
                                                          , MouseMotionListener
                                                          , ChangeListener
@@ -160,10 +164,21 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sDone.setEnabled(false);
         add(sDone);
 
-        sBack   = new JButton("BACK");
-        sMenu   = new JButton("MENU");
-        sHome   = new JButton("HOME");
-        sSearch = new JButton("SEARCH");
+        JComponent btns = initShortcutButtons();
+        add(btns);
+    }
+
+    private JComponent initShortcutButtons() {
+        ImageIcon icon;
+        icon    = createScaledIcon("/btn_back.png", 30, 30);
+        sBack   = new JButton(icon);
+        icon    = createScaledIcon("/btn_menu.png", 30, 30);
+        sMenu   = new JButton(icon);
+        icon    = createScaledIcon("/btn_home.png", 30, 30);
+        sHome   = new JButton(icon);
+        icon    = createScaledIcon("/btn_search.png", 30, 30);
+        sSearch = new JButton(icon);
+
         MainKeyMonitor monitor = new MainKeyMonitor();
         sBack.addActionListener(monitor);
         sMenu.addActionListener(monitor);
@@ -176,7 +191,20 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         btnPanel.add(sHome);
         btnPanel.add(sSearch);
         btnPanel.setBounds(220, 10, 280, 30);
-        add(btnPanel);
+        return btnPanel;
+    }
+
+    public ImageIcon createScaledIcon(String resourceName, int width, int height) {
+        ImageIcon icon = null;
+        try {
+            InputStream stream = Class.class.getResourceAsStream(resourceName);
+            BufferedImage img = ImageIO.read(stream);
+            icon = new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return icon;
     }
 
     public void setImage(BufferedImage img) {
