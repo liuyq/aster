@@ -55,7 +55,8 @@ import java.util.logging.Logger;
 
 public class AsterCommandManager {
 
-    private File mCwd;
+    private File mCwd = null;
+    private File mFile = null;
     private static Stack<String> mPathStack = new Stack<String>();
     private static ChimpChat mChimpChat;
     private static IChimpDevice mImpl;
@@ -68,6 +69,14 @@ public class AsterCommandManager {
 
     public void cdCwd() {
         System.setProperty("user.dir", mCwd.getAbsolutePath());
+    }
+
+    public File getFile() {
+        return mFile;
+    }
+
+    public boolean getSaved() {
+        return mFile != null;
     }
 
     private void zipDir(File prefix, String dir, ZipOutputStream zos)
@@ -224,7 +233,7 @@ public class AsterCommandManager {
         return new AsterCommand.ExecutionResult(true, "");
     }
     
-    public void dump(AsterCommand[] cmds, String filename)
+    public void dump(AsterCommand[] cmds, String filename, boolean overwrite)
         throws IOException {
         if (!filename.endsWith(".ast"))
             filename += ".ast";
@@ -239,6 +248,14 @@ public class AsterCommandManager {
         out.close();
 
         try {
+            File outfile = new File(filename);
+            if (outfile.exists()) {
+                if (overwrite) {
+                    outfile.delete();
+                } else {
+                    throw new IOException(String.format("File `%s' exists", filename));
+                }
+            }
             ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filename));
             zipDir(root, root.getAbsolutePath(), zos);
             zos.close();
@@ -246,6 +263,8 @@ public class AsterCommandManager {
         } catch(FileNotFoundException e) {
             throw new IOException(e);
         }
+
+        mFile = new File(filename);
     }
 
     public AsterCommand[] load(String zipfile)
@@ -291,7 +310,10 @@ public class AsterCommandManager {
             System.out.println(e);
             e.printStackTrace();
         }
+
+        mFile = new File(zipfile);
         AsterCommand[] cmd_array = new AsterCommand[cmds.size()];
+
         return cmds.toArray(cmd_array);
     }
 }

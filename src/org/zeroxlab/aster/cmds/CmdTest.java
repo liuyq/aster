@@ -41,7 +41,7 @@ class CmdTest {
         }
 
         try {
-            manager.dump(cmds, "cmds.ast");
+            manager.dump(cmds, "cmds.ast", true);
             cmds = manager.load("cmds.ast");
             for (AsterCommand c: cmds) {
                 System.out.printf("%s", c.toScript());

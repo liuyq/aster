@@ -199,16 +199,40 @@ public class AsterMainPanel extends JPanel {
         JMenuItem saveItem = new JMenuItem();
         saveItem.setAction(new AbstractAction() {
                 public void actionPerformed(ActionEvent ev) {
-                    try {
+                    if (mCmdManager.getSaved()) {
+                        try {
+                            mCmdManager.dump(mActionList.getModel().toArray(),
+                                             mCmdManager.getFile().getAbsolutePath(),
+                                             true);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
                         final JFileChooser fc = new JFileChooser();
                         int returnVal = fc.showSaveDialog(AsterMainPanel.this);
                         if (returnVal == JFileChooser.APPROVE_OPTION) {
                             File file = fc.getSelectedFile();
-                            mCmdManager.dump(mActionList.getModel().toArray(),
-                                                     file.getAbsolutePath());
+                            try {
+                                mCmdManager.dump(mActionList.getModel().toArray(),
+                                    file.getAbsolutePath(), false);
+                            } catch (IOException e) {
+                                JOptionPane pane = new JOptionPane(
+                                    "File exists! Do you want to overwrite?");
+                                Object[] options = new String[] { "Yes", "No" };
+                                pane.setOptions(options);
+                                JDialog dialog = pane.createDialog(new JFrame(), "Confirm");
+                                dialog.show();
+                                Object obj = pane.getValue();
+                                if (options[0].equals(obj)) {
+                                    try {
+                                        mCmdManager.dump(mActionList.getModel().toArray(),
+                                                file.getAbsolutePath(), true);
+                                    } catch (IOException e2) {
+                                        e2.printStackTrace();
+                                    }
+                                }
+                            }
                         }
-                    } catch (IOException e) {
-                        System.err.println(e.toString());
                     }
                 }
             });
@@ -217,25 +241,39 @@ public class AsterMainPanel extends JPanel {
         fileMenu.add(saveItem);
 
         // Save As
-        //JMenuItem saveItem = new JMenuItem();
-        //saveItem.setAction(new AbstractAction() {
-        //        public void actionPerformed(ActionEvent ev) {
-        //            try {
-        //                final JFileChooser fc = new JFileChooser();
-        //                int returnVal = fc.showSaveDialog(AsterMainPanel.this);
-        //                if (returnVal == JFileChooser.APPROVE_OPTION) {
-        //                    File file = fc.getSelectedFile();
-        //                    mCmdManager.dump(mActionList.getModel().toArray(),
-        //                                             file.getAbsolutePath());
-        //                }
-        //            } catch (IOException e) {
-        //                System.err.println(e.toString());
-        //            }
-        //        }
-        //    });
-        //saveItem.setText("Save As...");
-        //saveItem.setMnemonic(KeyEvent.VK_S);
-        //fileMenu.add(saveItem);
+        JMenuItem saveAsItem = new JMenuItem();
+        saveAsItem.setAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent ev) {
+                    final JFileChooser fc = new JFileChooser();
+                    int returnVal = fc.showSaveDialog(AsterMainPanel.this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        try {
+                            mCmdManager.dump(mActionList.getModel().toArray(),
+                                file.getAbsolutePath(), false);
+                        } catch (IOException e) {
+                            JOptionPane pane = new JOptionPane(
+                                "File exists! Do you want to overwrite?");
+                            Object[] options = new String[] { "Yes", "No" };
+                            pane.setOptions(options);
+                            JDialog dialog = pane.createDialog(new JFrame(), "Confirm");
+                            dialog.show();
+                            Object obj = pane.getValue();
+                            if (options[0].equals(obj)) {
+                                try {
+                                    mCmdManager.dump(mActionList.getModel().toArray(),
+                                            file.getAbsolutePath(), true);
+                                } catch (IOException e2) {
+                                    e2.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        saveAsItem.setText("Save As...");
+        saveAsItem.setMnemonic(KeyEvent.VK_A);
+        fileMenu.add(saveAsItem);
 
         // Recall
         JMenuItem recallItem = new JMenuItem();
