@@ -322,6 +322,20 @@ public class AsterMainPanel extends JPanel {
         group.add(rb);
         viewMenu.add(rb);
         menu.add(viewMenu);
+
+        JMenu helpMenu = new JMenu("Help");
+        helpMenu.setMnemonic(KeyEvent.VK_H);
+        // About
+        JMenuItem aboutItem = new JMenuItem();
+        aboutItem.setAction(new AbstractAction() {
+            public void actionPerformed(ActionEvent ev) {
+                JOptionPane.showMessageDialog(null, new AboutMsg());
+            }
+        });
+        aboutItem.setText("About");
+        aboutItem.setMnemonic(KeyEvent.VK_A);
+        helpMenu.add(aboutItem);
+        menu.add(helpMenu);
         return menu;
     }
 
@@ -364,6 +378,17 @@ public class AsterMainPanel extends JPanel {
 
                 sRotate = state;
             }
+        }
+    }
+
+    class AboutMsg {
+        public String toString() {
+            String msg = "";
+            msg += "Android System Testing Environment and Runtime\n";
+            msg += "Designed by 0xLab\n\n";
+            msg += "Aster is a testing environment and\n";
+            msg += "test-driven development runtime for Android. ";
+            return msg;
         }
     }
 
