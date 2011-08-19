@@ -19,6 +19,8 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.AsterCommand.CommandExecutionListener;
+import org.zeroxlab.aster.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.AsterWorkspace.FillListener;
 import org.zeroxlab.wookieerunner.ImageUtils;
 
@@ -70,8 +72,6 @@ public class AsterMainPanel extends JPanel {
     private MyListener mCmdFillListener;
     private RotationStateListener mRSListener;
 
-    private File mCwd;
-
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
@@ -120,6 +120,14 @@ public class AsterMainPanel extends JPanel {
         add(mWorkspace, c);
 
         c.gridx = 0;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        c.weightx = 0;
+        c.weighty = 0;
+        add(ActionDashboard.getInstance(), c);
+
+        c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 4;
         c.gridheight = 1;
@@ -132,9 +140,8 @@ public class AsterMainPanel extends JPanel {
         // Initialize command Manager
         mCmdManager = new AsterCommandManager();
 
-        // Set working dir and cd to it
-        mCwd = Files.createTempDir();
-        System.setProperty("user.dir", mCwd.getAbsolutePath());
+        ActionExecutor executor = new ActionExecutor();
+        ActionDashboard.getInstance().setListener(executor);
 
         mCmdConn = new CmdConn();
         setRotationStateListener(mCmdConn);
@@ -283,19 +290,66 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
+    class ActionExecutor implements ActionDashboard.ClickListener
+                                    , CommandExecutionListener {
+        AsterCommand[] mList;
+        ActionDashboard mDashboard;
+        int mIndex;
+
+        ActionExecutor() {
+            mDashboard = ActionDashboard.getInstance();
+        }
+
+        private void reset() {
+            ActionListModel model = mActionList.getModel();
+            mList = model.toArray();
+            mIndex = 0; // execute Recall first
+            mCmdConn.setListener(this);
+        }
+
+        public void onPlayClicked() {
+            reset();
+            mDashboard.disableButtons();
+            mCmdConn.runCommand(mList[mIndex]);
+        }
+
+        public void onNextClicked() {
+            mIndex++;
+            if (mList != null && mIndex < mList.length) {
+                mDashboard.disableButtons();
+                mCmdConn.runCommand(mList[mIndex]);
+            } else {
+                mDashboard.resetButtons();
+            }
+        }
+
+        public void onStopClicked() {
+            mDashboard.resetButtons();
+        }
+
+        public void processResult(ExecutionResult result) {
+            /* process success and is not in the end. (1 for Recall)*/
+            if(result.mSuccess && mIndex < mList.length - 1) {
+                mDashboard.enableButtons();
+            } else {
+                mDashboard.resetButtons();
+            }
+        }
+    }
+
     class CmdConn implements Runnable, RotationStateListener {
 
         private boolean mKeepWalking = true;
         private AsterCommand mCmd;
         private ExecutionState mState;
         private boolean mLandscape = false;
-        private AsterCommand.CommandExecutionLister mListener = null;
+        private CommandExecutionListener mListener = null;
 
         public void finish() {
             mKeepWalking = false;
         }
 
-        synchronized public void setListener(AsterCommand.CommandExecutionLister listener) {
+        synchronized public void setListener(CommandExecutionListener listener) {
             mListener = listener;
         }
 
@@ -319,7 +373,7 @@ public class AsterMainPanel extends JPanel {
                     updateScreen();
                 } else {
                     // Reset user.dir everytime
-                    System.setProperty("user.dir", mCwd.getAbsolutePath());
+                    System.setProperty("user.dir", mCmdManager.mCwd.getAbsolutePath());
                     String msg = String.format("Executing %s command ...\n",
                                                mCmd.getName());
                     System.err.printf(msg);
