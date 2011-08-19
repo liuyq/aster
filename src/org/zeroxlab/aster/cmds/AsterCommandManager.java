@@ -39,6 +39,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.lang.Thread;
 import java.lang.InterruptedException;
+import java.lang.NullPointerException;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Enumeration;
@@ -209,11 +210,13 @@ public class AsterCommandManager {
     public AsterCommand.ExecutionResult runLocal(String astfile)
         throws IOException {
         if (!mPathStack.empty()) {
-            astfile = findFile(mPathStack.peek(), astfile).getAbsolutePath();
+            try {
+                astfile = findFile(mPathStack.peek(), astfile).getAbsolutePath();
+            } catch(NullPointerException e) {
+                throw new IOException(String.format("Can not open `%s'.", astfile));
+            }
         }
         AsterCommand[] cmds = load(astfile);
-
-        mPathStack.push((new File(astfile)).getParent());
 
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
@@ -273,6 +276,8 @@ public class AsterCommandManager {
         String filename = "script.py";
         String rootpath = mCwd.getAbsolutePath();
         unzipDir(zipfile, rootpath);
+
+        mPathStack.push((new File(zipfile)).getParent());
 
         cdCwd();
         ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();

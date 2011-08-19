@@ -491,15 +491,24 @@ public class AsterMainPanel extends JPanel {
                     mDashboard.setStep();
                 }
             } else {
+                if (!result.mSuccess) {
+                    if (mIndex == 1 && !mCmdManager.getSaved()) {
+                        JOptionPane.showMessageDialog(null,
+                              "Since you have set recall script, you need to \n"
+                            + "save this script first for Aster to locate the\n"
+                            + " recall script.",
+                              "Execution failed",
+                              JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        System.out.println("\nFailed\n");
+                        JOptionPane.showMessageDialog(null,
+                                result.mMessage,
+                                "Execution failed",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
+                }
                 reset();
                 mDashboard.resetButtons();
-                if (!result.mSuccess) {
-                    System.out.println("\nFailed\n");
-                    JOptionPane.showMessageDialog(null
-                            , result.mMessage
-                            , "Execution failed"
-                            , JOptionPane.ERROR_MESSAGE);
-                }
             }
         }
     }
