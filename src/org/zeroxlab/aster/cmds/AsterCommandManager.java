@@ -65,6 +65,7 @@ public class AsterCommandManager {
 
     public AsterCommandManager() {
         mCwd = Files.createTempDir();
+        System.setProperty("user.dir", mCwd.getAbsolutePath());
     }
 
     public void cdCwd() {
