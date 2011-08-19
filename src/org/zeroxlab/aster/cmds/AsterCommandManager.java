@@ -62,6 +62,10 @@ public class AsterCommandManager {
     private static ScriptRunner mScriptRunner;
     public static boolean mConnected = false;
 
+    public AsterCommandManager() {
+        mCwd = Files.createTempDir();
+    }
+
     private void zipDir(File prefix, String dir, ZipOutputStream zos)
         throws FileNotFoundException, IOException {
         File dirfile = new File(dir);
@@ -243,7 +247,6 @@ public class AsterCommandManager {
     public AsterCommand[] load(String zipfile)
         throws IOException {
         String filename = "script.py";
-        mCwd = Files.createTempDir();
         String rootpath = mCwd.getAbsolutePath();
         unzipDir(zipfile, rootpath);
 
