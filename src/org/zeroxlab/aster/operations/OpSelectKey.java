@@ -90,7 +90,7 @@ public class OpSelectKey implements AsterOperation {
         if (selection != null) {
             set(selection.toString());
         } else  {
-            System.out.println("Pressed Cancl, still using " +mKey);
+            System.out.println("Press Canceled, still using " +mKey);
         }
 
         listener.operationFinished(this);
