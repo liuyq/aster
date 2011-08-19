@@ -159,6 +159,7 @@ public class DefaultActionListModel implements ActionListModel {
 
     public void clear() {
         actionList.clear();
+        fireStateChanged();
     }
 
     public void trigger() {

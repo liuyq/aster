@@ -158,6 +158,16 @@ public class AsterMainPanel extends JPanel {
         fileMenu.setMnemonic(KeyEvent.VK_F);
         menu.add(fileMenu);
 
+        JMenuItem newItem = new JMenuItem();
+        newItem.setAction(new AbstractAction() {
+                public void actionPerformed(ActionEvent ev) {
+                    mActionList.getModel().clear();
+                }
+            });
+        newItem.setText("New File");
+        newItem.setMnemonic(KeyEvent.VK_N);
+        fileMenu.add(newItem);
+
         // Open
         JMenuItem openItem = new JMenuItem();
         openItem.setAction(new AbstractAction() {
