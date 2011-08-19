@@ -314,7 +314,13 @@ public class AsterMainPanel extends JPanel {
         }
 
         private void reset() {
-            mList = null;
+            if (mList != null) {
+                for (AsterCommand cmd : mList) {
+                    cmd.setExecuting(false);
+                }
+                mActionList.getModel().trigger();
+                mList = null;
+            }
             mIndex = -1;
             mInPlaying = false;
             mCmdConn.setListener(null);
@@ -333,6 +339,8 @@ public class AsterMainPanel extends JPanel {
             if (mIndex < mList.length) {
                 mDashboard.setRunning();
                 mCmdConn.runCommand(mList[mIndex]);
+                mList[mIndex].setExecuting(true);
+                mActionList.getModel().trigger();
                 mIndex++;
             } else {
                 onStopClicked();
