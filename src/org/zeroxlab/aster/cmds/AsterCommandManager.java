@@ -177,10 +177,21 @@ public class AsterCommandManager {
         runLocal(astfile);
     }
 
+    public File findFile(String cwd, String astfile)
+        throws IOException {
+        File ast = new File(cwd, astfile);
+        while (!ast.exists()) {
+            if (ast.getParentFile().getParent() == null)
+                return null;
+            ast = new File(ast.getParentFile().getParent(), astfile);
+        }
+        return ast;
+    }
+
     public AsterCommand.ExecutionResult runLocal(String astfile)
         throws IOException {
         if (!mPathStack.empty()) {
-            astfile = (new File(mPathStack.peek(), astfile)).getAbsolutePath();
+            astfile = findFile(mPathStack.peek(), astfile).getAbsolutePath();
         }
         AsterCommand[] cmds = load(astfile);
 
