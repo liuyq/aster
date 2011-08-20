@@ -705,10 +705,10 @@ public class AsterWorkspace extends JPanel implements ComponentListener
                 // move to center by default
                 x = (int)(mImgRect.width / 2);
                 y = (int)(mImgRect.height / 2);
-                ltx = x - 30;
-                lty = y - 30;
-                rbx = x + 30;
-                rby = y + 30;
+                ltx = x - 23;
+                lty = y - 23;
+                rbx = x + 23;
+                rby = y + 23;
                 sRegion.setVisible(false);
             }
 
@@ -779,10 +779,10 @@ public class AsterWorkspace extends JPanel implements ComponentListener
                 sY = (int)(mImgRect.height / 2);
                 eX = sX + 100;
                 eY = sY;
-                ltx = sX - 30;
-                lty = sY - 30;
-                rbx = sX + 30;
-                rby = sY + 30;
+                ltx = sX - 23;
+                lty = sY - 23;
+                rbx = sX + 23;
+                rby = sY + 23;
                 sRegion.setVisible(false);
             }
             sRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
