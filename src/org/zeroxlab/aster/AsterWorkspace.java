@@ -20,29 +20,36 @@
 
 package org.zeroxlab.aster;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
+import javax.swing.Box;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -53,7 +60,7 @@ import org.zeroxlab.aster.AsterOperation.OperationListener;
 import org.zeroxlab.aster.OpDrag;
 import org.zeroxlab.aster.OpTouch;
 
-public class AsterWorkspace extends JComponent implements ComponentListener
+public class AsterWorkspace extends JPanel implements ComponentListener
                                                          , MouseListener
                                                          , MouseMotionListener
                                                          , ChangeListener
@@ -64,11 +71,18 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public final static int PORTRAIT_WIDTH  = 240;
     public final static int PORTRAIT_HEIGHT = 400;
 
+    /* constants for Main Keys*/
+    private final static int MK_WIDTH  = 25;
+    private final static int MK_HEIGHT = 25;
+    private final static int MK_CONTAINER_WIDTH  = MK_WIDTH * 4 + 60;
+    private final static int MK_CONTAINER_HEIGHT = MK_HEIGHT + 10;
+    private static JComponent sMKContainer;
     private static JButton sDone;
     private static JButton sHome;
     private static JButton sMenu;
     private static JButton sBack;
     private static JButton sSearch;
+    private static JCheckBox sRotate;
 
     private BufferedImage mSourceImage;
     private BufferedImage mDrawingBuffer;
@@ -160,23 +174,66 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         sDone.setEnabled(false);
         add(sDone);
 
-        sBack   = new JButton("BACK");
-        sMenu   = new JButton("MENU");
-        sHome   = new JButton("HOME");
-        sSearch = new JButton("SEARCH");
+        sRotate = new JCheckBox("Rotate");
+        sRotate.setSize(80, 20);
+        sRotate.setForeground(Color.WHITE);
+        add(sRotate);
+
+        sMKContainer = initShortcutButtons();
+        add(sMKContainer);
+    }
+
+    private JComponent initShortcutButtons() {
+        ImageIcon icon;
+        icon    = createScaledIcon("/btn_back.png", MK_WIDTH, MK_HEIGHT);
+        sBack   = new JButton(icon);
+        icon    = createScaledIcon("/btn_menu.png", MK_WIDTH, MK_HEIGHT);
+        sMenu   = new JButton(icon);
+        icon    = createScaledIcon("/btn_home.png", MK_WIDTH, MK_HEIGHT);
+        sHome   = new JButton(icon);
+        icon    = createScaledIcon("/btn_search.png", MK_WIDTH, MK_HEIGHT);
+        sSearch = new JButton(icon);
+
         MainKeyMonitor monitor = new MainKeyMonitor();
         sBack.addActionListener(monitor);
         sMenu.addActionListener(monitor);
         sHome.addActionListener(monitor);
         sSearch.addActionListener(monitor);
-        GridLayout grid = new GridLayout(1, 4);
-        JPanel btnPanel = new JPanel(grid);
-        btnPanel.add(sBack);
-        btnPanel.add(sMenu);
-        btnPanel.add(sHome);
-        btnPanel.add(sSearch);
-        btnPanel.setBounds(220, 10, 280, 30);
-        add(btnPanel);
+        Box box = Box.createHorizontalBox();
+        box.add(sBack);
+        box.add(Box.createHorizontalGlue());
+        box.add(sMenu);
+        box.add(Box.createHorizontalGlue());
+        box.add(sHome);
+        box.add(Box.createHorizontalGlue());
+        box.add(sSearch);
+        box.setSize(MK_CONTAINER_WIDTH, MK_CONTAINER_HEIGHT);
+        return box;
+    }
+
+    public void addRotationListener(ItemListener listener) {
+        sRotate.addItemListener(listener);
+    }
+
+    public static void setRotate(boolean rotate) {
+        sRotate.setSelected(rotate);
+    }
+
+    public static boolean isRotate() {
+        return sRotate.isSelected();
+    }
+
+    public ImageIcon createScaledIcon(String resourceName, int width, int height) {
+        ImageIcon icon = null;
+        try {
+            InputStream stream = Class.class.getResourceAsStream(resourceName);
+            BufferedImage img = ImageIO.read(stream);
+            icon = new ImageIcon(img.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return icon;
     }
 
     public void setImage(BufferedImage img) {
@@ -190,6 +247,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
     public void fillCmd(AsterCommand cmd, FillListener listener) {
         sRecordingCmd = cmd;
         sFillListener = listener;
+        sRotate.setSelected(cmd.isLandscape());
         AsterOperation[] ops = sRecordingCmd.getOperations();
         if (ops == null || ops.length == 0) {
             System.err.println("You are asking me to fill an empty command");
@@ -264,6 +322,8 @@ public class AsterWorkspace extends JComponent implements ComponentListener
         updateDrawingBuffer(mSourceImage);
         sRegion.setVisible(false);
         sDone.setEnabled(false);
+        sRotate.setLocation(mWidth - sRotate.getWidth(), 10);
+        sMKContainer.setLocation(mWidth - (MK_CONTAINER_WIDTH + 10), mHeight - (MK_CONTAINER_HEIGHT + 10));
         repaint();
     }
 
@@ -645,10 +705,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 // move to center by default
                 x = (int)(mImgRect.width / 2);
                 y = (int)(mImgRect.height / 2);
-                ltx = x - 30;
-                lty = y - 30;
-                rbx = x + 30;
-                rby = y + 30;
+                ltx = x - 23;
+                lty = y - 23;
+                rbx = x + 23;
+                rby = y + 23;
                 sRegion.setVisible(false);
             }
 
@@ -667,9 +727,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
             this.setClip(lt.x, lt.y, rb.x, rb.y);
             settings.put("Image", buf);
-            if (AsterMainPanel.needRotate()) {
-                settings.put("Landscape", true);
-            }
+            settings.put("Landscape", sRotate.isSelected());
             return settings;
         }
     }
@@ -721,10 +779,10 @@ public class AsterWorkspace extends JComponent implements ComponentListener
                 sY = (int)(mImgRect.height / 2);
                 eX = sX + 100;
                 eY = sY;
-                ltx = sX - 30;
-                lty = sY - 30;
-                rbx = sX + 30;
-                rby = sY + 30;
+                ltx = sX - 23;
+                lty = sY - 23;
+                rbx = sX + 23;
+                rby = sY + 23;
                 sRegion.setVisible(false);
             }
             sRegion.moveC(sX + mImgRect.x, sY + mImgRect.y);
@@ -759,10 +817,7 @@ public class AsterWorkspace extends JComponent implements ComponentListener
             settings.put("Image", buf);
             Point lt = convertPointW2Img(sRegion.pL.x, sRegion.pL.y);
             Point rb = convertPointW2Img(sRegion.pR.x, sRegion.pR.y);
-            this.setClip(lt.x, lt.y, rb.x, rb.y);
-            if (AsterMainPanel.needRotate()) {
-                settings.put("Landscape", true);
-            }
+            settings.put("Landscape", sRotate.isSelected());
             return settings;
         }
     }
