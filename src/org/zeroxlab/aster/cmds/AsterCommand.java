@@ -66,6 +66,10 @@ public abstract class AsterCommand {
         return mExecuting;
     }
 
+    synchronized public boolean isLandscape() {
+        return mLandscape;
+    }
+
     protected String[] splitArgs(String argline) {
         String[] args = argline.split(",");
         for (int i = 0; i < args.length; ++i)

@@ -62,7 +62,6 @@ public class AsterMainPanel extends JPanel {
 
     public final static int MENU_ROTATE = 1;
     public final static int MENU_NOT_ROTATE = 2;
-    private static boolean sRotate;
 
     private enum ExecutionState { NORMAL, EXECUTION }
 
@@ -73,7 +72,6 @@ public class AsterMainPanel extends JPanel {
     private CmdConn mCmdConn;
 
     private MyListener mCmdFillListener;
-    private RotationStateListener mRSListener;
 
     public AsterMainPanel() {
 	GridBagLayout gridbag = new GridBagLayout();
@@ -144,7 +142,7 @@ public class AsterMainPanel extends JPanel {
         mCmdManager = new AsterCommandManager();
 
         mCmdConn = new CmdConn();
-        setRotationStateListener(mCmdConn);
+        mWorkspace.addRotationListener(mCmdConn);
         ActionExecutor executor = new ActionExecutor();
         ActionDashboard.getInstance().setListener(executor);
 
@@ -305,24 +303,6 @@ public class AsterMainPanel extends JPanel {
         quitItem.setMnemonic(KeyEvent.VK_Q);
         fileMenu.add(quitItem);
 
-        JMenu viewMenu = new JMenu("View");
-        ButtonGroup group = new ButtonGroup();
-        RotationMenuListener rListener = new RotationMenuListener();
-        JRadioButtonMenuItem rb;
-        rb = new JRadioButtonMenuItem("Rotate Image");
-        rb.addActionListener(rListener);
-        rb.setMnemonic(MENU_ROTATE);
-        group.add(rb);
-        viewMenu.add(rb);
-
-        rb = new JRadioButtonMenuItem("Not Rotate Image");
-        rb.addActionListener(rListener);
-        rb.setMnemonic(MENU_NOT_ROTATE);
-        rb.setSelected(true);
-        group.add(rb);
-        viewMenu.add(rb);
-        menu.add(viewMenu);
-
         JMenu helpMenu = new JMenu("Help");
         helpMenu.setMnemonic(KeyEvent.VK_H);
         // About
@@ -337,14 +317,6 @@ public class AsterMainPanel extends JPanel {
         helpMenu.add(aboutItem);
         menu.add(helpMenu);
         return menu;
-    }
-
-    public static  boolean needRotate() {
-        return sRotate;
-    }
-
-    public void setRotationStateListener(RotationStateListener l) {
-        mRSListener = l;
     }
 
     private void resetRecall(String fileName) {
@@ -363,22 +335,6 @@ public class AsterMainPanel extends JPanel {
 
     interface RotationStateListener {
         public void rotationUpdated(boolean needRotate);
-    }
-
-    class RotationMenuListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (e.getSource() instanceof AbstractButton) {
-                AbstractButton button = (AbstractButton)e.getSource();
-                boolean state = (button.getMnemonic() == MENU_ROTATE);
-                if (state != sRotate) {
-                    if (mRSListener!= null) {
-                        mRSListener.rotationUpdated(state);
-                    }
-                }
-
-                sRotate = state;
-            }
-        }
     }
 
     class AboutMsg {
@@ -504,7 +460,7 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    class CmdConn implements Runnable, RotationStateListener {
+    class CmdConn implements Runnable, ItemListener {
 
         private boolean mKeepWalking = true;
         private AsterCommand mCmd;
@@ -573,8 +529,13 @@ public class AsterMainPanel extends JPanel {
             mWorkspace.repaint(mWorkspace.getBounds());
         }
 
-        public void rotationUpdated(boolean needRotate) {
-            mLandscape = needRotate;
+        public void itemStateChanged(ItemEvent e) {
+            Object source = e.getSource();
+            if (source instanceof JCheckBox) {
+                JCheckBox rotate = (JCheckBox) source;
+                // a NOT ROTATED image should be Portrait
+                mLandscape = rotate.isSelected();
+            }
         }
     }
 }
