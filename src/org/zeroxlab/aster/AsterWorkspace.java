@@ -247,7 +247,10 @@ public class AsterWorkspace extends JPanel implements ComponentListener
     public void fillCmd(AsterCommand cmd, FillListener listener) {
         sRecordingCmd = cmd;
         sFillListener = listener;
-        sRotate.setSelected(cmd.isLandscape());
+        if (cmd.isFilled()) {
+            // if this command is filled, set orientation as its expect
+            sRotate.setSelected(cmd.isLandscape());
+        }
         AsterOperation[] ops = sRecordingCmd.getOperations();
         if (ops == null || ops.length == 0) {
             System.err.println("You are asking me to fill an empty command");
