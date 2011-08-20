@@ -20,6 +20,7 @@
 
 package org.zeroxlab.aster;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,7 +31,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
+import javax.swing.Box;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.ImageIcon;
@@ -68,6 +69,12 @@ public class AsterWorkspace extends JPanel implements ComponentListener
     public final static int PORTRAIT_WIDTH  = 240;
     public final static int PORTRAIT_HEIGHT = 400;
 
+    /* constants for Main Keys*/
+    private final static int MK_WIDTH  = 25;
+    private final static int MK_HEIGHT = 25;
+    private final static int MK_CONTAINER_WIDTH  = MK_WIDTH * 4 + 60;
+    private final static int MK_CONTAINER_HEIGHT = MK_HEIGHT + 10;
+    private static JComponent sMKContainer;
     private static JButton sDone;
     private static JButton sHome;
     private static JButton sMenu;
@@ -164,19 +171,19 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sDone.setEnabled(false);
         add(sDone);
 
-        JComponent btns = initShortcutButtons();
-        add(btns);
+        sMKContainer = initShortcutButtons();
+        add(sMKContainer);
     }
 
     private JComponent initShortcutButtons() {
         ImageIcon icon;
-        icon    = createScaledIcon("/btn_back.png", 30, 30);
+        icon    = createScaledIcon("/btn_back.png", MK_WIDTH, MK_HEIGHT);
         sBack   = new JButton(icon);
-        icon    = createScaledIcon("/btn_menu.png", 30, 30);
+        icon    = createScaledIcon("/btn_menu.png", MK_WIDTH, MK_HEIGHT);
         sMenu   = new JButton(icon);
-        icon    = createScaledIcon("/btn_home.png", 30, 30);
+        icon    = createScaledIcon("/btn_home.png", MK_WIDTH, MK_HEIGHT);
         sHome   = new JButton(icon);
-        icon    = createScaledIcon("/btn_search.png", 30, 30);
+        icon    = createScaledIcon("/btn_search.png", MK_WIDTH, MK_HEIGHT);
         sSearch = new JButton(icon);
 
         MainKeyMonitor monitor = new MainKeyMonitor();
@@ -184,14 +191,16 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sMenu.addActionListener(monitor);
         sHome.addActionListener(monitor);
         sSearch.addActionListener(monitor);
-        GridLayout grid = new GridLayout(1, 4);
-        JPanel btnPanel = new JPanel(grid);
-        btnPanel.add(sBack);
-        btnPanel.add(sMenu);
-        btnPanel.add(sHome);
-        btnPanel.add(sSearch);
-        btnPanel.setBounds(220, 10, 280, 30);
-        return btnPanel;
+        Box box = Box.createHorizontalBox();
+        box.add(sBack);
+        box.add(Box.createHorizontalGlue());
+        box.add(sMenu);
+        box.add(Box.createHorizontalGlue());
+        box.add(sHome);
+        box.add(Box.createHorizontalGlue());
+        box.add(sSearch);
+        box.setSize(MK_CONTAINER_WIDTH, MK_CONTAINER_HEIGHT);
+        return box;
     }
 
     public ImageIcon createScaledIcon(String resourceName, int width, int height) {
@@ -292,6 +301,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         updateDrawingBuffer(mSourceImage);
         sRegion.setVisible(false);
         sDone.setEnabled(false);
+        sMKContainer.setLocation(mWidth - (MK_CONTAINER_WIDTH + 10), mHeight - (MK_CONTAINER_HEIGHT + 10));
         repaint();
     }
 
