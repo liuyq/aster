@@ -40,6 +40,7 @@ public abstract class AsterCommand {
     protected BufferedImage mImage = null;
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
+    protected boolean mFilled    = false;
 
     public static class ExecutionResult {
         public boolean mSuccess;
@@ -52,6 +53,14 @@ public abstract class AsterCommand {
             mSuccess = success;
             mMessage = message;
         }
+    }
+
+    public boolean isFilled() {
+        return mFilled;
+    }
+
+    protected void setFilled(boolean status) {
+        mFilled = status;
     }
 
     static public void setScriptRunner(ScriptRunner runner) {
@@ -98,6 +107,11 @@ public abstract class AsterCommand {
         return mOps;
     }
 
+    public final void fillSettings(SimpleBindings settings) throws IOException {
+        setFilled(true);
+        onFillSettings(settings);
+    }
+
     /* Get name of command */
     public abstract String getName();
 
@@ -105,7 +119,7 @@ public abstract class AsterCommand {
     public abstract SimpleBindings getSettings();
 
     /* Set settings of a command */
-    public abstract void fillSettings(SimpleBindings settings) throws IOException;
+    protected abstract void onFillSettings(SimpleBindings settings) throws IOException;
 
     /* Dump command to script text */
     protected abstract String toScript();

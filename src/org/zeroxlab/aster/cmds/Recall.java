@@ -35,6 +35,7 @@ public class Recall extends AsterCommand {
     }
 
     public Recall(String argline) throws IllegalArgumentException {
+        super.setFilled(true);
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
@@ -61,7 +62,7 @@ public class Recall extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("Script")) {
             mScript = (String)settings.get("Script");
         }

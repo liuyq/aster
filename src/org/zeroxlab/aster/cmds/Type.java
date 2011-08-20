@@ -36,6 +36,7 @@ public class Type extends AsterCommand {
     }
 
     public Type(String argline) throws IllegalArgumentException {
+        super.setFilled(true);
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
@@ -66,7 +67,7 @@ public class Type extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings == null) {
             return;
         }

@@ -74,6 +74,7 @@ public class Touch extends AsterCommand {
 
     public Touch(String prefix, String argline)
         throws IllegalArgumentException {
+        super.setFilled(true);
         String[] args = splitArgs(argline);
 
         if (args.length == 5) {
@@ -150,7 +151,7 @@ public class Touch extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("CoordType")) {
             mCoordType = (CoordType)settings.get("CoordType");
         }

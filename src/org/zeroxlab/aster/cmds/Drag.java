@@ -57,6 +57,7 @@ public class Drag extends AsterCommand {
 
     public Drag(String prefix, String argline) throws IllegalArgumentException {
         String[] args = splitArgs(argline);
+        super.setFilled(true);
 
         if (args.length == 8) {
             // drag(start_image, (dx, dy), duration, steps, timeout, similarity,
@@ -146,7 +147,7 @@ public class Drag extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("CoordType")) {
             mCoordType = (CoordType)settings.get("CoordType");
         }

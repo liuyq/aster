@@ -44,6 +44,7 @@ public class Wait extends AsterCommand {
 
     public Wait(String prefix, String argline)
         throws IllegalArgumentException {
+        super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 4) {
             // wait(image, timeout, similarity, landscape)
@@ -98,7 +99,7 @@ public class Wait extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("WaitType")) {
             mWaitType = (WaitType)settings.get("WaitType");
         }

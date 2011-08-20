@@ -64,13 +64,14 @@ public class Press extends AsterCommand {
         super.mOps = new AsterOperation[1];
         super.mOps[0] = op;
         try {
-            fillSettings(op.getSettings());
+            this.onFillSettings(op.getSettings());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public Press(String argline) throws IllegalArgumentException {
+        super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 2) {
             // press(keycode, type)
@@ -102,7 +103,7 @@ public class Press extends AsterCommand {
     }
 
     @Override
-    public void fillSettings(SimpleBindings settings) throws IOException {
+    protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("KeyCode")) {
             mKeyCode = (String)settings.get("KeyCode");
         }
