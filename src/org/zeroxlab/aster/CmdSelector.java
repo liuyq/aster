@@ -20,9 +20,19 @@
 
 package org.zeroxlab.aster;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+
+import org.zeroxlab.aster.cmds.AsterCommand;
+import org.zeroxlab.aster.cmds.Drag;
+import org.zeroxlab.aster.cmds.Press;
+import org.zeroxlab.aster.cmds.Recall;
+import org.zeroxlab.aster.cmds.Touch;
+import org.zeroxlab.aster.cmds.Type;
+import org.zeroxlab.aster.cmds.Wait;
 
 public class CmdSelector {
 
@@ -48,8 +58,9 @@ public class CmdSelector {
             commands.keySet().toArray(),
             null);
         try {
-            if (s != null)
+            if (s != null) {
                 return (AsterCommand)commands.get(s).getConstructor().newInstance();
+            }
         } catch (Exception e) {
             System.out.println("Warning: Class cannot be instantiated");
             e.printStackTrace();

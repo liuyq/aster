@@ -16,10 +16,8 @@
  * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 
 class CmdTest {

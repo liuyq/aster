@@ -30,35 +30,32 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.awt.Graphics;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
-import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 import javax.swing.Box;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.zeroxlab.aster.ActionListModel;
-import org.zeroxlab.aster.AsterCommand;
-import org.zeroxlab.aster.AsterCommand.CommandListener;
-import org.zeroxlab.aster.AsterOperation.OperationListener;
-import org.zeroxlab.aster.OpDrag;
-import org.zeroxlab.aster.OpTouch;
+import org.zeroxlab.aster.cmds.AsterCommand;
+import org.zeroxlab.aster.cmds.AsterCommand.CommandListener;
+import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.aster.operations.AsterOperation.OperationListener;
+import org.zeroxlab.aster.operations.OpDrag;
+import org.zeroxlab.aster.operations.OpTouch;
 
 public class AsterWorkspace extends JPanel implements ComponentListener
                                                          , MouseListener
@@ -148,6 +145,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sDone = new JButton("Done");
         sDone.addActionListener(
                 new ActionListener() {
+                    @Override
                     public void actionPerformed(ActionEvent e) {
                         sRegion.setVisible(false);
                         sDone.setEnabled(false);
@@ -264,6 +262,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         ops[0].record(this);
     }
 
+    @Override
     public void operationFinished(AsterOperation op) {
         AsterOperation[] ops = sRecordingCmd.getOperations();
         int now = 0;
@@ -304,6 +303,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sFillListener = listener;
     }
 
+    @Override
     public void paintComponent(Graphics g) {
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, mWidth, mHeight);
@@ -312,12 +312,15 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sRegion.paint(g);
     }
 
+    @Override
     public void componentHidden(ComponentEvent e) {
     }
 
+    @Override
     public void componentMoved(ComponentEvent e) {
     }
 
+    @Override
     public void componentResized(ComponentEvent e) {
         mWidth  = getWidth();
         mHeight = getHeight();
@@ -330,9 +333,11 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         repaint();
     }
 
+    @Override
     public void componentShown(ComponentEvent e) {
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
@@ -356,12 +361,15 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         }
     }
 
+    @Override
     public void mouseEntered(MouseEvent e) {
     }
 
+    @Override
     public void mouseExited(MouseEvent e) {
     }
 
+    @Override
     public void mousePressed(MouseEvent e) {
         mPressX = e.getX();
         mPressY = e.getY();
@@ -383,6 +391,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         }
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
         double distance;
         int rX = e.getX();
@@ -416,6 +425,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         }
     }
 
+    @Override
     public void mouseDragged(MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
@@ -430,6 +440,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         repaint();
     }
 
+    @Override
     public void mouseMoved(MouseEvent e) {
     }
 
@@ -437,8 +448,8 @@ public class AsterWorkspace extends JPanel implements ComponentListener
      * Convert the point on workspace to the point on the original image */
     private Point convertPointW2Img(int workspaceX, int workspaceY) {
         int iX, iY;
-        iX = (int)((mSourceWidth  * (workspaceX - mImgRect.x)) / mImgRect.width);
-        iY = (int)((mSourceHeight * (workspaceY - mImgRect.y)) / mImgRect.height);
+        iX = ((mSourceWidth  * (workspaceX - mImgRect.x)) / mImgRect.width);
+        iY = ((mSourceHeight * (workspaceY - mImgRect.y)) / mImgRect.height);
 
         iX = Math.min(iX, mSourceWidth);
         iY = Math.min(iY, mSourceHeight);
@@ -470,6 +481,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         }
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
         if (!(e.getSource() instanceof ActionListModel)) {
             System.err.println("The source is not an ActionListModel");
@@ -584,14 +596,14 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             g.setColor(Color.RED);
             g.drawRect(pL.x, pL.y, pR.x - pL.x, pR.y - pL.y);
             g.setColor(Color.BLUE);
-            g.fillOval(pC.x - (int)(W / 2), pC.y - (int)(H / 2), W, H);
+            g.fillOval(pC.x - (W / 2), pC.y - (H / 2), W, H);
             g.setColor(Color.YELLOW);
             g.fillRect(pL.x, pL.y, W, H);
             g.fillRect(pR.x - W, pR.y - H, W, H);
 
             if (pD.x != -1 || pD.y != -1) {
                 g.drawLine(pC.x, pC.y, pD.x, pD.y);
-                g.fillRect(pD.x - (int)(W / 2), pD.y - (int)(H / 2), W, H);
+                g.fillRect(pD.x - (W / 2), pD.y - (H / 2), W, H);
             }
         }
 
@@ -658,6 +670,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         int mLTX, mLTY, mRBX, mRBY;
         OperationListener mListener;
 
+        @Override
         public void clicked(int x, int y) {
             setPoint(x, y);
         }
@@ -682,10 +695,12 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             repaint();
         }
 
+        @Override
         public String getName() {
             return "Touch";
         }
 
+        @Override
         public void record(AsterOperation.OperationListener listener) {
             sDone.setEnabled(false);
             mListener = listener;
@@ -697,17 +712,17 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             int rby = mRBY;
 
             if (super.isValid()) {
-                x = (int)((x * mImgRect.width) / mSourceWidth) ;
-                y = (int)((y * mImgRect.height ) / mSourceHeight);
-                ltx = (int)((ltx * mImgRect.width)  / mSourceWidth);
-                lty = (int)((lty * mImgRect.height) / mSourceHeight);
-                rbx = (int)((rbx * mImgRect.width)  / mSourceWidth);
-                rby = (int)((rby * mImgRect.height) / mSourceHeight);
+                x = ((x * mImgRect.width) / mSourceWidth) ;
+                y = ((y * mImgRect.height ) / mSourceHeight);
+                ltx = ((ltx * mImgRect.width)  / mSourceWidth);
+                lty = ((lty * mImgRect.height) / mSourceHeight);
+                rbx = ((rbx * mImgRect.width)  / mSourceWidth);
+                rby = ((rby * mImgRect.height) / mSourceHeight);
                 sRegion.setVisible(true);
             } else {
                 // move to center by default
-                x = (int)(mImgRect.width / 2);
-                y = (int)(mImgRect.height / 2);
+                x = (mImgRect.width / 2);
+                y = (mImgRect.height / 2);
                 ltx = x - 23;
                 lty = y - 23;
                 rbx = x + 23;
@@ -722,6 +737,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             setTouchListener(this);
         }
 
+        @Override
         public SimpleBindings getSettings() {
             SimpleBindings settings = new SimpleBindings();
             settings.put("Pos", super.getPoint());
@@ -746,10 +762,12 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             mRBY = valid(y2, 0, mSourceHeight);
         }
 
+        @Override
         public String getName() {
             return "Drag";
         }
 
+        @Override
         public void record(AsterOperation.OperationListener listener) {
             sDone.setEnabled(false);
             mListener = listener;
@@ -767,19 +785,19 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             if (r.contains(sX, sY) && r.contains(eX, eY)
                     && sX != 0 && sY != 0) {
                 // valid location
-                sX = (int)((sX * mImgRect.width)  / mSourceWidth);
-                sY = (int)((sY * mImgRect.height) / mSourceHeight);
-                eX = (int)((eX * mImgRect.width)  / mSourceWidth);
-                eY = (int)((eY * mImgRect.height) / mSourceHeight);
-                ltx = (int)((ltx * mImgRect.width)  / mSourceWidth);
-                lty = (int)((lty * mImgRect.height) / mSourceHeight);
-                rbx = (int)((rbx * mImgRect.width)  / mSourceWidth);
-                rby = (int)((rby * mImgRect.height) / mSourceHeight);
+                sX = ((sX * mImgRect.width)  / mSourceWidth);
+                sY = ((sY * mImgRect.height) / mSourceHeight);
+                eX = ((eX * mImgRect.width)  / mSourceWidth);
+                eY = ((eY * mImgRect.height) / mSourceHeight);
+                ltx = ((ltx * mImgRect.width)  / mSourceWidth);
+                lty = ((lty * mImgRect.height) / mSourceHeight);
+                rbx = ((rbx * mImgRect.width)  / mSourceWidth);
+                rby = ((rby * mImgRect.height) / mSourceHeight);
                 sRegion.setVisible(true);
             } else {
                 // move to center by default
-                sX = (int)(mImgRect.width / 2);
-                sY = (int)(mImgRect.height / 2);
+                sX = (mImgRect.width / 2);
+                sY = (mImgRect.height / 2);
                 eX = sX + 100;
                 eY = sY;
                 ltx = sX - 23;
@@ -796,6 +814,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             setDragListener(this);
         }
 
+        @Override
         public void dragged(int sx, int sy, int ex, int ey) {
             sx = Math.max(0, sx);
             sy = Math.max(0, sy);
@@ -812,6 +831,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
             }
         }
 
+        @Override
         public SimpleBindings getSettings() {
             SimpleBindings settings = new SimpleBindings();
             settings.put("StartPos", super.getStart());
@@ -826,6 +846,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener
     }
 
     private class MainKeyMonitor implements ActionListener {
+        @Override
         public void actionPerformed(ActionEvent e) {
             if (sMainKeyListener == null) {
                 return;

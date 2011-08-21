@@ -16,21 +16,18 @@
  * Authored by Kan-Ru Chen <kanru@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import org.zeroxlab.aster.AsterOperation;
-import org.zeroxlab.wookieerunner.ScriptRunner;
-
-import com.android.monkeyrunner.MonkeyRunnerOptions;
-
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
 import org.python.core.PyException;
+import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.wookieerunner.ScriptRunner;
 
 public abstract class AsterCommand {
     protected static ScriptRunner mRunner;
@@ -81,8 +78,9 @@ public abstract class AsterCommand {
 
     protected String[] splitArgs(String argline) {
         String[] args = argline.split(",");
-        for (int i = 0; i < args.length; ++i)
+        for (int i = 0; i < args.length; ++i) {
             args[i] = args[i].replaceAll("^[() ]+","").replaceAll("[() ]$","");
+        }
         return args;
     }
 
@@ -122,7 +120,7 @@ public abstract class AsterCommand {
     protected abstract void onFillSettings(SimpleBindings settings) throws IOException;
 
     /* Dump command to script text */
-    protected abstract String toScript();
+    public abstract String toScript();
 
     /* Execute command */
     public ExecutionResult execute() {

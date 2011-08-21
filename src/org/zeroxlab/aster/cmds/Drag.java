@@ -16,21 +16,18 @@
  * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import java.awt.image.BufferedImage;
 import java.awt.Point;
-import java.lang.IllegalArgumentException;
-import java.lang.NumberFormatException;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
-import org.zeroxlab.aster.AsterOperation;
-import org.zeroxlab.aster.OpDrag;
 import org.zeroxlab.aster.AsterWorkspace;
+import org.zeroxlab.aster.operations.AsterOperation;
 
 public class Drag extends AsterCommand {
 
@@ -186,7 +183,7 @@ public class Drag extends AsterCommand {
     }
 
     @Override
-    protected String toScript() {
+    public String toScript() {
         if (isAuto()) {
             return String.format("drag('%d.png', (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
                                  mSerial,

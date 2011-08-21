@@ -18,14 +18,22 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.Recall;
-import org.zeroxlab.aster.Drag;
-import org.zeroxlab.aster.Press;
-import org.zeroxlab.aster.Touch;
-import org.zeroxlab.aster.Type;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Point;
 
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.ListCellRenderer;
+import javax.swing.UIManager;
+
+import org.zeroxlab.aster.cmds.Drag;
+import org.zeroxlab.aster.cmds.Press;
+import org.zeroxlab.aster.cmds.Recall;
+import org.zeroxlab.aster.cmds.Touch;
+import org.zeroxlab.aster.cmds.Type;
 
 public class AsterCommandCellRenderer
     implements ListCellRenderer {
@@ -34,6 +42,7 @@ public class AsterCommandCellRenderer
     {
     }
 
+    @Override
     public Component getListCellRendererComponent
 	(JList list,
 	 Object val,

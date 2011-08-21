@@ -16,43 +16,37 @@
  * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
-
-import org.zeroxlab.wookieerunner.WookieeAPI;
-import org.zeroxlab.wookieerunner.WookieeRunner;
-import org.zeroxlab.wookieerunner.ScriptRunner;
-
-import com.android.monkeyrunner.MonkeyFormatter;
-import com.android.chimpchat.ChimpChat;
-import com.android.chimpchat.core.IChimpDevice;
-import com.android.chimpchat.core.IChimpImage;
-
-import com.google.common.io.Files;
+package org.zeroxlab.aster.cmds;
 
 import java.io.BufferedOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.FileNotFoundException;
-import java.lang.Thread;
-import java.lang.InterruptedException;
-import java.lang.NullPointerException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
+import java.util.Stack;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
+
+import org.zeroxlab.wookieerunner.ScriptRunner;
+import org.zeroxlab.wookieerunner.WookieeRunner;
+
+import com.android.chimpchat.ChimpChat;
+import com.android.chimpchat.core.IChimpDevice;
+import com.android.chimpchat.core.IChimpImage;
+import com.android.monkeyrunner.MonkeyFormatter;
+import com.google.common.io.Files;
+
 
 public class AsterCommandManager {
 
@@ -200,8 +194,9 @@ public class AsterCommandManager {
         throws IOException {
         File ast = new File(cwd, astfile);
         while (!ast.exists()) {
-            if (ast.getParentFile().getParent() == null)
+            if (ast.getParentFile().getParent() == null) {
                 return null;
+            }
             ast = new File(ast.getParentFile().getParent(), astfile);
         }
         return ast;
@@ -239,8 +234,9 @@ public class AsterCommandManager {
     
     public void dump(AsterCommand[] cmds, String filename, boolean overwrite)
         throws IOException {
-        if (!filename.endsWith(".ast"))
+        if (!filename.endsWith(".ast")) {
             filename += ".ast";
+        }
 
         File root = Files.createTempDir();
 

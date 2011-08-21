@@ -18,11 +18,10 @@
  *             Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.operations;
 
 import javax.script.SimpleBindings;
 import javax.swing.JOptionPane;
-import org.zeroxlab.aster.AsterOperation;
 
 public class OpGetInput implements AsterOperation {
 

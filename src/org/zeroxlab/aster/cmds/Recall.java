@@ -18,12 +18,13 @@
  *             Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.script.SimpleBindings;
+
+import org.zeroxlab.aster.operations.AsterOperation;
 
 public class Recall extends AsterCommand {
     private String mScript;
@@ -84,7 +85,7 @@ public class Recall extends AsterCommand {
     }
 
     @Override
-    protected String toScript() {
+    public String toScript() {
         return String.format("recall('%s')\n", mScript);
     }
 }

@@ -18,12 +18,14 @@
 
 package org.zeroxlab.aster;
 
-import javax.swing.*;
-
 import java.io.IOException;
-
 import java.lang.ArrayIndexOutOfBoundsException;
-import org.zeroxlab.aster.AsterCommand.ExecutionResult;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.zeroxlab.aster.cmds.AsterCommandManager;
+import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 
 public class AsterMain {
 

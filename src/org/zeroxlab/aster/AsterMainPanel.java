@@ -18,25 +18,55 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterCommand;
-import org.zeroxlab.aster.AsterCommand.CommandExecutionListener;
-import org.zeroxlab.aster.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.AsterWorkspace.FillListener;
+import org.zeroxlab.aster.cmds.AsterCommand;
+import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
+import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
+import org.zeroxlab.aster.cmds.AsterCommandManager;
+import org.zeroxlab.aster.cmds.Press;
+import org.zeroxlab.aster.cmds.Recall;
+import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.aster.operations.OpSelectKey;
 import org.zeroxlab.wookieerunner.ImageUtils;
 
 import com.android.chimpchat.core.IChimpImage;
-
 import com.google.common.io.Files;
 
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
-import java.io.*;
+import java.io.File;
+import java.io.InputStream;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.event.EventListenerList;
 import javax.script.SimpleBindings;
+import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 
 public class AsterMainPanel extends JPanel {
 
@@ -58,6 +88,7 @@ public class AsterMainPanel extends JPanel {
 
     public static void status(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     mStatus.setStatus(msg);
                 }
@@ -66,6 +97,7 @@ public class AsterMainPanel extends JPanel {
 
     public static void message(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     mStatus.message(msg);
                 }
@@ -116,6 +148,7 @@ public class AsterMainPanel extends JPanel {
         mActionList.getModel().setRecall(new Recall());
         mActionList.getModel().addChangeListener(mWorkspace);
         mActionList.addNewActionListener(new MouseAdapter () {
+                @Override
                 public void mouseClicked(MouseEvent e) {
                     AsterCommand cmd = CmdSelector.selectCommand((Component)e.getSource());
                     if (cmd != null) {
@@ -170,6 +203,7 @@ public class AsterMainPanel extends JPanel {
 
         JMenuItem newItem = new JMenuItem();
         newItem.setAction(new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent ev) {
                     mActionList.getModel().clear();
                 }
@@ -181,6 +215,7 @@ public class AsterMainPanel extends JPanel {
         // Open
         JMenuItem openItem = new JMenuItem();
         openItem.setAction(new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent ev) {
                     try {
                         final JFileChooser fc = new JFileChooser();
@@ -208,6 +243,7 @@ public class AsterMainPanel extends JPanel {
         // Save
         JMenuItem saveItem = new JMenuItem();
         saveItem.setAction(new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent ev) {
                     if (mCmdManager.getSaved()) {
                         try {
@@ -253,6 +289,7 @@ public class AsterMainPanel extends JPanel {
         // Save As
         JMenuItem saveAsItem = new JMenuItem();
         saveAsItem.setAction(new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent ev) {
                     final JFileChooser fc = new JFileChooser();
                     int returnVal = fc.showSaveDialog(AsterMainPanel.this);
@@ -288,6 +325,7 @@ public class AsterMainPanel extends JPanel {
         // Recall
         JMenuItem recallItem = new JMenuItem();
         recallItem.setAction(new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
                 String input = JOptionPane.showInputDialog(
                     null
@@ -307,6 +345,7 @@ public class AsterMainPanel extends JPanel {
         // Quit
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAction(new AbstractAction() {
+                @Override
                 public void actionPerformed(ActionEvent ev) {
                     System.exit(0);
                 }
@@ -320,6 +359,7 @@ public class AsterMainPanel extends JPanel {
         // About
         JMenuItem aboutItem = new JMenuItem();
         aboutItem.setAction(new AbstractAction() {
+            @Override
             public void actionPerformed(ActionEvent ev) {
                 JOptionPane.showMessageDialog(null,
                                               new AboutMsg(),
@@ -349,10 +389,6 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    interface RotationStateListener {
-        public void rotationUpdated(boolean needRotate);
-    }
-
     class AboutMsg {
         public String toString() {
             String msg = "";
@@ -365,6 +401,7 @@ public class AsterMainPanel extends JPanel {
     }
 
     class MyListener implements FillListener {
+        @Override
         public void commandFilled(AsterCommand whichOne) {
             mActionList.getModel().trigger();
             System.out.println("Complete cmd: " + whichOne.getName());
@@ -373,21 +410,25 @@ public class AsterMainPanel extends JPanel {
     }
 
     class MainKeyMonitor implements AsterWorkspace.MainKeyListener {
+        @Override
         public void onClickHome() {
             AsterOperation op = new OpSelectKey("KEYCODE_HOME");
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+        @Override
         public void onClickMenu() {
             AsterOperation op = new OpSelectKey("KEYCODE_MENU");
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+        @Override
         public void onClickBack() {
             AsterOperation op = new OpSelectKey("KEYCODE_BACK");
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+        @Override
         public void onClickSearch() {
             AsterOperation op = new OpSelectKey("KEYCODE_SEARCH");
             AsterCommand cmd = new Press(op);
@@ -395,8 +436,8 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    class ActionExecutor implements ActionDashboard.ClickListener
-                                    , CommandExecutionListener {
+    class ActionExecutor implements ActionDashboard.ClickListener,
+                                    CommandExecutionListener {
         AsterCommand[] mList;
         ActionDashboard mDashboard;
         int mIndex; // refer to a command which is going to be executed
@@ -510,6 +551,7 @@ public class AsterMainPanel extends JPanel {
             mState = state;
         }
 
+        @Override
         public void run() {
             mState = ExecutionState.NORMAL;
             AsterMainPanel.message("Connecting to device...");
@@ -548,12 +590,14 @@ public class AsterMainPanel extends JPanel {
         private void updateScreen() {
             IChimpImage snapshot = mCmdManager.takeSnapshot();
             BufferedImage image = snapshot.createBufferedImage();
-            if (mLandscape)
+            if (mLandscape) {
                 image = ImageUtils.rotate(image);
+            }
             mWorkspace.setImage(image);
             mWorkspace.repaint(mWorkspace.getBounds());
         }
 
+        @Override
         public void itemStateChanged(ItemEvent e) {
             Object source = e.getSource();
             if (source instanceof JCheckBox) {

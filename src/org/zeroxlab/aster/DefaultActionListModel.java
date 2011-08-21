@@ -18,8 +18,15 @@
 
 package org.zeroxlab.aster;
 
-import java.util.*;
-import javax.swing.event.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.NoSuchElementException;
+
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
+
+import org.zeroxlab.aster.cmds.AsterCommand;
 
 public class DefaultActionListModel implements ActionListModel {
     /** The listeners waiting for model changes. */
@@ -30,26 +37,32 @@ public class DefaultActionListModel implements ActionListModel {
 
     protected boolean mChangeEnabled = true;
 
+    @Override
     public void addChangeListener(ChangeListener l) {
         listenerList.add(ChangeListener.class, l);
     }
 
+    @Override
     public void removeChangeListener(ChangeListener l) {
         listenerList.remove(ChangeListener.class, l);
     }
 
+    @Override
     public void addCommandChangeListener(ChangeListener l) {
         cmdListenerList.add(ChangeListener.class, l);
     }
 
+    @Override
     public void removeCommandChangeListener(ChangeListener l) {
         cmdListenerList.remove(ChangeListener.class, l);
     }
 
+    @Override
     public void disableChangeListener() {
         mChangeEnabled = false;
     }
 
+    @Override
     public void enableChangeListener() {
         mChangeEnabled = true;
     }
@@ -66,8 +79,9 @@ public class DefaultActionListModel implements ActionListModel {
         for (int i = listeners.length-2; i >= 0; i -= 2) {
             if (listeners[i] == ChangeListener.class) {
                 // Lazily create the event:
-                if (ev == null)
+                if (ev == null) {
                     ev = new ChangeEvent(this);
+                }
                 ((ChangeListener)listeners[i+1]).stateChanged(ev);
             }
         }
@@ -101,7 +115,7 @@ public class DefaultActionListModel implements ActionListModel {
      * @see #removeChangeListener
      */
     public ChangeListener[] getChangeListeners() {
-        return (ChangeListener[]) listenerList.getListeners(ChangeListener.class);
+        return listenerList.getListeners(ChangeListener.class);
     }
 
     /**
@@ -126,20 +140,24 @@ public class DefaultActionListModel implements ActionListModel {
     public DefaultActionListModel() {
     }
 
+    @Override
     public void setRecall(AsterCommand cmd) {
         recall = cmd;
         fireStateChanged();
     }
 
+    @Override
     public AsterCommand getRecall() {
         return recall;
     }
 
+    @Override
     public void pushCmd(AsterCommand cmd) {
         actionList.addLast(cmd);
         fireStateChanged();
     }
 
+    @Override
     public void popCmd() {
         try {
             actionList.removeLast();
@@ -149,23 +167,28 @@ public class DefaultActionListModel implements ActionListModel {
         }
     }
 
+    @Override
     public boolean empty() {
         return actionList.isEmpty();
     }
 
+    @Override
     public Iterable<AsterCommand> getCommands() {
         return actionList;
     }
 
+    @Override
     public void clear() {
         actionList.clear();
         fireStateChanged();
     }
 
+    @Override
     public void trigger() {
         fireCommandChanged();
     }
 
+    @Override
     public AsterCommand[] toArray() {
         AsterCommand[] commands = new AsterCommand[actionList.size()+1];
         commands[0] = recall;

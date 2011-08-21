@@ -20,6 +20,8 @@ package org.zeroxlab.aster;
 
 import javax.swing.event.ChangeListener;
 
+import org.zeroxlab.aster.cmds.AsterCommand;
+
 public interface ActionListModel {
 
     /**

@@ -16,14 +16,14 @@
  * Authored by Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import java.lang.IllegalArgumentException;
-import java.lang.NumberFormatException;
 import java.io.IOException;
+
 import javax.script.SimpleBindings;
 
-import org.zeroxlab.aster.OpGetInput;
+import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.aster.operations.OpGetInput;
 
 public class Type extends AsterCommand {
 
@@ -78,7 +78,7 @@ public class Type extends AsterCommand {
     }
 
     @Override
-    protected String toScript() {
+    public String toScript() {
         return String.format("typet('%s')\n", mText);
     }
 }

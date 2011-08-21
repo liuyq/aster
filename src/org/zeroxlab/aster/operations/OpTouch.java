@@ -18,7 +18,7 @@
  *             Wei-Ning Huang <azhuang@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.operations;
 
 import java.awt.Point;
 

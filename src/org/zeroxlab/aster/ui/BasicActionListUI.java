@@ -18,25 +18,39 @@
 
 package org.zeroxlab.aster.ui;
 
-import com.android.ninepatch.NinePatch;
-import com.android.ninepatch.NinePatchChunk;
-
-import java.io.*;
-import java.util.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Vector;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JComponent;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.EventListenerList;
 import javax.swing.plaf.ComponentUI;
 
-import org.zeroxlab.aster.ActionListModel;
 import org.zeroxlab.aster.JActionList;
-import org.zeroxlab.aster.AsterCommand;
+import org.zeroxlab.aster.cmds.AsterCommand;
+
+import com.android.ninepatch.NinePatch;
 
 /**
  * Basic UI for {@link JActionList}.
@@ -65,8 +79,9 @@ public class BasicActionListUI extends ActionListUI {
     /*
      * @see javax.swing.plaf.ComponentUI#installUI(javax.swing.JComponent)
      */
+    @Override
     public void installUI(JComponent c) {
-        this.actionList = (JActionList) c;
+        actionList = (JActionList) c;
         installDefaults();
         installListeners();
         c.setLayout(null);
@@ -75,19 +90,20 @@ public class BasicActionListUI extends ActionListUI {
     /*
      * @see javax.swing.plaf.ComponentUI#uninstallUI(javax.swing.JComponent)
      */
+    @Override
     public void uninstallUI(JComponent c) {
         c.setLayout(null);
         uninstallListeners();
         uninstallDefaults();
 
-        this.actionList = null;
+        actionList = null;
     }
 
     public void installDefaults() {
     }
 
     public void installListeners() {
-        this.mouseListener = new MouseAdapter() {
+        mouseListener = new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                 }
@@ -100,42 +116,43 @@ public class BasicActionListUI extends ActionListUI {
                 public void mousePressed(MouseEvent e) {
                 }
             };
-        this.actionList.addMouseListener(this.mouseListener);
+        actionList.addMouseListener(mouseListener);
 
-        this.mouseMotionListener = new MouseMotionAdapter() {
+        mouseMotionListener = new MouseMotionAdapter() {
                 @Override
                 public void mouseDragged(MouseEvent e) {
                 }
             };
-        this.actionList.addMouseMotionListener(this.mouseMotionListener);
+        actionList.addMouseMotionListener(mouseMotionListener);
 
-        this.actionListChangeListener = new ChangeListener() {
+        actionListChangeListener = new ChangeListener() {
+                @Override
                 public void stateChanged(ChangeEvent e) {
                     updateButtonList();
                     actionList.repaint();
                 }
             };
-        this.actionList.getModel().addChangeListener(
-            this.actionListChangeListener);
-        this.actionList.getModel().addCommandChangeListener(
-            this.actionListChangeListener);
+        actionList.getModel().addChangeListener(
+            actionListChangeListener);
+        actionList.getModel().addCommandChangeListener(
+            actionListChangeListener);
     }
 
     public void uninstallDefaults() {
     }
 
     public void uninstallListeners() {
-        this.actionList.removeMouseListener(this.mouseListener);
-        this.mouseListener = null;
+        actionList.removeMouseListener(mouseListener);
+        mouseListener = null;
 
-        this.actionList.removeMouseMotionListener(this.mouseMotionListener);
-        this.mouseMotionListener = null;
+        actionList.removeMouseMotionListener(mouseMotionListener);
+        mouseMotionListener = null;
 
-        this.actionList.getModel().removeChangeListener(
-            this.actionListChangeListener);
-        this.actionList.getModel().removeCommandChangeListener(
-            this.actionListChangeListener);
-        this.actionListChangeListener = null;
+        actionList.getModel().removeChangeListener(
+            actionListChangeListener);
+        actionList.getModel().removeCommandChangeListener(
+            actionListChangeListener);
+        actionListChangeListener = null;
     }
 
     @Override
@@ -143,19 +160,23 @@ public class BasicActionListUI extends ActionListUI {
         super.paint(g, c);
         CloseButton delay = null;
         for (Component child: c.getComponents()) {
-            if (child instanceof CloseButton)
+            if (child instanceof CloseButton) {
                 delay = (CloseButton)child;
-            else
+            } else {
                 child.paint(g);
+            }
         }
-        if (delay != null)
+        if (delay != null) {
             delay.paint(g);
+        }
     }
 
+    @Override
     public void addNewActionListener(MouseListener l) {
         newActionListenerList.add(MouseListener.class, l);
     }
 
+    @Override
     public void removeNewActionListener(MouseListener l) {
         newActionListenerList.remove(MouseListener.class, l);
     }
@@ -177,8 +198,8 @@ public class BasicActionListUI extends ActionListUI {
 
     protected void updateButtonList() {
         buttonList = new Vector<JComponent>();
-        buttonList.add(new ActionButton(this.actionList.getModel().getRecall()));
-        for (AsterCommand cmd : this.actionList.getModel().getCommands()) {
+        buttonList.add(new ActionButton(actionList.getModel().getRecall()));
+        for (AsterCommand cmd : actionList.getModel().getCommands()) {
             buttonList.add(new ActionButton(cmd));
         }
         updateComponents();
@@ -194,6 +215,7 @@ public class BasicActionListUI extends ActionListUI {
             if (!it.hasNext() && !actionList.getModel().empty()) {
                 CloseButton closebtn = new CloseButton();
                 closebtn.addMouseListener(new MouseAdapter() {
+                        @Override
                         public void mouseClicked(MouseEvent e) {
                             actionList.getModel().popCmd();
                         }
@@ -206,6 +228,7 @@ public class BasicActionListUI extends ActionListUI {
         }
         NewActionButton newbtn = new NewActionButton();
         newbtn.addMouseListener(new MouseAdapter() {
+                @Override
                 public void mouseClicked(MouseEvent e) {
                     fireNewAction(e);
                 }
@@ -258,10 +281,12 @@ public class BasicActionListUI extends ActionListUI {
             actionList.scrollRectToVisible(focused.getBounds());
     }
 
+    @Override
     public Dimension getMinimumSize(JComponent c) {
         return getPreferredSize(c);
     }
 
+    @Override
     public Dimension getPreferredSize(JComponent c) {
         Dimension max = new Dimension(0, 0);
         for (Component child: c.getComponents()) {
@@ -270,12 +295,14 @@ public class BasicActionListUI extends ActionListUI {
                 max.width = BUTTON_MARGIN * 2 + d.width;
             }
             max.height += d.height;
-            if (child instanceof ActionButton)
+            if (child instanceof ActionButton) {
                 max.height += BUTTON_MARGIN * 2;
+            }
         }
         return max;
     }
 
+    @Override
     public Dimension getMaximumSize(JComponent c) {
         return getPreferredSize(c);
     }
@@ -323,23 +350,28 @@ public class BasicActionListUI extends ActionListUI {
             return mCommand.isExecuting();
         }
 
+        @Override
         public Dimension getMinimumSize() {
             return getPreferredSize();
         }
 
+        @Override
         public Dimension getPreferredSize() {
             FontMetrics fm = getFontMetrics(mFont);
             int width = fm.stringWidth(mCommand.getName()) + TEXT_MARGIN*2;
             int height = fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2;
-            if (mClipImage != null)
+            if (mClipImage != null) {
                 height += TEXT_MARGIN + CLIP_WIDTH;
+            }
             return new Dimension(width, height);
         }
 
+        @Override
         public Dimension getMaximumSize() {
             return getPreferredSize();
         }
 
+        @Override
         public void setBounds(int x, int y, int width, int height) {
             super.setBounds(x, y, width, height);
             mFontBox.setLocation(getBounds().getLocation());
@@ -347,6 +379,7 @@ public class BasicActionListUI extends ActionListUI {
             mFontBox.translate(TEXT_MARGIN, TEXT_MARGIN + fm.getAscent());
         }
 
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
@@ -385,6 +418,7 @@ public class BasicActionListUI extends ActionListUI {
     static class LittleArrow extends JComponent {
         public LittleArrow() {
         }
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
@@ -423,11 +457,13 @@ public class BasicActionListUI extends ActionListUI {
 
         public NewActionButton() {
             addMouseListener(new MouseAdapter() {
+                    @Override
                     public void mouseEntered(MouseEvent e) {
                         NewActionButton btn = (NewActionButton)e.getSource();
                         btn.setActive(true);
                         btn.repaint();
                     }
+                    @Override
                     public void mouseExited(MouseEvent e) {
                         NewActionButton btn = (NewActionButton)e.getSource();
                         btn.setActive(false);
@@ -437,19 +473,22 @@ public class BasicActionListUI extends ActionListUI {
             Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
             setCursor(handCursor);
         }
+        @Override
         public Dimension getPreferredSize() {
             return new Dimension(inactiveImage.getWidth(), inactiveImage.getHeight());
         }
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
-            if (mActiveP)
+            if (mActiveP) {
                 g.drawImage(activeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
-            else
+            } else {
                 g.drawImage(inactiveImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+            }
         }
         public void setActive(boolean activep) {
-            this.mActiveP = activep;
+            mActiveP = activep;
         }
     }
 
@@ -469,10 +508,12 @@ public class BasicActionListUI extends ActionListUI {
             setCursor(handCursor);
         }
 
+        @Override
         public Dimension getPreferredSize() {
             return new Dimension(closeImage.getWidth(), closeImage.getHeight());
         }
 
+        @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();

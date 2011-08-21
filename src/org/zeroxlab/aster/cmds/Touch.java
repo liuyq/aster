@@ -16,21 +16,18 @@
  * Authored by Kan-Ru Chen <kanru@0xlab.org>
  */
 
-package org.zeroxlab.aster;
+package org.zeroxlab.aster.cmds;
 
-import java.awt.image.BufferedImage;
 import java.awt.Point;
-import java.lang.IllegalArgumentException;
-import java.lang.NumberFormatException;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
-import org.zeroxlab.aster.AsterOperation;
 import org.zeroxlab.aster.AsterWorkspace;
-import org.zeroxlab.aster.OpTouch;
+import org.zeroxlab.aster.operations.AsterOperation;
 
 public class Touch extends AsterCommand {
 
@@ -178,7 +175,7 @@ public class Touch extends AsterCommand {
     }
 
     @Override
-    protected String toScript() {
+    public String toScript() {
         if (isAuto()) {
             return String.format("touch('%d.png', '%s', %.1f, %.2f, %s)\n", mSerial,
                                  mTouchType.getTypeStr(), mTimeout, mSimilarity,
