@@ -27,10 +27,6 @@ import org.zeroxlab.aster.cmds.Press;
 import org.zeroxlab.aster.cmds.Recall;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpSelectKey;
-import org.zeroxlab.wookieerunner.ImageUtils;
-
-import com.android.chimpchat.core.IChimpImage;
-import com.google.common.io.Files;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -41,8 +37,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -54,7 +48,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -113,7 +106,7 @@ public class AsterMainPanel extends JPanel {
     private JActionList mActionList;
     private AsterCommandManager mCmdManager;
 
-    private CmdConn mCmdConn;
+    private CmdConnection mCmdConn;
 
     private MyListener mCmdFillListener;
 
@@ -186,7 +179,7 @@ public class AsterMainPanel extends JPanel {
         // Initialize command Manager
         mCmdManager = new AsterCommandManager();
 
-        mCmdConn = new CmdConn();
+        mCmdConn = new CmdConnection(mWorkspace, mCmdManager);
         mWorkspace.addRotationListener(mCmdConn);
         ActionExecutor executor = new ActionExecutor();
         ActionDashboard.getInstance().setListener(executor);
@@ -522,88 +515,6 @@ public class AsterMainPanel extends JPanel {
                 }
                 reset();
                 mDashboard.resetButtons();
-            }
-        }
-    }
-
-    class CmdConn implements Runnable, ItemListener {
-
-        private boolean mKeepWalking = true;
-        private AsterCommand mCmd;
-        private ExecutionState mState;
-        private boolean mLandscape = false;
-        private CommandExecutionListener mListener = null;
-
-        public void finish() {
-            mKeepWalking = false;
-        }
-
-        synchronized public void setListener(CommandExecutionListener listener) {
-            mListener = listener;
-        }
-
-        synchronized public void runCommand(AsterCommand cmd) {
-            mCmd = cmd;
-            switchState(ExecutionState.EXECUTION);
-        }
-
-        synchronized private void switchState(ExecutionState state) {
-            mState = state;
-        }
-
-        @Override
-        public void run() {
-            mState = ExecutionState.NORMAL;
-            AsterMainPanel.message("Connecting to device...");
-            mCmdManager.connect();
-            AsterMainPanel.message("Connected");
-
-            while (mKeepWalking) {
-                if (mState == ExecutionState.NORMAL) {
-                    updateScreen();
-                } else {
-                    // Reset user.dir everytime
-                    mCmdManager.cdCwd();
-                    String msg = String.format("Executing %s command ...\n",
-                                               mCmd.getName());
-                    System.err.printf(msg);
-                    AsterMainPanel.message(msg);
-                    System.err.println(mCmd.toScript());
-                    AsterCommand.ExecutionResult result = mCmd.execute();
-                    switchState(ExecutionState.NORMAL);
-                    if (mListener != null) {
-                        mListener.processResult(result);
-                    }
-                    updateScreen();
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    String msg = "Update Screen thread is interrupted";
-                    System.err.println(msg);
-                    AsterMainPanel.message(msg);
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        private void updateScreen() {
-            IChimpImage snapshot = mCmdManager.takeSnapshot();
-            BufferedImage image = snapshot.createBufferedImage();
-            if (mLandscape) {
-                image = ImageUtils.rotate(image);
-            }
-            mWorkspace.setImage(image);
-            mWorkspace.repaint(mWorkspace.getBounds());
-        }
-
-        @Override
-        public void itemStateChanged(ItemEvent e) {
-            Object source = e.getSource();
-            if (source instanceof JCheckBox) {
-                JCheckBox rotate = (JCheckBox) source;
-                // a NOT ROTATED image should be Portrait
-                mLandscape = rotate.isSelected();
             }
         }
     }
