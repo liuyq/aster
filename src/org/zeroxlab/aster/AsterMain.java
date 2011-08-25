@@ -24,29 +24,24 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 
 public class AsterMain {
 
-    public static void main(String[] args) {
-        if (args.length > 0) {
-            try {
-                if ("-run".equals(args[0])) {
-                    startCLI(args[1]);
-                }
-            } catch(ArrayIndexOutOfBoundsException e) {
-                usage();
-            }
-        } else {
-            startGUI();
-        }
+    private AsterCommandManager mCmdMgr;
+    private CmdConnection mCmdConn;
+
+    public AsterMain() {
+        mCmdMgr = new AsterCommandManager();
+
     }
 
-    public static void startCLI(String script) {
+    public void startCLI(String script) {
         ExecutionResult result = null;
         try {
-            result = (new AsterCommandManager()).run(script);
+            result = mCmdMgr.run(script);
         } catch(IOException e) {
             System.err.printf(e.toString());
             System.exit(1);
@@ -60,15 +55,22 @@ public class AsterMain {
         }
     }
 
-    public static void startGUI() {
+    public void startGUI() {
+        mCmdConn = new CmdConnection(mCmdMgr);
+
         trySetupLookFeel();
         JFrame f = new JFrame("Aster");
-        AsterMainPanel p = new AsterMainPanel();
+        AsterMainPanel p = new AsterMainPanel(mCmdMgr, mCmdConn);
         f.setContentPane(p);
         f.setJMenuBar(p.createMenuBar());
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.pack();
         f.setVisible(true);
+
+        SnapshotDrawer drawer = p.getSnapshotDrawer();
+        mCmdConn.setDrawer(drawer);
+        Thread thread = new Thread(mCmdConn);
+        thread.start();
     }
 
     private static void trySetupLookFeel() {
@@ -92,4 +94,20 @@ public class AsterMain {
     private static void usage() {
         System.out.printf("Usage: aster [-run TEST.ast]\n\n");
     }
+
+    public static void main(String[] args) {
+        AsterMain aster = new AsterMain();
+        if (args.length > 0) {
+            try {
+                if ("-run".equals(args[0])) {
+                    aster.startCLI(args[1]);
+                }
+            } catch(ArrayIndexOutOfBoundsException e) {
+                aster.usage();
+            }
+        } else {
+            aster.startGUI();
+        }
+    }
+
 }
