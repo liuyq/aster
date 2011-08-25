@@ -19,6 +19,7 @@
 package org.zeroxlab.aster;
 
 import org.zeroxlab.aster.AsterWorkspace.FillListener;
+import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
@@ -110,7 +111,11 @@ public class AsterMainPanel extends JPanel {
 
     private MyListener mCmdFillListener;
 
-    public AsterMainPanel() {
+    public AsterMainPanel(AsterCommandManager cmdMgr,
+                          CmdConnection conn) {
+        mCmdManager = cmdMgr;
+        mCmdConn = conn;
+
 	GridBagLayout gridbag = new GridBagLayout();
 	GridBagConstraints c = new GridBagConstraints();
         mCmdFillListener = new MyListener();
@@ -176,16 +181,13 @@ public class AsterMainPanel extends JPanel {
 
         setPreferredSize(new Dimension(800, 600));
 
-        // Initialize command Manager
-        mCmdManager = new AsterCommandManager();
-
-        mCmdConn = new CmdConnection(mWorkspace, mCmdManager);
         mWorkspace.addRotationListener(mCmdConn);
         ActionExecutor executor = new ActionExecutor();
         ActionDashboard.getInstance().setListener(executor);
+    }
 
-        Thread thread = new Thread(mCmdConn);
-        thread.start();
+    public SnapshotDrawer getSnapshotDrawer() {
+        return mWorkspace.getInstance();
     }
 
     public JMenuBar createMenuBar() {
