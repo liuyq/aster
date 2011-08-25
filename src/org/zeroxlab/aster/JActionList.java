@@ -80,8 +80,8 @@ public class JActionList extends JComponent implements Scrollable {
 
     protected ActionListModel model;
 
-    public JActionList() {
-        this.model = new DefaultActionListModel();
+    public JActionList(ActionListModel model) {
+        this.model = model;
         this.updateUI();
     }
 
