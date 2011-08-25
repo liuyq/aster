@@ -112,7 +112,8 @@ public class AsterMainPanel extends JPanel {
     private MyListener mCmdFillListener;
 
     public AsterMainPanel(AsterCommandManager cmdMgr,
-                          CmdConnection conn) {
+                          CmdConnection conn,
+                          ActionListModel model) {
         mCmdManager = cmdMgr;
         mCmdConn = conn;
 
@@ -129,7 +130,7 @@ public class AsterMainPanel extends JPanel {
         c.gridheight = 3;
         c.weightx = 0;
         c.weighty = 0;
-        mActionList = new JActionList();
+        mActionList = new JActionList(model);
         JScrollPane scrollPane = new JScrollPane();
         /*
          * TODO: FIXME:
@@ -182,8 +183,6 @@ public class AsterMainPanel extends JPanel {
         setPreferredSize(new Dimension(800, 600));
 
         mWorkspace.addRotationListener(mCmdConn);
-        ActionExecutor executor = new ActionExecutor();
-        ActionDashboard.getInstance().setListener(executor);
     }
 
     public SnapshotDrawer getSnapshotDrawer() {
@@ -431,93 +430,4 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    class ActionExecutor implements ActionDashboard.ClickListener,
-                                    CommandExecutionListener {
-        AsterCommand[] mList;
-        ActionDashboard mDashboard;
-        int mIndex; // refer to a command which is going to be executed
-                    // but not happen yet
-        boolean mInPlaying = false;
-
-        ActionExecutor() {
-            mDashboard = ActionDashboard.getInstance();
-            reset();
-        }
-
-        private void set() {
-            ActionListModel model = mActionList.getModel();
-            mList = model.toArray();
-            mIndex = 0;
-            mCmdConn.setListener(this);
-        }
-
-        private void reset() {
-            if (mList != null) {
-                for (AsterCommand cmd : mList) {
-                    cmd.setExecuting(false);
-                }
-                mActionList.getModel().trigger();
-                mList = null;
-            }
-            mIndex = -1;
-            mInPlaying = false;
-            mCmdConn.setListener(null);
-        }
-
-        public void onPlayClicked() {
-            mInPlaying = true;
-            onStepClicked();
-        }
-
-        public void onStepClicked() {
-            if (mIndex == -1 || mList == null) {
-                set();
-            }
-
-            if (mIndex < mList.length) {
-                mDashboard.setRunning();
-                mCmdConn.runCommand(mList[mIndex]);
-                mList[mIndex].setExecuting(true);
-                mActionList.getModel().trigger();
-                mIndex++;
-            } else {
-                onStopClicked();
-            }
-        }
-
-        public void onStopClicked() {
-            reset();
-            mDashboard.resetButtons();
-        }
-
-        public void processResult(ExecutionResult result) {
-            if(result.mSuccess && mIndex < mList.length) {
-                // process success and is not in the end. (1 for Recall)
-                if (mInPlaying) {
-                    this.onStepClicked(); // go to next step automatically
-                } else {
-                    mDashboard.setStep();
-                }
-            } else {
-                if (!result.mSuccess) {
-                    if (mIndex == 1 && !mCmdManager.getSaved()) {
-                        JOptionPane.showMessageDialog(null,
-                              "Since you have set recall script, you need to \n"
-                            + "save this script first for Aster to locate the\n"
-                            + " recall script.",
-                              "Execution failed",
-                              JOptionPane.ERROR_MESSAGE);
-                    } else {
-                        System.out.println("\nFailed\n");
-                        JOptionPane.showMessageDialog(null,
-                                result.mMessage,
-                                "Execution failed",
-                                JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-                reset();
-                mDashboard.resetButtons();
-            }
-        }
-    }
 }
