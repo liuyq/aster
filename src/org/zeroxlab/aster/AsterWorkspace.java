@@ -51,6 +51,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.zeroxlab.aster.ActionListModel;
+import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommand.CommandListener;
 import org.zeroxlab.aster.operations.AsterOperation;
@@ -58,11 +59,12 @@ import org.zeroxlab.aster.operations.AsterOperation.OperationListener;
 import org.zeroxlab.aster.operations.OpDrag;
 import org.zeroxlab.aster.operations.OpTouch;
 
-public class AsterWorkspace extends JPanel implements ComponentListener
-                                                         , MouseListener
-                                                         , MouseMotionListener
-                                                         , ChangeListener
-                                                         , AsterOperation.OperationListener {
+public class AsterWorkspace extends JPanel implements ComponentListener,
+                                                      MouseListener,
+                                                      MouseMotionListener,
+                                                      ChangeListener,
+                                                      CmdConnection.SnapshotDrawer,
+                                                      AsterOperation.OperationListener {
 
     public final static int LANDSCAPE_WIDTH  = 400;
     public final static int LANDSCAPE_HEIGHT = 240;
@@ -242,12 +244,14 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         return icon;
     }
 
+    @Override
     public void setImage(BufferedImage img) {
         mSourceImage = img;
         if (mSourceImage != null) {
             generateDrawingBuffer();
             updateDrawingBuffer(mSourceImage);
         }
+        repaint();
     }
 
     public void fillCmd(AsterCommand cmd, FillListener listener) {
