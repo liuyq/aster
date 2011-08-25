@@ -24,12 +24,14 @@ import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.zeroxlab.aster.AsterController;
 import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 
 public class AsterMain {
 
+    private AsterController mController;
     private AsterCommandManager mCmdMgr;
     private CmdConnection mCmdConn;
 
@@ -57,10 +59,17 @@ public class AsterMain {
 
     public void startGUI() {
         mCmdConn = new CmdConnection(mCmdMgr);
+        ActionListModel model = new DefaultActionListModel();
+        /*FIXME: The way to set needed objects before initialize is bad
+         *       It should be improved to become stable. */
+        AsterController.setConnection(mCmdConn);
+        AsterController.setModel(model);
+        AsterController.setCmdMgr(mCmdMgr);
+        mController = AsterController.getInstance();
 
         trySetupLookFeel();
         JFrame f = new JFrame("Aster");
-        AsterMainPanel p = new AsterMainPanel(mCmdMgr, mCmdConn);
+        AsterMainPanel p = new AsterMainPanel(mCmdMgr, mCmdConn, model);
         f.setContentPane(p);
         f.setJMenuBar(p.createMenuBar());
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
