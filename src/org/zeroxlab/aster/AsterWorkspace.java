@@ -33,6 +33,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.io.IOException;
@@ -172,7 +173,9 @@ public class AsterWorkspace extends JPanel implements ComponentListener
         sDone.setEnabled(false);
         add(sDone);
 
+        Insets insets = new Insets(0, 0, 0, 0);
         sRotate = new JCheckBox("Rotate");
+        sRotate.setMargin(insets);
         sRotate.setSize(80, 20);
         sRotate.setForeground(Color.WHITE);
         add(sRotate);
@@ -183,14 +186,19 @@ public class AsterWorkspace extends JPanel implements ComponentListener
 
     private JComponent initShortcutButtons() {
         ImageIcon icon;
+        Insets insets = new Insets(0, 4, 0, 4);
         icon    = createScaledIcon("/btn_back.png", MK_WIDTH, MK_HEIGHT);
         sBack   = new JButton(icon);
+        sBack.setMargin(insets);
         icon    = createScaledIcon("/btn_menu.png", MK_WIDTH, MK_HEIGHT);
         sMenu   = new JButton(icon);
+        sMenu.setMargin(insets);
         icon    = createScaledIcon("/btn_home.png", MK_WIDTH, MK_HEIGHT);
         sHome   = new JButton(icon);
+        sHome.setMargin(insets);
         icon    = createScaledIcon("/btn_search.png", MK_WIDTH, MK_HEIGHT);
         sSearch = new JButton(icon);
+        sSearch.setMargin(insets);
 
         MainKeyMonitor monitor = new MainKeyMonitor();
         sBack.addActionListener(monitor);

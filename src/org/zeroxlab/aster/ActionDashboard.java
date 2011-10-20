@@ -23,6 +23,7 @@ package org.zeroxlab.aster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
@@ -46,6 +47,10 @@ public class ActionDashboard extends JPanel {
         mStep = new JButton("Step");
         mStop = new JButton("Stop");
         setLayout(new GridLayout(1, 3));
+	Insets insets = new Insets(0, 0, 0, 0);
+	mPlay.setMargin(insets);
+	mStep.setMargin(insets);
+	mStop.setMargin(insets);
         add(mPlay);
         add(mStep);
         add(mStop);
