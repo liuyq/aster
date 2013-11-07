@@ -18,36 +18,22 @@
 
 package org.zeroxlab.aster;
 
-import org.zeroxlab.aster.AsterWorkspace.FillListener;
-import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
-import org.zeroxlab.aster.cmds.AsterCommand;
-import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
-import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
-import org.zeroxlab.aster.cmds.AsterCommandManager;
-import org.zeroxlab.aster.cmds.Press;
-import org.zeroxlab.aster.cmds.Recall;
-import org.zeroxlab.aster.operations.AsterOperation;
-import org.zeroxlab.aster.operations.OpSelectKey;
-
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 import javax.swing.AbstractAction;
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -57,10 +43,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
+
+import org.zeroxlab.aster.AsterWorkspace.FillListener;
+import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
+import org.zeroxlab.aster.cmds.AsterCommand;
+import org.zeroxlab.aster.cmds.AsterCommandManager;
+import org.zeroxlab.aster.cmds.Press;
+import org.zeroxlab.aster.cmds.Recall;
+import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.aster.operations.OpSelectKey;
 
 public class AsterMainPanel extends JPanel {
 
@@ -117,8 +111,8 @@ public class AsterMainPanel extends JPanel {
         mCmdManager = cmdMgr;
         mCmdConn = conn;
 
-	GridBagLayout gridbag = new GridBagLayout();
-	GridBagConstraints c = new GridBagConstraints();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
         mCmdFillListener = new MyListener();
 
         setLayout(gridbag);
@@ -180,7 +174,7 @@ public class AsterMainPanel extends JPanel {
         c.weighty = 0;
         add(mStatus, c);
 
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(1024, 768));
 
         mWorkspace.addRotationListener(mCmdConn);
     }

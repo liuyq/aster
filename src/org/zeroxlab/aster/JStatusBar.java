@@ -18,9 +18,16 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
+@SuppressWarnings("serial")
 public class JStatusBar extends JPanel {
     JLabel statusBar;
     JTextArea miniBuf;
@@ -36,7 +43,7 @@ public class JStatusBar extends JPanel {
         miniBuf.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
         miniBuf.setEditable(false);
         miniBuf.setLineWrap(true);
-        miniBuf.setRows(1);
+        miniBuf.setRows(5);
         JScrollPane scrollPane = new JScrollPane();
         scrollPane.getViewport().setView(miniBuf);
         add(statusBar, BorderLayout.PAGE_START);

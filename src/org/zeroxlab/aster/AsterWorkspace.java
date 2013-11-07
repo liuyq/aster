@@ -20,8 +20,12 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -30,15 +34,11 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
+
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 import javax.swing.Box;
@@ -50,10 +50,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.zeroxlab.aster.ActionListModel;
-import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommand;
-import org.zeroxlab.aster.cmds.AsterCommand.CommandListener;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.AsterOperation.OperationListener;
 import org.zeroxlab.aster.operations.OpDrag;
@@ -66,10 +63,10 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
                                                       CmdConnection.SnapshotDrawer,
                                                       AsterOperation.OperationListener {
 
-    public final static int LANDSCAPE_WIDTH  = 400;
-    public final static int LANDSCAPE_HEIGHT = 240;
-    public final static int PORTRAIT_WIDTH  = 240;
-    public final static int PORTRAIT_HEIGHT = 400;
+    public final static int LANDSCAPE_WIDTH = 800;
+    public final static int LANDSCAPE_HEIGHT = 480;
+    public final static int PORTRAIT_WIDTH = 480;
+    public final static int PORTRAIT_HEIGHT = 800;
 
     /* constants for Main Keys*/
     private final static int MK_WIDTH  = 25;

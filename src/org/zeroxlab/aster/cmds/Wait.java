@@ -19,8 +19,6 @@
 package org.zeroxlab.aster.cmds;
 
 import java.awt.image.BufferedImage;
-import java.lang.IllegalArgumentException;
-import java.lang.NumberFormatException;
 import java.io.File;
 import java.io.IOException;
 
@@ -133,5 +131,11 @@ public class Wait extends AsterCommand {
         } else {
             return String.format("wait(%.2f)\n", mWaitDuration);
         }
+    }
+
+    @Override
+    public void executeFromJava() throws Exception {
+        // TODO Auto-generated method stub
+        throw new Exception("not implemented");
     }
 }

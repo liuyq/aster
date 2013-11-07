@@ -27,6 +27,7 @@ import javax.script.SimpleBindings;
 
 import org.python.core.PyException;
 import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
 public abstract class AsterCommand {
@@ -38,6 +39,7 @@ public abstract class AsterCommand {
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
     protected boolean mFilled    = false;
+    protected MonkeyDeviceWrapper monkeyDeviceWrapper = null;
 
     public static class ExecutionResult {
         public boolean mSuccess;
@@ -139,4 +141,20 @@ public abstract class AsterCommand {
     public interface CommandExecutionListener {
         public void processResult(ExecutionResult result);
     }
+
+    public ExecutionResult executeFromJava(
+            MonkeyDeviceWrapper monkeyDeviceWrapper) {
+        try {
+            this.monkeyDeviceWrapper = monkeyDeviceWrapper;
+            executeFromJava();
+        } catch (Exception e) {
+            System.out.println(e);
+            return new ExecutionResult(false, e.toString());
+        }
+        return new ExecutionResult(true, "");
+    }
+
+    public abstract void executeFromJava()
+            throws Exception;
+
 }

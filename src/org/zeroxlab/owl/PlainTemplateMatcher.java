@@ -18,14 +18,17 @@
 
 package org.zeroxlab.owl;
 
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_imgproc.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
-
+import static com.googlecode.javacv.cpp.opencv_core.IPL_DEPTH_32F;
+import static com.googlecode.javacv.cpp.opencv_core.cvCreateImage;
+import static com.googlecode.javacv.cpp.opencv_core.cvMinMaxLoc;
+import static com.googlecode.javacv.cpp.opencv_core.cvSize;
+import static com.googlecode.javacv.cpp.opencv_imgproc.CV_TM_SQDIFF_NORMED;
+import static com.googlecode.javacv.cpp.opencv_imgproc.cvMatchTemplate;
 import static java.lang.Math.abs;
-import java.util.logging.Logger;
+
+import com.googlecode.javacv.cpp.opencv_core.CvPoint;
+import com.googlecode.javacv.cpp.opencv_core.CvSize;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class PlainTemplateMatcher implements IMatcher {
     @Override

@@ -88,4 +88,9 @@ public class Recall extends AsterCommand {
     public String toScript() {
         return String.format("recall('%s')\n", mScript);
     }
+
+    @Override
+    public void executeFromJava() throws Exception {
+        super.monkeyDeviceWrapper.wake();
+    }
 }

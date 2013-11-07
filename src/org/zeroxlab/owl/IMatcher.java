@@ -18,9 +18,7 @@
 
 package org.zeroxlab.owl;
 
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public interface IMatcher {
     /* Find needle in a haystack */

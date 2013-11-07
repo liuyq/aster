@@ -28,7 +28,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Map;
 import java.util.Stack;
+import java.util.TreeMap;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -38,8 +40,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
+import org.zeroxlab.wookieerunner.MonkeyRunnerWrapper;
 import org.zeroxlab.wookieerunner.ScriptRunner;
-import org.zeroxlab.wookieerunner.WookieeRunner;
 
 import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
@@ -57,6 +60,7 @@ public class AsterCommandManager {
     private static IChimpDevice mImpl;
     private static ScriptRunner mScriptRunner;
     public static boolean mConnected = false;
+    private static MonkeyDeviceWrapper deviceWrapper = null;
 
     public AsterCommandManager() {
         mCwd = Files.createTempDir();
@@ -156,28 +160,22 @@ public class AsterCommandManager {
         }
     }
 
-    public void connect() {
+    public MonkeyDeviceWrapper connect() {
         replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
 
-        mChimpChat = ChimpChat.getInstance();
-        WookieeRunner.setChimpChat(mChimpChat);
-
-        String wookieeRunnerPath =
-            System.getProperty("org.zeroxlab.wookieerunner.bindir") +
-            File.separator + "wookieerunner";
-        mScriptRunner = ScriptRunner.newInstance(null, null, wookieeRunnerPath);
-        AsterCommand.setScriptRunner(mScriptRunner);
-
-        // Import WookieeRunnerWrapper
-        mScriptRunner.runStringLocal("import os, sys");
-        mScriptRunner.runStringLocal("sys.path.insert(0, os.getcwd())");
-        mScriptRunner.runStringLocal("from WookieeRunnerWrapper import *");
-
-        // Connect to the device and get IChimpDevice
-        mScriptRunner.runStringLocal("connect()");
-        mImpl = WookieeRunner.getLastChimpDevice();
+        Map<String, String> options = new TreeMap<String, String>();
+        options.put("backend", "adb");
+        String adbLocation = System.getProperty("adb.location");
+        if (adbLocation != null){
+            options.put("adbLocation", "adb");
+        }
+        mChimpChat = ChimpChat.getInstance(options);
+        MonkeyRunnerWrapper.setChimpChat(mChimpChat);
+        deviceWrapper = MonkeyRunnerWrapper.connect();
+        mImpl = MonkeyRunnerWrapper.getLastChimpDevice();
 
         mConnected = true;
+        return deviceWrapper;
     }
 
     public IChimpImage takeSnapshot() {

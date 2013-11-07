@@ -20,17 +20,19 @@
 
 package org.zeroxlab.aster;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
+
+import javax.swing.JCheckBox;
+
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.wookieerunner.ImageUtils;
+import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
 
 import com.android.chimpchat.core.IChimpImage;
-
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.image.BufferedImage;
-import javax.swing.JCheckBox;
 
 class CmdConnection implements Runnable, ItemListener {
 
@@ -91,7 +93,7 @@ class CmdConnection implements Runnable, ItemListener {
     public void run() {
         mState = ExecutionState.NORMAL;
         AsterMainPanel.message("Connecting to device...");
-        mCmdManager.connect();
+        MonkeyDeviceWrapper monkeyDevice = mCmdManager.connect();
         AsterMainPanel.message("Connected");
 
         while (mKeepWalking) {
@@ -105,7 +107,9 @@ class CmdConnection implements Runnable, ItemListener {
                 System.err.printf(msg);
                 AsterMainPanel.message(msg);
                 System.err.println(mCmd.toScript());
-                AsterCommand.ExecutionResult result = mCmd.execute();
+                AsterCommand.ExecutionResult result = mCmd
+                        .executeFromJava(monkeyDevice);
+
                 switchState(ExecutionState.NORMAL);
                 if (mListener != null) {
                     mListener.processResult(result);

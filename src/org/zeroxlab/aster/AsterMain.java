@@ -19,15 +19,14 @@
 package org.zeroxlab.aster;
 
 import java.io.IOException;
-import java.lang.ArrayIndexOutOfBoundsException;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.zeroxlab.aster.AsterController;
 import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
-import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
+import org.zeroxlab.aster.cmds.AsterCommandManager;
 
 public class AsterMain {
 
@@ -59,6 +58,7 @@ public class AsterMain {
 
     public void startGUI() {
         mCmdConn = new CmdConnection(mCmdMgr);
+
         ActionListModel model = new DefaultActionListModel();
         /*FIXME: The way to set needed objects before initialize is bad
          *       It should be improved to become stable. */

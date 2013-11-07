@@ -81,4 +81,10 @@ public class Type extends AsterCommand {
     public String toScript() {
         return String.format("typet('%s')\n", mText);
     }
+
+    @Override
+    public void executeFromJava() throws Exception {
+        // TODO Auto-generated method stub
+        throw new Exception("not implemented");
+    }
 }

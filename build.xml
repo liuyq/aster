@@ -6,13 +6,13 @@
     <target name="init">
         <property file="local.properties"/>
         <property file="build.properties"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/lib/linux-${arch}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.classes.dir}"/>
     </target>
 
-    <!--
-         JavaCV
-    -->
+    <!--  JavaCV    -->
     <target name="-compile-javacv" depends="init" unless="${useprebuilt}">
         <subant target="jar">
             <fileset dir="external" includes="*/build.xml"/>
@@ -27,9 +27,10 @@
         <copy todir="${dist.dir}/jar">
             <fileset dir="${prebuilt.dir}/javacv" includes="**/*.jar"/>
         </copy>
-        <!-- need windows/macos support -->
-        <copy todir="${dist.dir}/lib/linux-${arch}">
-            <fileset dir="${prebuilt.dir}/opencv/linux-${arch}" includes="*"/>
+        <!-- use system opencv support -->
+        <copy todir="${dist.dir}/lib/android">
+            <fileset dir="${prebuilt.dir}/android" includes="*.jar"/>
+            <fileset dir="${prebuilt.dir}/android/framework" includes="*.jar"/>
         </copy>
     </target>
     <target name="-clean-javacv" unless="${useprebuilt}">
@@ -64,7 +65,7 @@
                srcdir="src/com/android/chimpchat"
                destdir="${build.classes.dir}">
             <classpath>
-                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+                <fileset dir="${prebuilt.dir}/android" includes="**/*.jar"/>
             </classpath>
         </javac>
     </target>
@@ -142,7 +143,7 @@
             destdir="${build.classes.dir}">
             <!-- <compilerarg value="-Xlint"/> -->
             <classpath>
-                <fileset dir="${framework.dir}" includes="**/*.jar"/>
+                <fileset dir="${prebuilt.dir}/android" includes="**/*.jar"/>
             </classpath>
         </javac>
     </target>

@@ -18,9 +18,7 @@
 
 package org.zeroxlab.owl;
 
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
+import static com.googlecode.javacv.cpp.opencv_core.cvRect;
 
 public class MatchResult {
     public int x;

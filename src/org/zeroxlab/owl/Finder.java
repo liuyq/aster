@@ -18,15 +18,13 @@
 
 package org.zeroxlab.owl;
 
-import com.googlecode.javacpp.Loader;
-import com.googlecode.javacv.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
+import static com.googlecode.javacv.cpp.opencv_highgui.cvLoadImage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import java.util.logging.Logger;
+
+import com.googlecode.javacv.cpp.opencv_core.IplImage;
 
 public class Finder {
     private static final Logger LOG = Logger.getLogger(Finder.class.getName());
@@ -38,12 +36,14 @@ public class Finder {
         needle = (new File(pre, needle)).getAbsolutePath();
 
         IplImage img = cvLoadImage(haystack);
-        IplImage tmpl = cvLoadImage(needle);
 
-        if (img == null)
+        if (img == null){
             throw new FileNotFoundException("can't open `" + haystack +"'");
-        if (tmpl == null)
+        }
+        IplImage tmpl = cvLoadImage(needle);
+        if (tmpl == null){
             throw new FileNotFoundException("can't open `" + needle +"'");
+        }
         MatchResult result = matcher.find(img, tmpl, similarity);
         LOG.info(String.format("MatchResut: %s", result));
         return result;

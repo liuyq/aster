@@ -18,34 +18,27 @@
  */
 package org.zeroxlab.wookieerunner;
 
-import com.google.common.base.Functions;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-
-import com.android.chimpchat.ChimpChat;
-import com.android.chimpchat.core.IChimpBackend;
-import com.android.chimpchat.core.IChimpDevice;
-import com.android.chimpchat.core.IChimpImage;
-import com.android.chimpchat.core.ChimpImageBase;
-
-import com.android.monkeyrunner.doc.MonkeyRunnerExported;
-import com.android.monkeyrunner.JythonUtils;
-import com.android.monkeyrunner.MonkeyImage;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.python.core.ArgParser;
 import org.python.core.ClassDictInit;
 import org.python.core.PyException;
 import org.python.core.PyObject;
 
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.swing.JOptionPane;
+import com.android.chimpchat.ChimpChat;
+import com.android.chimpchat.core.ChimpImageBase;
+import com.android.chimpchat.core.IChimpDevice;
+import com.android.chimpchat.core.IChimpImage;
+import com.android.monkeyrunner.JythonUtils;
+import com.android.monkeyrunner.MonkeyImage;
+import com.android.monkeyrunner.doc.MonkeyRunnerExported;
+import com.google.common.base.Preconditions;
 
 /**
  * This is the main interface class into the jython bindings.
  */
+@SuppressWarnings("serial")
 @MonkeyRunnerExported(doc = "Main entry point for WookieeRunner")
 public class WookieeRunner extends PyObject implements ClassDictInit {
     private static final Logger LOG = Logger.getLogger(WookieeRunner.class.getCanonicalName());

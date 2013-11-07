@@ -133,7 +133,7 @@ public class DefaultActionListModel implements ActionListModel {
     }
 
     /** The command stack */
-    Deque actionList = new ArrayDeque<AsterCommand>();
+    Deque<AsterCommand> actionList = new ArrayDeque<AsterCommand>();
     /** The recall command */
     AsterCommand recall;
 

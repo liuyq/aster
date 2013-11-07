@@ -186,4 +186,17 @@ public class Touch extends AsterCommand {
                                  mTouchType.getTypeStr());
         }
     }
+
+    @Override
+    public void executeFromJava()
+            throws Exception {
+        if (isAuto()) {
+            super.monkeyDeviceWrapper.touch(String.format("%d.png", mSerial),
+                    mTouchType.getTypeStr(), mTimeout, mSimilarity, mLandscape);
+        } else {
+            super.monkeyDeviceWrapper.touch((int) mPosition.getX(),
+                    (int) mPosition.getY(),
+                    mTouchType.getTypeStr());
+        }
+    }
 }

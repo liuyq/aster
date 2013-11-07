@@ -18,42 +18,36 @@
 
 package org.zeroxlab.wookieerunner;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
+
 import org.zeroxlab.owl.Finder;
 import org.zeroxlab.owl.IMatcher;
 import org.zeroxlab.owl.MatchResult;
 import org.zeroxlab.owl.PyramidTemplateMatcher;
 import org.zeroxlab.owl.TemplateNotFoundException;
 
-import com.android.chimpchat.ChimpChat;
 import com.android.chimpchat.core.IChimpDevice;
 import com.android.chimpchat.core.IChimpImage;
-import com.android.chimpchat.core.ChimpImageBase;
 import com.android.chimpchat.core.TouchPressType;
 import com.android.chimpchat.hierarchyviewer.HierarchyViewer;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.lang.Math;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 public class WookieeAPI {
     private IChimpDevice impl;
     private IMatcher matcher;
-    private int shortside;
-
     public WookieeAPI(IChimpDevice impl) {
         this.impl = impl;
         this.matcher = new PyramidTemplateMatcher();
-        this.shortside = Math.min(
-                Integer.parseInt(getProperty("display.width")),
-                Integer.parseInt(getProperty("display.height"))
-        );
+        /*
+         * Math.min( Integer.parseInt(getProperty("display.width")),
+         * Integer.parseInt(getProperty("display.height")) );
+         */
     }
 
     private String getCurrentSnapshot(boolean landscape) {
@@ -133,8 +127,6 @@ public class WookieeAPI {
         MatchResult rs = new MatchResult();
         String current;
         long st = System.nanoTime();
-        long ms = (long) (sec * 1000.0);
-
         while (true) {
             try {
                 current = getCurrentSnapshot(landscape);

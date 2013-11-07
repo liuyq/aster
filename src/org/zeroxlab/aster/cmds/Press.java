@@ -116,4 +116,9 @@ public class Press extends AsterCommand {
         return String.format("press('%s', '%s')\n",
                              mKeyCode, mPressType.getTypeStr());
     }
+
+    @Override
+    public void executeFromJava() throws Exception {
+        super.monkeyDeviceWrapper.press(mKeyCode, mPressType.getTypeStr());
+    }
 }

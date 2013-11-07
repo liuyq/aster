@@ -21,7 +21,7 @@ import com.android.ddmlib.AndroidDebugBridge;
 import com.android.ddmlib.IDevice;
 import com.android.chimpchat.core.IChimpBackend;
 import com.android.chimpchat.core.IChimpDevice;
-import com.android.sdklib.SdkConstants;
+import com.android.SdkConstants;
 
 import java.io.File;
 import java.util.List;

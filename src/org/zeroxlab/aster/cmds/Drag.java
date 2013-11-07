@@ -200,4 +200,10 @@ public class Drag extends AsterCommand {
                                  mDuration, mSteps);
         }
     }
+
+    @Override
+    public void executeFromJava() throws Exception {
+        // TODO Auto-generated method stub
+        throw new Exception("not implemented");
+    }
 }
