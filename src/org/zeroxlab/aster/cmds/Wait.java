@@ -135,7 +135,10 @@ public class Wait extends AsterCommand {
 
     @Override
     public void executeFromJava() throws Exception {
-        // TODO Auto-generated method stub
-        throw new Exception("not implemented");
+        if (mWaitType == WaitType.IMAGE){
+            throw new Exception("not implemented");
+        }else{
+            throw new Exception("not implemented");
+        }
     }
 }

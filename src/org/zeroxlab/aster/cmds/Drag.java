@@ -203,7 +203,12 @@ public class Drag extends AsterCommand {
 
     @Override
     public void executeFromJava() throws Exception {
-        // TODO Auto-generated method stub
-        throw new Exception("not implemented");
+        if (isAuto()) {
+            throw new Exception("not implemented");
+        }else{
+            super.monkeyDeviceWrapper.drag((int)mStartPosition.getX(),
+                    (int) mStartPosition.getY(), (int) mEndPosition.getX(),
+                    (int) mEndPosition.getY(), mSteps, mDuration);
+        }
     }
 }

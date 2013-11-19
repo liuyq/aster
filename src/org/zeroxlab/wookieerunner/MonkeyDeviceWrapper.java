@@ -97,10 +97,9 @@ public class MonkeyDeviceWrapper {
             "Mininum similarity to determine found",
             "True if in landscape mode"})
     public void drag(int startx, int starty, int endx, int endy, int steps,
-            long seconds) {
+            double seconds) {
         long ms = (long) (seconds * 1000.0);
         impl.drag(startx, starty, endx, endy, steps, ms);
-
     }
 
     public void drag(String start_img, int dx, int dy, int steps, double sec,

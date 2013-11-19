@@ -84,7 +84,6 @@ public class Type extends AsterCommand {
 
     @Override
     public void executeFromJava() throws Exception {
-        // TODO Auto-generated method stub
-        throw new Exception("not implemented");
+        super.monkeyDeviceWrapper.type(mText);
     }
 }
