@@ -1,180 +1,152 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="aster" default="dist">
-    <!--
-         Initialization
-    -->
-    <target name="init">
-        <property file="local.properties"/>
-        <property file="build.properties"/>
-        <mkdir dir="${dist.dir}"/>
-        <mkdir dir="${dist.dir}/lib/linux-${arch}"/>
-        <mkdir dir="${build.dir}"/>
-        <mkdir dir="${build.classes.dir}"/>
-    </target>
+	<!-- Initialization -->
+	<target name="init">
+		<property file="build.properties" />
+		<mkdir dir="${dist.dir}" />
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${build.classes.dir}" />
+	</target>
 
-    <!--  JavaCV    -->
-    <target name="-compile-javacv" depends="init" unless="${useprebuilt}">
-        <subant target="jar">
-            <fileset dir="external" includes="*/build.xml"/>
-        </subant>
-    </target>
-    <target name="-jar-javacv" depends="-compile-javacv,-jar-javacv-build,-jar-javacv-prebuilt" unless="${useprebuilt}"/>
-    <target name="-jar-javacv-build" unless="${useprebuilt}">
-        <copy file="external/javacv/dist/javacv.jar" todir="${dist.dir}"/>
-        <copy file="external/javacpp/dist/javacpp.jar" todir="${dist.dir}"/>
-    </target>
-    <target name="-jar-javacv-prebuilt" if="${useprebuilt}">
+	<!-- JavaCV -->
+	<target name="-compile-javacv" depends="init" unless="${useprebuilt}">
+		<subant target="jar">
+			<fileset dir="external" includes="*/build.xml" />
+		</subant>
+	</target>
+	<target name="-jar-javacv-build" unless="${useprebuilt}">
+		<copy file="external/javacv/dist/javacv.jar" todir="${dist.dir}" />
+		<copy file="external/javacpp/dist/javacpp.jar" todir="${dist.dir}" />
+	</target>
+	<target name="-clean-javacv" unless="${useprebuilt}">
+		<subant target="clean">
+			<fileset dir="external" includes="*/build.xml" />
+		</subant>
+	</target>
+	<target name="-jar-javacv-prebuilt" if="${useprebuilt}">
+		<copy todir="${dist.dir}/jar">
+			<fileset dir="${prebuilt.dir}/javacv" includes="**/*.jar" />
+		</copy>
+	</target>
+	<target name="-jar-javacv"
+		depends="-compile-javacv,-jar-javacv-build,-jar-javacv-prebuilt"
+		unless="${useprebuilt}" />
+
+	<!-- ddmlib -->
+	<target name="-compile-ddmlib" depends="init">
+		<javac includeantruntime="false" srcdir="src/com/android/ddmlib"
+			destdir="${build.classes.dir}">
+			<classpath>
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+				<fileset dir="${prebuilt.dir}/android/framework" includes="**/*.jar" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="-jar-ddmlib" depends="-compile-ddmlib">
+		<jar destfile="${dist.dir}/jar/ddmlib.jar" basedir="${build.classes.dir}"
+			includes="com/android/ddmlib/**/*.class" />
+	</target>
+
+	<!-- ChimpChat -->
+	<target name="-compile-chimpchat" depends="init">
+		<javac includeantruntime="false" srcdir="src/com/android/chimpchat"
+			destdir="${build.classes.dir}">
+			<classpath>
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+				<fileset dir="${prebuilt.dir}/android/framework" includes="**/*.jar" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="-jar-chimpchat" depends="-compile-chimpchat">
+		<jar destfile="${dist.dir}/jar/chimpchat.jar" basedir="${build.classes.dir}"
+			includes="com/android/chimpchat/**/*.class" />
+	</target>
+
+	<!-- NinePatch -->
+	<target name="-compile-ninepatch" depends="init">
+		<javac includeantruntime="false" srcdir="src/com/android/ninepatch"
+			destdir="${build.classes.dir}">
+			<classpath>
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+				<fileset dir="${prebuilt.dir}/android/framework" includes="**/*.jar" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="-jar-ninepatch" depends="-compile-ninepatch">
+		<jar destfile="${dist.dir}/jar/ninepatch.jar" basedir="${build.classes.dir}"
+			includes="com/android/ninepatch/**/*.class" />
+	</target>
+
+	<!-- Owl -->
+	<target name="-compile-owl" depends="init">
+		<javac includeantruntime="false" srcdir="src/org/zeroxlab/owl"
+			destdir="${build.classes.dir}">
+			<classpath>
+				<fileset dir="${prebuilt.dir}/javacv" includes="**/*.jar" />
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+				<fileset dir="${prebuilt.dir}/android/framework" includes="**/*.jar" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="-jar-owl" depends="-compile-owl">
+		<jar destfile="${dist.dir}/jar/owl.jar" basedir="${build.classes.dir}"
+			includes="org/zeroxlab/owl/**/*.class" manifest="etc/owl/manifest.txt" />
+	</target>
+
+	<!-- WookieeRunner -->
+	<target name="-compile-wookieerunner" depends="init">
+		<javac includeantruntime="false" srcdir="src/org/zeroxlab/wookieerunner"
+			destdir="${build.classes.dir}">
+			<classpath>
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+                <fileset dir="${prebuilt.dir}/android/framework" includes="**/*.jar" />
+			</classpath>
+		</javac>
+		<copy file="src/python/WookieeRunnerWrapper.py" todir="${build.classes.dir}" />
+	</target>
+	<target name="-jar-wookieerunner" depends="-compile-wookieerunner">
+		<jar destfile="${dist.dir}/jar/wookieerunner.jar" basedir="${build.classes.dir}"
+			includes="org/zeroxlab/wookieerunner/**/*.class,**/*.py" manifest="etc/wookieerunner/manifest.txt" />
+	</target>
+
+	<!-- Aster IDE -->
+	<target name="-compile-aster" depends="init">
+		<javac includeantruntime="false" debug="true" srcdir="src/" destdir="${build.classes.dir}">
+			<!-- <compilerarg value="-Xlint"/> -->
+			<classpath>
+				<fileset dir="${prebuilt.dir}/android" includes="**/*.jar" />
+			</classpath>
+		</javac>
+	</target>
+	<target name="-jar-aster" depends="-compile-aster">
+		<jar destfile="${dist.dir}/jar/aster.jar" manifest="etc/aster/manifest.txt">
+			<fileset dir="${build.classes.dir}" includes="org/**/*.class" />
+			<fileset dir="res" includes="*.png" />
+		</jar>
+	</target>
+
+	
+	<!-- Copy prebuilt android jar files -->
+	<target name="-jar-android-prebuilt" if="${useprebuilt}">
         <copy todir="${dist.dir}/jar">
-            <fileset dir="${prebuilt.dir}/javacv" includes="**/*.jar"/>
-        </copy>
-        <!-- use system opencv support -->
-        <copy todir="${dist.dir}/lib/android">
-            <fileset dir="${prebuilt.dir}/android" includes="*.jar"/>
-            <fileset dir="${prebuilt.dir}/android/framework" includes="*.jar"/>
+            <fileset dir="${prebuilt.dir}/android" includes="*.jar" />
+            <fileset dir="${prebuilt.dir}/android/framework" includes="*.jar" />
         </copy>
     </target>
-    <target name="-clean-javacv" unless="${useprebuilt}">
-        <subant target="clean">
-            <fileset dir="external" includes="*/build.xml"/>
-        </subant>
-    </target>
+	<!-- Targets -->
+	<target name="compile"
+		depends="init,-compile-javacv,-compile-ddmlib,-compile-chimpchat,-compile-ninepatch,-compile-owl,-compile-wookieerunner,-compile-aster" />
 
-    <!--
-         ddmlib
-    -->
-    <target name="-compile-ddmlib" depends="init">
-        <javac includeantruntime="false"
-               srcdir="src/com/android/ddmlib"
-               destdir="${build.classes.dir}">
-            <classpath>
-                <fileset dir="${framework.dir}" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="-jar-ddmlib" depends="-compile-ddmlib">
-        <jar destfile="${dist.dir}/jar/ddmlib.jar"
-             basedir="${build.classes.dir}"
-             includes="com/android/ddmlib/**/*.class"/>
-    </target>
+	<target name="jar"
+		depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-ninepatch,-jar-owl,-jar-wookieerunner,-jar-aster" />
+	<target name="dist" depends="jar, -jar-android-prebuilt">
+		<copy file="etc/aster/aster" todir="${dist.dir}" />
+		<chmod file="${dist.dir}/aster" perm="ugo+x" />
+	</target>
 
-    <!--
-         ChimpChat
-    -->
-    <target name="-compile-chimpchat" depends="init">
-        <javac includeantruntime="false"
-               srcdir="src/com/android/chimpchat"
-               destdir="${build.classes.dir}">
-            <classpath>
-                <fileset dir="${prebuilt.dir}/android" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="-jar-chimpchat" depends="-compile-chimpchat">
-        <jar destfile="${dist.dir}/jar/chimpchat.jar"
-             basedir="${build.classes.dir}"
-             includes="com/android/chimpchat/**/*.class"/>
-    </target>
-
-    <!--
-         NinePatch
-    -->
-    <target name="-compile-ninepatch" depends="init">
-        <javac includeantruntime="false"
-               srcdir="src/com/android/ninepatch"
-               destdir="${build.classes.dir}">
-            <classpath>
-                <fileset dir="${framework.dir}" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="-jar-ninepatch" depends="-compile-ninepatch">
-        <jar destfile="${dist.dir}/jar/ninepatch.jar"
-             basedir="${build.classes.dir}"
-             includes="com/android/ninepatch/**/*.class"/>
-    </target>
-
-    <!--
-         Owl
-    -->
-    <target name="-compile-owl" depends="init">
-        <javac includeantruntime="false"
-               srcdir="src/org/zeroxlab/owl"
-               destdir="${build.classes.dir}">
-            <classpath>
-                <fileset dir="${prebuilt.dir}" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="-jar-owl" depends="-compile-owl">
-        <jar destfile="${dist.dir}/jar/owl.jar"
-             basedir="${build.classes.dir}"
-             includes="org/zeroxlab/owl/**/*.class"
-             manifest="etc/owl/manifest.txt"/>
-    </target>
-
-    <!--
-         WookieeRunner
-    -->
-    <target name="-compile-wookieerunner" depends="init">
-        <javac includeantruntime="false"
-               srcdir="src/org/zeroxlab/wookieerunner"
-               destdir="${build.classes.dir}">
-            <classpath>
-                <fileset dir="${prebuilt.dir}" includes="**/*.jar"/>
-                <fileset dir="${framework.dir}" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-        <copy file="src/python/WookieeRunnerWrapper.py" todir="${build.classes.dir}"/>
-    </target>
-    <target name="-jar-wookieerunner" depends="-compile-wookieerunner">
-        <jar destfile="${dist.dir}/jar/wookieerunner.jar"
-             basedir="${build.classes.dir}"
-             includes="org/zeroxlab/wookieerunner/**/*.class,**/*.py"
-             manifest="etc/wookieerunner/manifest.txt"/>
-    </target>
-
-    <!--
-         Aster IDE
-    -->
-    <target name="-compile-aster" depends="init">
-        <javac includeantruntime="false"
-            debug="true"
-            srcdir="src/org/zeroxlab/aster"
-            destdir="${build.classes.dir}">
-            <!-- <compilerarg value="-Xlint"/> -->
-            <classpath>
-                <fileset dir="${prebuilt.dir}/android" includes="**/*.jar"/>
-            </classpath>
-        </javac>
-    </target>
-    <target name="-jar-aster" depends="-compile-aster">
-        <jar destfile="${dist.dir}/jar/aster.jar"
-             manifest="etc/aster/manifest.txt">
-	  <fileset dir="${build.classes.dir}"
-		   includes="org/zeroxlab/aster/**/*.class"/>
-	  <fileset dir="res"
-		   includes="*.png"/>
-	</jar>
-    </target>
-
-    <!--
-         Targets
-    -->
-    <target name="compile" depends="init,-compile-javacv,-compile-ddmlib,-compile-chimpchat,-compile-ninepatch,-compile-owl,-compile-wookieerunner,-compile-aster"/>
-
-    <target name="jar" depends="init,-jar-javacv,-jar-ddmlib,-jar-chimpchat,-jar-ninepatch,-jar-owl,-jar-wookieerunner,-jar-aster"/>
-    <target name="dist" depends="jar">
-        <copy file="bin/adb" todir="${dist.dir}/bin"/>
-        <copy file="etc/wookieerunner/wookieerunner" todir="${dist.dir}"/>
-        <copy file="etc/aster/aster" todir="${dist.dir}"/>
-        <chmod file="${dist.dir}/bin/adb" perm="ugo+x"/>
-        <chmod file="${dist.dir}/wookieerunner" perm="ugo+x"/>
-        <chmod file="${dist.dir}/aster" perm="ugo+x"/>
-    </target>
-
-    <target name="clean" depends="init,-clean-javacv">
-        <delete dir="${build.dir}"/>
-        <delete dir="${dist.dir}" />
-    </target>
+	<target name="clean" depends="init,-clean-javacv">
+		<delete dir="${build.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
 </project>
 <!-- vim: set ts=4 sts=4 sw=4 expandtab: -->

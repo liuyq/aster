@@ -16,14 +16,14 @@
 
 package com.android.ddmlib;
 
-import com.android.ddmlib.log.LogReceiver;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.SocketChannel;
+
+import com.android.ddmlib.log.LogReceiver;
 
 /**
  * Helper class to handle requests and connections to adb.
@@ -633,7 +633,7 @@ final class AdbHelper {
             throws TimeoutException, IOException {
         ByteBuffer buf = ByteBuffer.wrap(data, 0, length != -1 ? length : data.length);
         int numWaits = 0;
-
+        timeout = 20 * timeout;// timeout=5000
         while (buf.position() != buf.limit()) {
             int count;
 

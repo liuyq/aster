@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpGetInput;
 
@@ -35,7 +36,9 @@ public class Type extends AsterCommand {
         super.mOps[0] = new OpGetInput();
     }
 
-    public Type(String argline) throws IllegalArgumentException {
+    public Type(String argline, DeviceForAster device)
+            throws IllegalArgumentException {
+        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -83,7 +86,7 @@ public class Type extends AsterCommand {
     }
 
     @Override
-    public void executeFromJava() throws Exception {
-        super.monkeyDeviceWrapper.type(mText);
+    public void execute() {
+        super.device.inputText(mText);
     }
 }

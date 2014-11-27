@@ -18,15 +18,25 @@
 
 package org.zeroxlab.aster;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Rectangle;
+import java.awt.event.MouseListener;
 
-import org.zeroxlab.aster.ActionListModel;
-import org.zeroxlab.aster.ui.BasicActionListUI;
+import javax.swing.JComponent;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
+
 import org.zeroxlab.aster.ui.ActionListUI;
+import org.zeroxlab.aster.ui.BasicActionListUI;
 
 public class JActionList extends JComponent implements Scrollable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     /**
      * The UI class ID string.
      */

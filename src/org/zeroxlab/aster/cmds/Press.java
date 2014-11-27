@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpSelectKey;
 
@@ -31,6 +32,7 @@ public class Press extends AsterCommand {
         DOWN("down"), UP("up"), DOWN_AND_UP("downAndUp");
 
         private String typeStr;
+
         PressType(String typestr) {
             typeStr = typestr;
         }
@@ -69,7 +71,9 @@ public class Press extends AsterCommand {
         }
     }
 
-    public Press(String argline) throws IllegalArgumentException {
+    public Press(String argline, DeviceForAster device)
+            throws IllegalArgumentException {
+        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 2) {
@@ -84,7 +88,7 @@ public class Press extends AsterCommand {
     }
 
     public String getKeyCode() {
-	return mKeyCode;
+        return mKeyCode;
     }
 
     @Override
@@ -104,21 +108,21 @@ public class Press extends AsterCommand {
     @Override
     protected void onFillSettings(SimpleBindings settings) throws IOException {
         if (settings.containsKey("KeyCode")) {
-            mKeyCode = (String)settings.get("KeyCode");
+            mKeyCode = (String) settings.get("KeyCode");
         }
         if (settings.containsKey("Type")) {
-            mPressType = PressType.parse((String)settings.get("Type"));
+            mPressType = PressType.parse((String) settings.get("Type"));
         }
     }
 
     @Override
     public String toScript() {
-        return String.format("press('%s', '%s')\n",
-                             mKeyCode, mPressType.getTypeStr());
+        return String.format("press('%s', '%s')\n", mKeyCode,
+                mPressType.getTypeStr());
     }
 
     @Override
-    public void executeFromJava() throws Exception {
-        super.monkeyDeviceWrapper.press(mKeyCode, mPressType.getTypeStr());
+    public void execute() {
+        super.device.press(mKeyCode);
     }
 }

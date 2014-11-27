@@ -25,6 +25,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.AsterWorkspace;
 import org.zeroxlab.aster.operations.AsterOperation;
 
@@ -43,8 +44,9 @@ public class Wait extends AsterCommand {
         mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
 
-    public Wait(String prefix, String argline)
+    public Wait(String prefix, String argline, DeviceForAster device)
         throws IllegalArgumentException {
+        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 4) {
@@ -134,11 +136,13 @@ public class Wait extends AsterCommand {
     }
 
     @Override
-    public void executeFromJava() throws Exception {
+    public void execute() {
         if (mWaitType == WaitType.IMAGE){
-            throw new Exception("not implemented");
+            device.waitImageUntil(String.format("%d.png", mSerial),
+                    device.getScreenShotPath(), mTimeout);
+            //TODO: need to check more
         }else{
-            throw new Exception("not implemented");
+            new Exception("not implemented").printStackTrace();
         }
     }
 }

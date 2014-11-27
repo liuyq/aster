@@ -18,34 +18,33 @@
 
 package org.zeroxlab.aster.cmds;
 
-import java.io.IOException;
 
 class CmdTest {
-    static public void main(String argv[]) {
-
-        Drag drag1 = new Drag(".", "('0.png', (400, 400), 0.1, 10, 4, False)");
-        Drag drag2 = new Drag(".", "((0, 0), (400, 400), 0.1, 10, 4, False)");
-        Touch touch1 = new Touch(".", "('test.png', 'downAndUp', 4, False)");
-        Touch touch2 = new Touch(".", "((400, 400), 'downAndUp', 4, False)");
-        Press press = new Press("('KEYCODE_HOME', 'downAndUp')");
-        Type type = new Type("('testing')");
-
-        AsterCommand[] cmds = { drag1, drag2, touch1, touch2, press, type };
-
-        AsterCommandManager manager = new AsterCommandManager();
-        manager.connect();
-        for (AsterCommand c: cmds) {
-            c.execute();
-        }
-
-        try {
-            manager.dump(cmds, "cmds.ast", true);
-            cmds = manager.load("cmds.ast");
-            for (AsterCommand c: cmds) {
-                System.out.printf("%s", c.toScript());
-            }
-        } catch (IOException e) {
-            System.out.println(e);
-        }
-    }
+    // static public void main(String argv[]) {
+    //
+    // Drag drag1 = new Drag(".", "('0.png', (400, 400), 0.1, 10, 4, False)");
+    // Drag drag2 = new Drag(".", "((0, 0), (400, 400), 0.1, 10, 4, False)");
+    // Touch touch1 = new Touch(".", "('test.png', 'downAndUp', 4, False)");
+    // Touch touch2 = new Touch(".", "((400, 400), 'downAndUp', 4, False)");
+    // Press press = new Press("('KEYCODE_HOME', 'downAndUp')");
+    // Type type = new Type("('testing')");
+    //
+    // AsterCommand[] cmds = { drag1, drag2, touch1, touch2, press, type };
+    //
+    // AsterCommandManager manager = new AsterCommandManager();
+    // manager.connect(null);
+    // for (AsterCommand c: cmds) {
+    // c.execute();
+    // }
+    //
+    // try {
+    // manager.dump(cmds, "cmds.ast", true);
+    // cmds = manager.load("cmds.ast");
+    // for (AsterCommand c: cmds) {
+    // System.out.printf("%s", c.toScript());
+    // }
+    // } catch (IOException e) {
+    // System.out.println(e);
+    // }
+    // }
 }

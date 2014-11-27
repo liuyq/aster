@@ -34,10 +34,14 @@ import org.zeroxlab.aster.cmds.Touch;
 import org.zeroxlab.aster.cmds.Type;
 import org.zeroxlab.aster.cmds.Wait;
 
+/*
+ * The class used to show the command selection dialog 
+ * when press the plus button
+ */
 public class CmdSelector {
 
-    static final Map<String, Class> commands = new LinkedHashMap<String, Class>()
-    {
+    @SuppressWarnings("rawtypes")
+    static final Map<String, Class> commands = new LinkedHashMap<String, Class>() {
         {
             put("Touch", Touch.class);
             put("Drag", Drag.class);
@@ -48,14 +52,18 @@ public class CmdSelector {
         }
     };
 
+    /*
+     * The real method used to show the command selection dialog when press the
+     * plus button. Called by mouseClicked in AsterMainPanel.java
+     */
     static public AsterCommand selectCommand(Component parent) {
         String s = (String)JOptionPane.showInputDialog(
             parent,
-            "Select next command",
-            "New Command",
+                "Select next command", // Tip message
+                "New Command", // dialog title
             JOptionPane.PLAIN_MESSAGE,
             null,
-            commands.keySet().toArray(),
+            commands.keySet().toArray(), // array will be shown in the selectbox
             null);
         try {
             if (s != null) {

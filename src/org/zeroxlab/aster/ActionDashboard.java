@@ -28,7 +28,18 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * Display for the play/step/stop button
+ * 
+ * @author liuyq
+ * 
+ */
 public class ActionDashboard extends JPanel {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     private final static ActionDashboard sDashboard = new ActionDashboard();
 

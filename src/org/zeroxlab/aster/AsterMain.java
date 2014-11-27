@@ -19,8 +19,10 @@
 package org.zeroxlab.aster;
 
 import java.io.IOException;
+import java.util.TreeMap;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -30,20 +32,20 @@ import org.zeroxlab.aster.cmds.AsterCommandManager;
 
 public class AsterMain {
 
-    private AsterController mController;
     private AsterCommandManager mCmdMgr;
     private CmdConnection mCmdConn;
 
     public AsterMain() {
-        mCmdMgr = new AsterCommandManager();
 
     }
 
-    public void startCLI(String script) {
+    public void startCLI(String scriptPath, String serial) {
+        mCmdMgr = new AsterCommandManager(null, null);
+
         ExecutionResult result = null;
         try {
-            result = mCmdMgr.run(script);
-        } catch(IOException e) {
+            result = mCmdMgr.run(scriptPath, serial);
+        } catch (IOException e) {
             System.err.printf(e.toString());
             System.exit(1);
         }
@@ -57,18 +59,49 @@ public class AsterMain {
     }
 
     public void startGUI() {
+        String[] adbTypeKeys = { "LOCAL", "MONKEYRUNNER", "SSH" };
+        Object adbType = JOptionPane.showInputDialog(null,
+                "Please choose the adb type",
+                "Choose the type on how to connect device",
+                JOptionPane.QUESTION_MESSAGE, null, adbTypeKeys, "LAVA");
+        String serial = null;
+        String adbTypeStr = null;
+        if (adbType != null) {
+            if (adbType.toString().equals("LAVA")) {
+                adbTypeStr = "SSH";
+                TreeMap<String, String> juno_devices = new TreeMap<String, String>();
+                Object lava_device = JOptionPane.showInputDialog(null,
+                        "Please select the juno device",
+                        "Select the juno device", JOptionPane.QUESTION_MESSAGE,
+                        null, juno_devices.keySet().toArray(), "juno-01");
+
+                if (lava_device != null) {
+                    serial = juno_devices.get(lava_device.toString());
+                }
+            } else {
+                adbTypeStr = adbType.toString();
+                serial = JOptionPane.showInputDialog(null,
+                        "Please input the serial number", "");
+            }
+        }else{
+            adbTypeStr = "LOCAL";
+        }
+
+        mCmdMgr = new AsterCommandManager(adbTypeStr, serial);
         mCmdConn = new CmdConnection(mCmdMgr);
 
         ActionListModel model = new DefaultActionListModel();
-        /*FIXME: The way to set needed objects before initialize is bad
-         *       It should be improved to become stable. */
+        /*
+         * FIXME: The way to set needed objects before initialize is bad It
+         * should be improved to become stable.
+         */
         AsterController.setConnection(mCmdConn);
         AsterController.setModel(model);
         AsterController.setCmdMgr(mCmdMgr);
-        mController = AsterController.getInstance();
+        AsterController.getInstance();
 
         trySetupLookFeel();
-        JFrame f = new JFrame("Aster");
+        JFrame f = new JFrame("Aster");// The entire window
         AsterMainPanel p = new AsterMainPanel(mCmdMgr, mCmdConn, model);
         f.setContentPane(p);
         f.setJMenuBar(p.createMenuBar());
@@ -83,12 +116,12 @@ public class AsterMain {
     }
 
     private static void trySetupLookFeel() {
-        System.setProperty("awt.useSystemAAFontSettings","on");
+        System.setProperty("awt.useSystemAAFontSettings", "on");
         System.setProperty("swing.aatext", "true");
         try {
             // Set System L&F
-            UIManager.setLookAndFeel(
-                "com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
+            UIManager
+                    .setLookAndFeel("com.sun.java.swing.plaf.gtk.GTKLookAndFeel");
         } catch (UnsupportedLookAndFeelException e) {
             // handle exception
         } catch (ClassNotFoundException e) {
@@ -108,11 +141,15 @@ public class AsterMain {
         AsterMain aster = new AsterMain();
         if (args.length > 0) {
             try {
-                if ("-run".equals(args[0])) {
-                    aster.startCLI(args[1]);
+                String serial = null;
+                if (args.length >= 4 && "-serial".equals(args[2])) {
+                    serial = args[3];
                 }
-            } catch(ArrayIndexOutOfBoundsException e) {
-                aster.usage();
+                if ("-run".equals(args[0])) {
+                    aster.startCLI(args[1], serial);
+                }
+            } catch (ArrayIndexOutOfBoundsException e) {
+                AsterMain.usage();
             }
         } else {
             aster.startGUI();

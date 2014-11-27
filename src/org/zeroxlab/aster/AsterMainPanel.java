@@ -47,6 +47,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.AsterWorkspace.FillListener;
 import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommand;
@@ -56,9 +57,34 @@ import org.zeroxlab.aster.cmds.Recall;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpSelectKey;
 
+/**
+ * Respresents the whole window, include the status window, action list window,
+ * Screen display window, play/stop/steps boutton window
+ * 
+ * @author liuyq
+ * 
+ */
 public class AsterMainPanel extends JPanel {
 
+    /**
+     * Display the status message
+     */
     static JStatusBar mStatus = new JStatusBar();
+
+    /*
+     * This is the whole window
+     */
+    private AsterWorkspace mWorkspace;
+    /*
+     * Used to show the actions list in the top-left part
+     */
+    private JActionList mActionList;
+
+    private AsterCommandManager mCmdManager;
+
+    private CmdConnection mCmdConn;
+
+    private MyListener mCmdFillListener;
 
     private final static String RECALL = "recall.ast";
     private static String sRecall = RECALL;
@@ -76,38 +102,31 @@ public class AsterMainPanel extends JPanel {
 
     public static void status(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    mStatus.setStatus(msg);
-                }
-            });
+            @Override
+            public void run() {
+                mStatus.setStatus(msg);
+            }
+        });
     }
 
     public static void message(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    mStatus.message(msg);
-                }
-            });
+            @Override
+            public void run() {
+                mStatus.message(msg);
+            }
+        });
     }
 
     public final static int MENU_ROTATE = 1;
     public final static int MENU_NOT_ROTATE = 2;
 
-    private enum ExecutionState { NORMAL, EXECUTION }
+    private enum ExecutionState {
+        NORMAL, EXECUTION
+    }
 
-    private AsterWorkspace mWorkspace;
-    private JActionList mActionList;
-    private AsterCommandManager mCmdManager;
-
-    private CmdConnection mCmdConn;
-
-    private MyListener mCmdFillListener;
-
-    public AsterMainPanel(AsterCommandManager cmdMgr,
-                          CmdConnection conn,
-                          ActionListModel model) {
+    public AsterMainPanel(AsterCommandManager cmdMgr, CmdConnection conn,
+            ActionListModel model) {
         mCmdManager = cmdMgr;
         mCmdConn = conn;
 
@@ -127,11 +146,11 @@ public class AsterMainPanel extends JPanel {
         mActionList = new JActionList(model);
         JScrollPane scrollPane = new JScrollPane();
         /*
-         * TODO: FIXME:
-         * Always show the scroll bar, otherwise when the scroll bar
-         * was displayed the scrollPane will resize incorretly.
+         * TODO: FIXME: Always show the scroll bar, otherwise when the scroll
+         * bar was displayed the scrollPane will resize incorretly.
          */
-        scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane
+                .setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
         MainKeyMonitor mkmonitor = new MainKeyMonitor();
@@ -140,15 +159,16 @@ public class AsterMainPanel extends JPanel {
         mWorkspace.setMainKeyListener(mkmonitor);
         mActionList.getModel().setRecall(new Recall());
         mActionList.getModel().addChangeListener(mWorkspace);
-        mActionList.addNewActionListener(new MouseAdapter () {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    AsterCommand cmd = CmdSelector.selectCommand((Component)e.getSource());
-                    if (cmd != null) {
-                        mActionList.getModel().pushCmd(cmd);
-                    }
+        mActionList.addNewActionListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                AsterCommand cmd = CmdSelector.selectCommand((Component) e
+                        .getSource());
+                if (cmd != null) {
+                    mActionList.getModel().pushCmd(cmd);
                 }
-            });
+            }
+        });
 
         c.gridx = 1;
         c.gridy = 0;
@@ -158,6 +178,7 @@ public class AsterMainPanel extends JPanel {
         c.weighty = 0.5;
         add(mWorkspace, c);
 
+        // add the dashboard window, which is the play/step/stop part
         c.gridx = 0;
         c.gridy = 3;
         c.gridwidth = 1;
@@ -166,6 +187,7 @@ public class AsterMainPanel extends JPanel {
         c.weighty = 0;
         add(ActionDashboard.getInstance(), c);
 
+        // add the status window
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 4;
@@ -173,57 +195,67 @@ public class AsterMainPanel extends JPanel {
         c.weightx = 0;
         c.weighty = 0;
         add(mStatus, c);
-
+        // [persist.sys.screen.size]: [800x480]
+        // or get from screencap.png's height and width
         setPreferredSize(new Dimension(1024, 768));
 
         mWorkspace.addRotationListener(mCmdConn);
     }
 
     public SnapshotDrawer getSnapshotDrawer() {
-        return mWorkspace.getInstance();
+        return AsterWorkspace.getInstance();
     }
 
     public JMenuBar createMenuBar() {
+        // add file menu
         JMenuBar menu = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         menu.add(fileMenu);
 
+        // add the "New File" sub menu to File menu
         JMenuItem newItem = new JMenuItem();
         newItem.setAction(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    mActionList.getModel().clear();
-                }
-            });
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                mActionList.getModel().clear();
+            }
+        });
         newItem.setText("New File");
         newItem.setMnemonic(KeyEvent.VK_N);
         fileMenu.add(newItem);
 
-        // Open
+        // Add the Open sub menu to File menu
         JMenuItem openItem = new JMenuItem();
         openItem.setAction(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    try {
-                        final JFileChooser fc = new JFileChooser();
-                        int returnVal = fc.showOpenDialog(AsterMainPanel.this);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            AsterCommand[] cmds = mCmdManager.load(file.getAbsolutePath());
-                            mActionList.getModel().disableChangeListener();
-                            mActionList.getModel().clear();
-                            mActionList.getModel().setRecall(cmds[0]);
-                            for (int i = 1; i < cmds.length; i++) {
-                                mActionList.getModel().pushCmd(cmds[i]);
-                            }
-                            mActionList.getModel().enableChangeListener();
-                            mActionList.getModel().trigger();
+            private static final long serialVersionUID = 1L;
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                try {
+                    final JFileChooser fc = new JFileChooser();
+                    int returnVal = fc.showOpenDialog(AsterMainPanel.this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        // TODO: Pass the right serial number
+                        DeviceForAster device = mCmdManager
+                                .getConnectedDevice();
+                        AsterCommand[] cmds = mCmdManager.load(
+                                file.getAbsolutePath(), device);
+                        mActionList.getModel().disableChangeListener();
+                        mActionList.getModel().clear();
+                        mActionList.getModel().setRecall(cmds[0]);
+                        for (int i = 1; i < cmds.length; i++) {
+                            mActionList.getModel().pushCmd(cmds[i]);
                         }
-                    } catch (IOException e) {
+                        mActionList.getModel().enableChangeListener();
+                        mActionList.getModel().trigger();
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+            }
+        });
         openItem.setText("Open...");
         openItem.setMnemonic(KeyEvent.VK_O);
         fileMenu.add(openItem);
@@ -231,73 +263,39 @@ public class AsterMainPanel extends JPanel {
         // Save
         JMenuItem saveItem = new JMenuItem();
         saveItem.setAction(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    if (mCmdManager.getSaved()) {
-                        try {
-                            mCmdManager.dump(mActionList.getModel().toArray(),
-                                             mCmdManager.getFile().getAbsolutePath(),
-                                             true);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        final JFileChooser fc = new JFileChooser();
-                        int returnVal = fc.showSaveDialog(AsterMainPanel.this);
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File file = fc.getSelectedFile();
-                            try {
-                                mCmdManager.dump(mActionList.getModel().toArray(),
-                                    file.getAbsolutePath(), false);
-                            } catch (IOException e) {
-                                JOptionPane pane = new JOptionPane(
-                                    "File exists! Do you want to overwrite?");
-                                Object[] options = new String[] { "Yes", "No" };
-                                pane.setOptions(options);
-                                JDialog dialog = pane.createDialog(new JFrame(), "Confirm");
-                                dialog.show();
-                                Object obj = pane.getValue();
-                                if (options[0].equals(obj)) {
-                                    try {
-                                        mCmdManager.dump(mActionList.getModel().toArray(),
-                                                file.getAbsolutePath(), true);
-                                    } catch (IOException e2) {
-                                        e2.printStackTrace();
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        saveItem.setText("Save");
-        saveItem.setMnemonic(KeyEvent.VK_S);
-        fileMenu.add(saveItem);
+            private static final long serialVersionUID = 1L;
 
-        // Save As
-        JMenuItem saveAsItem = new JMenuItem();
-        saveAsItem.setAction(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                if (mCmdManager.getSaved()) {
+                    try {
+                        mCmdManager.dump(mActionList.getModel().toArray(),
+                                mCmdManager.getFile().getAbsolutePath(), true);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     final JFileChooser fc = new JFileChooser();
                     int returnVal = fc.showSaveDialog(AsterMainPanel.this);
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
                         try {
                             mCmdManager.dump(mActionList.getModel().toArray(),
-                                file.getAbsolutePath(), false);
+                                    file.getAbsolutePath(), false);
                         } catch (IOException e) {
                             JOptionPane pane = new JOptionPane(
-                                "File exists! Do you want to overwrite?");
+                                    "File exists! Do you want to overwrite?");
                             Object[] options = new String[] { "Yes", "No" };
                             pane.setOptions(options);
-                            JDialog dialog = pane.createDialog(new JFrame(), "Confirm");
+                            JDialog dialog = pane.createDialog(new JFrame(),
+                                    "Confirm");
                             dialog.show();
                             Object obj = pane.getValue();
                             if (options[0].equals(obj)) {
                                 try {
-                                    mCmdManager.dump(mActionList.getModel().toArray(),
-                                            file.getAbsolutePath(), true);
+                                    mCmdManager.dump(mActionList.getModel()
+                                            .toArray(), file.getAbsolutePath(),
+                                            true);
                                 } catch (IOException e2) {
                                     e2.printStackTrace();
                                 }
@@ -305,7 +303,46 @@ public class AsterMainPanel extends JPanel {
                         }
                     }
                 }
-            });
+            }
+        });
+        saveItem.setText("Save");
+        saveItem.setMnemonic(KeyEvent.VK_S);
+        fileMenu.add(saveItem);
+
+        // Save As
+        JMenuItem saveAsItem = new JMenuItem();
+        saveAsItem.setAction(new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                final JFileChooser fc = new JFileChooser();
+                int returnVal = fc.showSaveDialog(AsterMainPanel.this);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    try {
+                        mCmdManager.dump(mActionList.getModel().toArray(),
+                                file.getAbsolutePath(), false);
+                    } catch (IOException e) {
+                        JOptionPane pane = new JOptionPane(
+                                "File exists! Do you want to overwrite?");
+                        Object[] options = new String[] { "Yes", "No" };
+                        pane.setOptions(options);
+                        JDialog dialog = pane.createDialog(new JFrame(),
+                                "Confirm");
+                        dialog.show();
+                        Object obj = pane.getValue();
+                        if (options[0].equals(obj)) {
+                            try {
+                                mCmdManager.dump(mActionList.getModel()
+                                        .toArray(), file.getAbsolutePath(),
+                                        true);
+                            } catch (IOException e2) {
+                                e2.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        });
         saveAsItem.setText("Save As...");
         saveAsItem.setMnemonic(KeyEvent.VK_A);
         fileMenu.add(saveAsItem);
@@ -315,10 +352,9 @@ public class AsterMainPanel extends JPanel {
         recallItem.setAction(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                String input = JOptionPane.showInputDialog(
-                    null
-                    ,"Input filename for recall, such as: " + RECALL
-                    , sRecall);
+                String input = JOptionPane.showInputDialog(null,
+                        "Input filename for recall, such as: " + RECALL,
+                        sRecall);
                 if (input != null) {
                     sRecall = input;
                 }
@@ -333,11 +369,11 @@ public class AsterMainPanel extends JPanel {
         // Quit
         JMenuItem quitItem = new JMenuItem();
         quitItem.setAction(new AbstractAction() {
-                @Override
-                public void actionPerformed(ActionEvent ev) {
-                    System.exit(0);
-                }
-            });
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                System.exit(0);
+            }
+        });
         quitItem.setText("Quit");
         quitItem.setMnemonic(KeyEvent.VK_Q);
         fileMenu.add(quitItem);
@@ -349,11 +385,8 @@ public class AsterMainPanel extends JPanel {
         aboutItem.setAction(new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                JOptionPane.showMessageDialog(null,
-                                              new AboutMsg(),
-                                              "About",
-                                              JOptionPane.INFORMATION_MESSAGE,
-                                              logoIcon);
+                JOptionPane.showMessageDialog(null, new AboutMsg(), "About",
+                        JOptionPane.INFORMATION_MESSAGE, logoIcon);
             }
         });
         aboutItem.setText("About");
@@ -404,18 +437,21 @@ public class AsterMainPanel extends JPanel {
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+
         @Override
         public void onClickMenu() {
             AsterOperation op = new OpSelectKey("KEYCODE_MENU");
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+
         @Override
         public void onClickBack() {
             AsterOperation op = new OpSelectKey("KEYCODE_BACK");
             AsterCommand cmd = new Press(op);
             mCmdConn.runCommand(cmd);
         }
+
         @Override
         public void onClickSearch() {
             AsterOperation op = new OpSelectKey("KEYCODE_SEARCH");

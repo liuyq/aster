@@ -5,13 +5,13 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="prebuilt/android/jython.jar"/>
 	<classpathentry kind="lib" path="prebuilt/android/sdklib-22.2.0-20131023.180033-1.jar"/>
-	<classpathentry kind="lib" path="prebuilt/android/framework/guavalib.jar"/>
 	<classpathentry kind="lib" path="prebuilt/android/common-22.2.0-20131023.175725-1.jar"/>
 	<classpathentry kind="lib" path="prebuilt/android/hierarchyviewer2lib-22.2.0-20131023.182759-1.jar"/>
-	<classpathentry kind="lib" path="prebuilt/android/framework/swt.jar"/>
 	<classpathentry kind="lib" path="prebuilt/android/monkeyrunner-22.2.0-20131023.182225-1.jar"/>
+	<classpathentry kind="lib" path="prebuilt/android/framework/guavalib.jar"/>
+	<classpathentry kind="lib" path="prebuilt/android/framework/swt.jar"/>
 	<classpathentry kind="lib" path="prebuilt/javacv/javacpp.jar"/>
 	<classpathentry kind="lib" path="prebuilt/javacv/javacv-linux-x86_64.jar"/>
 	<classpathentry kind="lib" path="prebuilt/javacv/javacv.jar"/>
-	<classpathentry kind="output" path="classes"/>
+	<classpathentry kind="output" path="build/classes"/>
 </classpath>

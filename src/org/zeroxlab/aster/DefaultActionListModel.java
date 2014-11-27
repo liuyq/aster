@@ -28,6 +28,12 @@ import javax.swing.event.EventListenerList;
 
 import org.zeroxlab.aster.cmds.AsterCommand;
 
+/**
+ * Implementation for controling the actions/operations list event
+ * 
+ * @author liuyq
+ * 
+ */
 public class DefaultActionListModel implements ActionListModel {
     /** The listeners waiting for model changes. */
     protected EventListenerList listenerList = new EventListenerList();
@@ -134,6 +140,7 @@ public class DefaultActionListModel implements ActionListModel {
 
     /** The command stack */
     Deque<AsterCommand> actionList = new ArrayDeque<AsterCommand>();
+
     /** The recall command */
     AsterCommand recall;
 

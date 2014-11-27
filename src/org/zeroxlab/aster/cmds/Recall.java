@@ -24,8 +24,15 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
 
+/**
+ * Wake up the device
+ * 
+ * @author liuyq
+ * 
+ */
 public class Recall extends AsterCommand {
     private String mScript;
 
@@ -35,7 +42,9 @@ public class Recall extends AsterCommand {
         //mOps[0] = AsterWorkspace.getOpRecall();
     }
 
-    public Recall(String argline) throws IllegalArgumentException {
+    public Recall(String argline, DeviceForAster device)
+            throws IllegalArgumentException {
+        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -70,18 +79,18 @@ public class Recall extends AsterCommand {
     }
 
     @Override
-    public ExecutionResult execute() {
-        ExecutionResult result = new ExecutionResult(true, "");
-        mRunner.runStringLocal("wake()\n");
-        try {
-            if (mScript.length() != 0) {
-                result = (new AsterCommandManager()).runLocal(mScript);
-            }
-        } catch(IOException e) {
-            result.mSuccess = false;
-            result.mMessage = e.toString();
-        }
-        return result;
+    public void execute() {
+        // ExecutionResult result = new ExecutionResult(true, "");
+        // mRunner.runStringLocal("wake()\n");
+        // // try {
+        // // if (mScript.length() != 0) {
+        // // result = (new AsterCommandManager()).runLocal(mScript);
+        // // }
+        // // } catch(IOException e) {
+        // // result.mSuccess = false;
+        // // result.mMessage = e.toString();
+        // // }
+        // return result;
     }
 
     @Override
@@ -89,8 +98,8 @@ public class Recall extends AsterCommand {
         return String.format("recall('%s')\n", mScript);
     }
 
-    @Override
-    public void executeFromJava() throws Exception {
-        super.monkeyDeviceWrapper.wake();
-    }
+    // @Override
+    // public void executeFromJava() throws Exception {
+    // super.monkeyDeviceWrapper.wake();
+    // }
 }

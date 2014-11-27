@@ -22,14 +22,17 @@ package org.zeroxlab.aster;
 
 import javax.swing.JOptionPane;
 
-import org.zeroxlab.aster.ActionListModel;
-import org.zeroxlab.aster.CmdConnection;
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
-import org.zeroxlab.wookieerunner.ImageUtils;
 
+/**
+ * Control for the play/step/stop buttons
+ * 
+ * @author liuyq
+ * 
+ */
 class AsterController {
 
     private static AsterCommandManager sCmdMgr;

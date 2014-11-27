@@ -26,13 +26,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JCheckBox;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.wookieerunner.ImageUtils;
-import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
-
-import com.android.chimpchat.core.IChimpImage;
 
 class CmdConnection implements Runnable, ItemListener {
 
@@ -92,8 +90,7 @@ class CmdConnection implements Runnable, ItemListener {
     @Override
     public void run() {
         mState = ExecutionState.NORMAL;
-        AsterMainPanel.message("Connecting to device...");
-        MonkeyDeviceWrapper monkeyDevice = mCmdManager.connect();
+        DeviceForAster device = mCmdManager.getConnectedDevice();
         AsterMainPanel.message("Connected");
 
         while (mKeepWalking) {
@@ -107,13 +104,13 @@ class CmdConnection implements Runnable, ItemListener {
                 System.err.printf(msg);
                 AsterMainPanel.message(msg);
                 System.err.println(mCmd.toScript());
-                AsterCommand.ExecutionResult result = mCmd
-                        .executeFromJava(monkeyDevice);
+                AsterMainPanel.message(mCmd.toScript());
+                mCmd.execute(device);
 
                 switchState(ExecutionState.NORMAL);
-                if (mListener != null) {
-                    mListener.processResult(result);
-                }
+                // if (mListener != null) {
+                // mListener.processResult(result);
+                // }
                 updateScreen();
             }
             try {
@@ -146,13 +143,19 @@ class CmdConnection implements Runnable, ItemListener {
             return;
         }
 
-        IChimpImage snapshot = mCmdManager.takeSnapshot();
-        BufferedImage image = snapshot.createBufferedImage();
-        if (mLandscape) {
-            // By default, a NOT-ROTATED-Image should be Portrait
-            image = ImageUtils.rotate(image);
+        // IChimpImage snapshot = mCmdManager.takeSnapshot();
+        // BufferedImage image = snapshot.createBufferedImage();
+        DeviceForAster device = mCmdManager.getConnectedDevice();
+        BufferedImage image = device.getScreenshotBufferedImage();
+        if (image != null) {
+            if (mLandscape) {
+                // By default, a NOT-ROTATED-Image should be Portrait
+                image = ImageUtils.rotate(image);
+            }
+            // System.out.println(String.format("height=%d, width=%d",
+            // image.getHeight(), image.getWidth()));
+            mDrawer.setImage(image);
         }
-        mDrawer.setImage(image);
     }
 
     interface SnapshotDrawer {

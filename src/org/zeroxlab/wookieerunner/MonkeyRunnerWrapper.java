@@ -45,16 +45,19 @@ public class MonkeyRunnerWrapper {
         chimpchat = chimp;
     }
 
-    static public IChimpDevice getLastChimpDevice() {
-        return device;
-    }
-
-    public static IChimpDevice getLastMonkeyDeviceWrapper() {
-        return device;
-    }
 
     public static MonkeyDeviceWrapper waitForConnection(int timeout, String deviceId) {
         device = chimpchat.waitForConnection(timeout, deviceId);
+        monkeyDeviceWrapper = new MonkeyDeviceWrapper(device);
+        return monkeyDeviceWrapper;
+    }
+
+    public static MonkeyDeviceWrapper waitForConnection(String deviceId) {
+        if (deviceId == null || deviceId.length() == 0) {
+            device = chimpchat.waitForConnection();
+        } else {
+            device = chimpchat.waitForConnection(Integer.MAX_VALUE, deviceId);
+        }
         monkeyDeviceWrapper = new MonkeyDeviceWrapper(device);
         return monkeyDeviceWrapper;
     }
@@ -67,6 +70,10 @@ public class MonkeyRunnerWrapper {
 
     public static MonkeyDeviceWrapper connect() {
         return waitForConnection();
+    }
+
+    public static MonkeyDeviceWrapper connect(String deviceId) {
+        return waitForConnection(deviceId);
     }
 
     public static void sleep(int seconds) {
@@ -82,88 +89,4 @@ public class MonkeyRunnerWrapper {
         IChimpImage image = ChimpImageBase.loadImageFromFile(path);
         return new MonkeyImage(image);
     }
-
-    /*
-     * public static void takeSnapshot(String path){ if(!path.endsWith(".png")){
-     * path = path + ".png"; }
-     * monkeyDeviceWrapper.takeSnapshot().writeToFile(path, "png"); }
-     * 
-     * public static String getProperty(String key){ return
-     * monkeyDeviceWrapper.getProperty(key); }
-     * 
-     * public static String getSystemProperty(String key){ return
-     * monkeyDeviceWrapper.getSystemProperty(key); }
-     * 
-     * public static boolean installPackage(String path){ return
-     * monkeyDeviceWrapper.installPackage(path); }
-     * 
-     * public static boolean removePackage(String packageName){ return
-     * monkeyDeviceWrapper.removePackage(packageName); }
-     * 
-     * public static void wake(){ monkeyDeviceWrapper.wake(); }
-     * 
-     * public static void wait(String name, double timeout, double similarity,
-     * boolean landscape) throws Exception { monkeyDeviceWrapper.wait(name,
-     * timeout, similarity, landscape); }
-     * 
-     * public static void wait(String name, boolean landscape) throws Exception
-     * { monkeyDeviceWrapper.wait(name, landscape); }
-     * 
-     * public static void press(String name, String touchType) {
-     * monkeyDeviceWrapper.press(name, touchType); }
-     * 
-     * public static void type(String message) {
-     * monkeyDeviceWrapper.type(message); }
-     * 
-     * public static String shell(String cmd) { return
-     * monkeyDeviceWrapper.shell(cmd); }
-     * 
-     * public static void reboot(String into) {
-     * monkeyDeviceWrapper.reboot(into); }
-     * 
-     * public static void push(String local, String remote) {
-     * monkeyDeviceWrapper.push(local, remote); }
-     * 
-     * public static void pull(String remote, String local) {
-     * monkeyDeviceWrapper.pull(remote, local); }
-     * 
-     * public static void startActivity(String uri, String action, String data,
-     * String mimetype, Collection<String> categories, Map<String, Object>
-     * extras, String component, int flags) {
-     * monkeyDeviceWrapper.startActivity(uri, action, data, mimetype,
-     * categories, extras, component, flags); }
-     * 
-     * public static void broadcastIntent(String uri, String action, String
-     * data, String mimetype, Collection<String> categories, Map<String, Object>
-     * extras, String component, int flags) {
-     * monkeyDeviceWrapper.broadcastIntent(uri, action, data, mimetype,
-     * categories, extras, component, flags); }
-     * 
-     * public static Map<String, Object> instrument(String packageName,
-     * Map<String, Object> instrumentArgs) { Map<String, Object> result =
-     * monkeyDeviceWrapper.instrument(packageName, instrumentArgs); return
-     * result; }
-     * 
-     * public static void drag(int startx, int starty, int endx, int endy, int
-     * steps, long seconds) { monkeyDeviceWrapper.drag(startx, starty, endx,
-     * endy, steps, seconds); }
-     * 
-     * public static void drag(String start_img, int dx, int dy, int steps,
-     * double sec, boolean landscape) throws Exception {
-     * monkeyDeviceWrapper.drag(start_img, dx, dy, steps, sec, -1, -1,
-     * landscape); }
-     * 
-     * public static void drag(String start_img, String end_img, int steps,
-     * double seconds, boolean landscape) throws FileNotFoundException,
-     * TemplateNotFoundException { monkeyDeviceWrapper.drag(start_img, end_img,
-     * steps, seconds, -1, -1, landscape); }
-     * 
-     * public static void touch(int x, int y, TouchPressType type) {
-     * monkeyDeviceWrapper.touch(x, y, type); }
-     * 
-     * public static void touch(String name, String typestr, double timeout,
-     * double similarity, boolean landscape) throws Exception {
-     * monkeyDeviceWrapper .touch(name, typestr, timeout, similarity,
-     * landscape); }
-     */
 }

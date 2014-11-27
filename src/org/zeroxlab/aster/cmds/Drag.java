@@ -26,8 +26,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.AsterWorkspace;
 import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.owl.MatchResult;
 
 public class Drag extends AsterCommand {
 
@@ -52,7 +54,9 @@ public class Drag extends AsterCommand {
         mOps[0] = AsterWorkspace.getInstance().getOpDrag();
     }
 
-    public Drag(String prefix, String argline) throws IllegalArgumentException {
+    public Drag(String prefix, String argline, DeviceForAster device)
+            throws IllegalArgumentException {
+        super.setDevice(device);
         String[] args = splitArgs(argline);
         super.setFilled(true);
 
@@ -202,13 +206,22 @@ public class Drag extends AsterCommand {
     }
 
     @Override
-    public void executeFromJava() throws Exception {
+    public void execute() {
+        int x1 = 0, x2 = 0, y1 = 0, y2 = 0;
         if (isAuto()) {
-            throw new Exception("not implemented");
+            MatchResult r = device.waitImageUntil(
+                    String.format("%d.png", mSerial),
+                    device.getScreenShotPath(), mTimeout);
+            x1 = r.cx();
+            y1 = r.cy();
+            x2 = x1 + (int) mShiftDistance.getX();
+            y2 = y1 + (int) mShiftDistance.getY();
         }else{
-            super.monkeyDeviceWrapper.drag((int)mStartPosition.getX(),
-                    (int) mStartPosition.getY(), (int) mEndPosition.getX(),
-                    (int) mEndPosition.getY(), mSteps, mDuration);
+            x1 = (int) mStartPosition.getX();
+            y1 = (int) mStartPosition.getY();
+            x2 = (int) mEndPosition.getX();
+            y2 = (int) mEndPosition.getY();
         }
+        super.device.drag(x1, y1, x2, y2);
     }
 }

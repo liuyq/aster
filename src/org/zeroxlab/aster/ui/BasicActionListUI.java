@@ -104,38 +104,37 @@ public class BasicActionListUI extends ActionListUI {
 
     public void installListeners() {
         mouseListener = new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                }
+            @Override
+            public void mouseClicked(MouseEvent e) {
+            }
 
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
 
-                @Override
-                public void mousePressed(MouseEvent e) {
-                }
-            };
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+        };
         actionList.addMouseListener(mouseListener);
 
         mouseMotionListener = new MouseMotionAdapter() {
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                }
-            };
+            @Override
+            public void mouseDragged(MouseEvent e) {
+            }
+        };
         actionList.addMouseMotionListener(mouseMotionListener);
 
         actionListChangeListener = new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    updateButtonList();
-                    actionList.repaint();
-                }
-            };
-        actionList.getModel().addChangeListener(
-            actionListChangeListener);
-        actionList.getModel().addCommandChangeListener(
-            actionListChangeListener);
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                updateButtonList();
+                actionList.repaint();
+            }
+        };
+        actionList.getModel().addChangeListener(actionListChangeListener);
+        actionList.getModel()
+                .addCommandChangeListener(actionListChangeListener);
     }
 
     public void uninstallDefaults() {
@@ -148,10 +147,9 @@ public class BasicActionListUI extends ActionListUI {
         actionList.removeMouseMotionListener(mouseMotionListener);
         mouseMotionListener = null;
 
-        actionList.getModel().removeChangeListener(
-            actionListChangeListener);
+        actionList.getModel().removeChangeListener(actionListChangeListener);
         actionList.getModel().removeCommandChangeListener(
-            actionListChangeListener);
+                actionListChangeListener);
         actionListChangeListener = null;
     }
 
@@ -159,9 +157,9 @@ public class BasicActionListUI extends ActionListUI {
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
         CloseButton delay = null;
-        for (Component child: c.getComponents()) {
+        for (Component child : c.getComponents()) {
             if (child instanceof CloseButton) {
-                delay = (CloseButton)child;
+                delay = (CloseButton) child;
             } else {
                 child.paint(g);
             }
@@ -183,15 +181,15 @@ public class BasicActionListUI extends ActionListUI {
 
     protected void fireNewAction(MouseEvent e) {
         Object[] listeners = newActionListenerList.getListenerList();
-        for (int i = listeners.length-2; i>=0; i-=2) {
-            if (listeners[i]==MouseListener.class) {
-                ((MouseListener)listeners[i+1]).mouseClicked(e);
+        for (int i = listeners.length - 2; i >= 0; i -= 2) {
+            if (listeners[i] == MouseListener.class) {
+                ((MouseListener) listeners[i + 1]).mouseClicked(e);
             }
         }
     }
 
     // ******************
-    //   Layout Methods
+    // Layout Methods
     // ******************
     protected static int BUTTON_MARGIN = 10;
     protected java.util.List<JComponent> buttonList;
@@ -215,11 +213,11 @@ public class BasicActionListUI extends ActionListUI {
             if (!it.hasNext() && !actionList.getModel().empty()) {
                 CloseButton closebtn = new CloseButton();
                 closebtn.addMouseListener(new MouseAdapter() {
-                        @Override
-                        public void mouseClicked(MouseEvent e) {
-                            actionList.getModel().popCmd();
-                        }
-                    });
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        actionList.getModel().popCmd();
+                    }
+                });
                 actionList.add(closebtn);
             }
             actionList.add(btn);
@@ -228,11 +226,11 @@ public class BasicActionListUI extends ActionListUI {
         }
         NewActionButton newbtn = new NewActionButton();
         newbtn.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    fireNewAction(e);
-                }
-            });
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                fireNewAction(e);
+            }
+        });
         actionList.add(newbtn);
     }
 
@@ -249,29 +247,29 @@ public class BasicActionListUI extends ActionListUI {
                 i++;
             }
             if (cs[i] instanceof ActionButton) {
-                btn = (ActionButton)cs[i];
-                Dimension size =  btn.getPreferredSize();
+                btn = (ActionButton) cs[i];
+                Dimension size = btn.getPreferredSize();
                 int offset_x = (width - size.width) / 2;
                 btn.setBounds(offset_x, offset_y, size.width, size.height);
                 offset_y += btn.getHeight() + BUTTON_MARGIN;
                 if (cls != null) {
                     cls.setSize(cls.getPreferredSize());
                     cls.setLocation(btn.getX() + btn.getWidth() - 15,
-                                    btn.getY() - 5);
+                            btn.getY() - 5);
                 }
                 if (btn.isExecuting())
                     focused = btn;
             }
-            if (i+1 < cs.length && cs[i+1] instanceof LittleArrow) {
+            if (i + 1 < cs.length && cs[i + 1] instanceof LittleArrow) {
                 // TODO: How to calculate?
                 i++;
                 cs[i].setLocation(btn.getX(), btn.getY() + btn.getHeight() - 3);
                 cs[i].setSize(btn.getWidth(), BUTTON_MARGIN);
             }
-            if (i+1 < cs.length && cs[i+1] instanceof NewActionButton) {
+            if (i + 1 < cs.length && cs[i + 1] instanceof NewActionButton) {
                 i++;
                 cs[i].setSize(cs[i].getPreferredSize());
-                cs[i].setLocation((width - cs[i].getWidth())/2, offset_y);
+                cs[i].setLocation((width - cs[i].getWidth()) / 2, offset_y);
                 if (focused == null) {
                     focused = cs[i];
                 }
@@ -289,7 +287,7 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public Dimension getPreferredSize(JComponent c) {
         Dimension max = new Dimension(0, 0);
-        for (Component child: c.getComponents()) {
+        for (Component child : c.getComponents()) {
             Dimension d = child.getPreferredSize();
             if (BUTTON_MARGIN * 2 + d.width > max.width) {
                 max.width = BUTTON_MARGIN * 2 + d.width;
@@ -323,23 +321,34 @@ public class BasicActionListUI extends ActionListUI {
         static {
             try {
                 InputStream stream;
-                stream = ActionButton.class.getResourceAsStream("/green_border.9.png");
+                stream = ActionButton.class
+                        .getResourceAsStream("/green_border.9.png");
                 mPatch = NinePatch.load(stream, true, false);
                 stream.close();
-                stream = ActionButton.class.getResourceAsStream("/inner_border.9.png");
+                stream = ActionButton.class
+                        .getResourceAsStream("/inner_border.9.png");
                 mInnerPatch = NinePatch.load(stream, true, false);
                 stream.close();
-                stream = ActionButton.class.getResourceAsStream("/yellow_border.9.png");
+                stream = ActionButton.class
+                        .getResourceAsStream("/yellow_border.9.png");
                 mActivePatch = NinePatch.load(stream, true, false);
                 stream.close();
-                stream = ActionButton.class.getResourceAsStream("/inner_yellow_border.9.png");
+                stream = ActionButton.class
+                        .getResourceAsStream("/inner_yellow_border.9.png");
                 mActiveInnerPatch = NinePatch.load(stream, true, false);
                 stream.close();
             } catch (IOException e) {
             }
         }
 
-	public ActionButton(AsterCommand cmd) {
+        /**
+         * UI wrappers for buttons listed in the action list When add the mouse
+         * listeners, we should change here
+         * 
+         * @param cmd
+         */
+
+        public ActionButton(AsterCommand cmd) {
             mCommand = cmd;
             mFont = new Font(Font.SANS_SERIF, Font.BOLD, 20);
             mFontBox = new Rectangle();
@@ -358,8 +367,8 @@ public class BasicActionListUI extends ActionListUI {
         @Override
         public Dimension getPreferredSize() {
             FontMetrics fm = getFontMetrics(mFont);
-            int width = fm.stringWidth(mCommand.getName()) + TEXT_MARGIN*2;
-            int height = fm.getDescent() + fm.getAscent() + TEXT_MARGIN*2;
+            int width = fm.stringWidth(mCommand.getName()) + TEXT_MARGIN * 2;
+            int height = fm.getDescent() + fm.getAscent() + TEXT_MARGIN * 2;
             if (mClipImage != null) {
                 height += TEXT_MARGIN + CLIP_WIDTH;
             }
@@ -393,43 +402,43 @@ public class BasicActionListUI extends ActionListUI {
                 innerPatch = mInnerPatch;
             }
             if (borderPatch != null) {
-                borderPatch.draw((Graphics2D)g,
-                            bbox.x,
-                            bbox.y,
-                            bbox.width,
-                            bbox.height);
+                borderPatch.draw((Graphics2D) g, bbox.x, bbox.y, bbox.width,
+                        bbox.height);
             }
             g.setFont(mFont);
-            ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                                             RenderingHints.VALUE_ANTIALIAS_ON);
-            g.drawString(mCommand.getName(),
-                         mFontBox.x, mFontBox.y);
+            ((Graphics2D) g).setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g.drawString(mCommand.getName(), mFontBox.x, mFontBox.y);
             if (mClipImage != null) {
-                int clip_x = bbox.x + (bbox.width - CLIP_WIDTH)/2;
+                int clip_x = bbox.x + (bbox.width - CLIP_WIDTH) / 2;
                 int clip_y = bbox.y + (bbox.height - TEXT_MARGIN - CLIP_WIDTH);
-                g.drawImage(mClipImage, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH, null);
+                g.drawImage(mClipImage, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH,
+                        null);
                 if (innerPatch != null) {
-                    innerPatch.draw((Graphics2D)g, clip_x, clip_y, CLIP_WIDTH, CLIP_WIDTH);
+                    innerPatch.draw((Graphics2D) g, clip_x, clip_y, CLIP_WIDTH,
+                            CLIP_WIDTH);
                 }
             }
         }
     }
 
+    /*
+     * Arrow icon between action button list
+     */
     static class LittleArrow extends JComponent {
         public LittleArrow() {
         }
+
         @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
             Line2D.Double line = new Line2D.Double(bbox.x + bbox.width / 2.0,
-                                                   bbox.y,
-                                                   bbox.x + bbox.width / 2.0,
-                                                   bbox.y + bbox.height);
+                    bbox.y, bbox.x + bbox.width / 2.0, bbox.y + bbox.height);
             Polygon arrowHead = new Polygon();
-            arrowHead.addPoint( 0,3);
-            arrowHead.addPoint( -3, -3);
-            arrowHead.addPoint( 3,-3);
+            arrowHead.addPoint(0, 3);
+            arrowHead.addPoint(-3, -3);
+            arrowHead.addPoint(3, -3);
             Graphics2D g2d = (Graphics2D) g.create();
             g2d.draw(line);
             g2d.translate(line.x2, line.y2);
@@ -438,15 +447,23 @@ public class BasicActionListUI extends ActionListUI {
         }
     }
 
+    /**
+     * New Action button definition
+     * 
+     * @author liuyq
+     * 
+     */
     static class NewActionButton extends JComponent {
         static BufferedImage inactiveImage;
         static BufferedImage activeImage;
         static {
             try {
-                InputStream stream = NewActionButton.class.getResourceAsStream("/add_button_inactive.png");
+                InputStream stream = NewActionButton.class
+                        .getResourceAsStream("/add_button_inactive.png");
                 inactiveImage = ImageIO.read(stream);
                 stream.close();
-                stream = NewActionButton.class.getResourceAsStream("/add_button_active.png");
+                stream = NewActionButton.class
+                        .getResourceAsStream("/add_button_active.png");
                 activeImage = ImageIO.read(stream);
                 stream.close();
             } catch (IOException e) {
@@ -457,46 +474,61 @@ public class BasicActionListUI extends ActionListUI {
 
         public NewActionButton() {
             addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        NewActionButton btn = (NewActionButton)e.getSource();
-                        btn.setActive(true);
-                        btn.repaint();
-                    }
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        NewActionButton btn = (NewActionButton)e.getSource();
-                        btn.setActive(false);
-                        btn.repaint();
-                    }
-                });
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    NewActionButton btn = (NewActionButton) e.getSource();
+                    btn.setActive(true);
+                    btn.repaint();
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    NewActionButton btn = (NewActionButton) e.getSource();
+                    btn.setActive(false);
+                    btn.repaint();
+                }
+            });
             Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
             setCursor(handCursor);
         }
+
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(inactiveImage.getWidth(), inactiveImage.getHeight());
+            return new Dimension(inactiveImage.getWidth(),
+                    inactiveImage.getHeight());
         }
+
         @Override
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
             if (mActiveP) {
-                g.drawImage(activeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+                g.drawImage(activeImage, bbox.x, bbox.y, bbox.width,
+                        bbox.height, null);
             } else {
-                g.drawImage(inactiveImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+                g.drawImage(inactiveImage, bbox.x, bbox.y, bbox.width,
+                        bbox.height, null);
             }
         }
+
         public void setActive(boolean activep) {
             mActiveP = activep;
         }
     }
 
+    /**
+     * Close button definition for the close icon on the top-right corner of
+     * each button
+     * 
+     * @author liuyq
+     * 
+     */
     static class CloseButton extends JComponent {
         static BufferedImage closeImage;
         static {
             try {
-                InputStream stream = CloseButton.class.getResourceAsStream("/close_button.png");
+                InputStream stream = CloseButton.class
+                        .getResourceAsStream("/close_button.png");
                 closeImage = ImageIO.read(stream);
                 stream.close();
             } catch (IOException e) {
@@ -517,7 +549,8 @@ public class BasicActionListUI extends ActionListUI {
         public void paint(Graphics g) {
             super.paint(g);
             Rectangle bbox = getBounds();
-            g.drawImage(closeImage, bbox.x, bbox.y, bbox.width, bbox.height, null);
+            g.drawImage(closeImage, bbox.x, bbox.y, bbox.width, bbox.height,
+                    null);
         }
     }
 }

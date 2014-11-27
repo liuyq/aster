@@ -28,9 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Stack;
-import java.util.TreeMap;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -40,31 +38,32 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
-import org.zeroxlab.wookieerunner.MonkeyRunnerWrapper;
-import org.zeroxlab.wookieerunner.ScriptRunner;
+import org.linaro.utils.DeviceForAster;
+import org.linaro.utils.LocalAdb;
+import org.linaro.utils.SshAdb;
 
-import com.android.chimpchat.ChimpChat;
-import com.android.chimpchat.core.IChimpDevice;
-import com.android.chimpchat.core.IChimpImage;
 import com.android.monkeyrunner.MonkeyFormatter;
 import com.google.common.io.Files;
 
 
 public class AsterCommandManager {
+    private String serial = null;
+    private String adbType = "LOCAL";
 
     private File mCwd = null;
     private File mFile = null;
     private static Stack<String> mPathStack = new Stack<String>();
-    private static ChimpChat mChimpChat;
-    private static IChimpDevice mImpl;
-    private static ScriptRunner mScriptRunner;
+    // private static ChimpChat mChimpChat;
     public static boolean mConnected = false;
-    private static MonkeyDeviceWrapper deviceWrapper = null;
+    private static DeviceForAster device = null;
 
-    public AsterCommandManager() {
+    public AsterCommandManager(String adbType, String serial) {
         mCwd = Files.createTempDir();
         System.setProperty("user.dir", mCwd.getAbsolutePath());
+        this.adbType = adbType;
+        this.serial = serial;
+
+        replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
     }
 
     public void cdCwd() {
@@ -107,7 +106,7 @@ public class AsterCommandManager {
 
     private void unzipDir(String zipfile, String prefix)
         throws IOException {
-        Enumeration entries;
+        Enumeration<?> entries;
         ZipFile zipFile = new ZipFile(zipfile);
         byte[] buffer = new byte[4096];
         int len = 0;
@@ -160,32 +159,37 @@ public class AsterCommandManager {
         }
     }
 
-    public MonkeyDeviceWrapper connect() {
-        replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
-
-        Map<String, String> options = new TreeMap<String, String>();
-        options.put("backend", "adb");
-        String adbLocation = System.getProperty("adb.location");
-        if (adbLocation != null){
-            options.put("adbLocation", "adb");
+    public DeviceForAster getConnectedDevice() {
+        if (mConnected) {
+            return device;
+        } else {
+            if (this.adbType == null || this.adbType.equals("LOCAL")) {
+                device = new LocalAdb(serial);
+            } else if (this.adbType.equals("SSH")) {
+                device = new SshAdb(serial, "aster-adb-host");
+            }// else{
+            // Map<String, String> options = new TreeMap<String, String>();
+            // options.put("backend", "adb");
+            // String adbLocation = System.getProperty("adb.location");
+            // if (adbLocation != null) {
+            // options.put("adbLocation", "adb");
+            // }
+            // mChimpChat = ChimpChat.getInstance(options);
+            // MonkeyRunnerWrapper.setChimpChat(mChimpChat);
+            // }
+            device.connect(this.serial);
+            mConnected = true;
         }
-        mChimpChat = ChimpChat.getInstance(options);
-        MonkeyRunnerWrapper.setChimpChat(mChimpChat);
-        deviceWrapper = MonkeyRunnerWrapper.connect();
-        mImpl = MonkeyRunnerWrapper.getLastChimpDevice();
-
-        mConnected = true;
-        return deviceWrapper;
+        return device;
     }
 
-    public IChimpImage takeSnapshot() {
-        return mImpl.takeSnapshot();
-    }
+    // public IChimpImage takeSnapshot() {
+    // return deviceWrapper.takeSnapshot();
+    // }
 
-    public AsterCommand.ExecutionResult run(String astfile)
+    public AsterCommand.ExecutionResult run(String astfile, String serial)
         throws IOException {
-        connect();
-        return runLocal(astfile);
+        return runLocal(astfile, getConnectedDevice());
     }
 
     public File findFile(String cwd, String astfile)
@@ -200,7 +204,8 @@ public class AsterCommandManager {
         return ast;
     }
 
-    public AsterCommand.ExecutionResult runLocal(String astfile)
+    public AsterCommand.ExecutionResult runLocal(String astfile,
+            DeviceForAster device)
         throws IOException {
         if (!mPathStack.empty()) {
             try {
@@ -209,18 +214,20 @@ public class AsterCommandManager {
                 throw new IOException(String.format("Can not open `%s'.", astfile));
             }
         }
-        AsterCommand[] cmds = load(astfile);
+        AsterCommand[] cmds = load(astfile, device);
 
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
             System.err.printf("%s", c.toScript());
             cdCwd();
-            AsterCommand.ExecutionResult result = c.execute();
-            if (result.mSuccess != true) {
-                System.err.println(result.mMessage);
-                mPathStack.pop();
-                return result;
-            }
+            // AsterCommand.ExecutionResult result = c
+            // .executeFromJava(monkeyDeviceWrapper);
+            c.execute();
+            // if (result.mSuccess != true) {
+            // System.err.println(result.mMessage);
+            // mPathStack.pop();
+            // return result;
+            // }
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -265,7 +272,7 @@ public class AsterCommandManager {
         mFile = new File(filename);
     }
 
-    public AsterCommand[] load(String zipfile)
+    public AsterCommand[] load(String zipfile, DeviceForAster device)
         throws IOException {
         String filename = "script.py";
         String rootpath = mCwd.getAbsolutePath();
@@ -293,17 +300,20 @@ public class AsterCommandManager {
 
             for (String s: data.split("\n")) {
                 if (s.startsWith("drag")) {
-                    cmds.add(new Drag(rootpath, s.substring(4, s.length())));
+                    cmds.add(new Drag(rootpath, s.substring(4, s.length()),
+                            device));
                 } else if (s.startsWith("touch")) {
-                    cmds.add(new Touch(rootpath, s.substring(5, s.length())));
+                    cmds.add(new Touch(rootpath, s.substring(5, s.length()),
+                            device));
                 } else if (s.startsWith("press")) {
-                    cmds.add(new Press(s.substring(5, s.length())));
+                    cmds.add(new Press(s.substring(5, s.length()), device));
                 } else if (s.startsWith("type")) {
-                    cmds.add(new Type(s.substring(4, s.length())));
+                    cmds.add(new Type(s.substring(4, s.length()), device));
                 } else if (s.startsWith("wait")) {
-                    cmds.add(new Wait(rootpath, s.substring(4, s.length())));
+                    cmds.add(new Wait(rootpath, s.substring(4, s.length()),
+                            device));
                 } else if (s.startsWith("recall")) {
-                    cmds.add(new Recall(s.substring(6, s.length())));
+                    cmds.add(new Recall(s.substring(6, s.length()), device));
                 }
             }
         } catch (FileNotFoundException e) {

@@ -56,6 +56,10 @@ import org.zeroxlab.aster.operations.AsterOperation.OperationListener;
 import org.zeroxlab.aster.operations.OpDrag;
 import org.zeroxlab.aster.operations.OpTouch;
 
+/*
+ * Class used to display the screen and home, menu, etc buttons
+ * 
+ */
 public class AsterWorkspace extends JPanel implements ComponentListener,
                                                       MouseListener,
                                                       MouseMotionListener,
@@ -65,8 +69,8 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
 
     public final static int LANDSCAPE_WIDTH = 800;
     public final static int LANDSCAPE_HEIGHT = 480;
-    public final static int PORTRAIT_WIDTH = 480;
-    public final static int PORTRAIT_HEIGHT = 800;
+    public final static int PORTRAIT_WIDTH = LANDSCAPE_HEIGHT;
+    public final static int PORTRAIT_HEIGHT = LANDSCAPE_WIDTH;
 
     /* constants for Main Keys*/
     private final static int MK_WIDTH  = 25;
@@ -142,6 +146,7 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
     private void initJComponents() {
         /* It is not elegant but acceptable */
         setLayout(null);
+        // add the Done button
         sDone = new JButton("Done");
         sDone.addActionListener(
                 new ActionListener() {
@@ -172,13 +177,14 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
         sDone.setEnabled(false);
         add(sDone);
 
+        // add the Roate checkbox
         Insets insets = new Insets(0, 0, 0, 0);
         sRotate = new JCheckBox("Rotate");
         sRotate.setMargin(insets);
         sRotate.setSize(80, 20);
         sRotate.setForeground(Color.WHITE);
         add(sRotate);
-
+        // add back/menu/home/search button
         sMKContainer = initShortcutButtons();
         add(sMKContainer);
     }
@@ -402,7 +408,6 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        double distance;
         int rX = e.getX();
         int rY = e.getY();
         int pX = mPressX;

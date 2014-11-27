@@ -25,12 +25,17 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
-import org.python.core.PyException;
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
-import org.zeroxlab.wookieerunner.MonkeyDeviceWrapper;
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
 public abstract class AsterCommand {
+    protected DeviceForAster device;
+
+    public void setDevice(DeviceForAster device) {
+        this.device = device;
+    }
+
     protected static ScriptRunner mRunner;
     protected static int mSeqNext = 0;
     protected int mSerial = 0;
@@ -39,7 +44,8 @@ public abstract class AsterCommand {
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
     protected boolean mFilled    = false;
-    protected MonkeyDeviceWrapper monkeyDeviceWrapper = null;
+
+    // protected MonkeyDeviceWrapper monkeyDeviceWrapper = null;
 
     public static class ExecutionResult {
         public boolean mSuccess;
@@ -124,37 +130,20 @@ public abstract class AsterCommand {
     /* Dump command to script text */
     public abstract String toScript();
 
-    /* Execute command */
-    public ExecutionResult execute() {
-        try {
-            mRunner.runStringLocal(toScript());
-        } catch (PyException e) {
-            return new ExecutionResult(false, e.toString());
-        }
-        return new ExecutionResult(true, "");
-    }
-
-    public interface CommandListener {
-        public void commandFinished(AsterCommand whichOne);
-    }
+    public abstract void execute();
 
     public interface CommandExecutionListener {
         public void processResult(ExecutionResult result);
     }
 
-    public ExecutionResult executeFromJava(
-            MonkeyDeviceWrapper monkeyDeviceWrapper) {
+    public ExecutionResult execute(DeviceForAster device) {
         try {
-            this.monkeyDeviceWrapper = monkeyDeviceWrapper;
-            executeFromJava();
+            this.device = device;
+            execute();
         } catch (Exception e) {
-            System.out.println(e);
+            e.printStackTrace();
             return new ExecutionResult(false, e.toString());
         }
         return new ExecutionResult(true, "");
     }
-
-    public abstract void executeFromJava()
-            throws Exception;
-
 }

@@ -26,8 +26,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.AsterWorkspace;
 import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.owl.MatchResult;
 
 public class Touch extends AsterCommand {
 
@@ -69,8 +71,9 @@ public class Touch extends AsterCommand {
         mOps[0] = AsterWorkspace.getInstance().getOpTouch();
     }
 
-    public Touch(String prefix, String argline)
+    public Touch(String prefix, String argline, DeviceForAster device)
         throws IllegalArgumentException {
+        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -167,7 +170,7 @@ public class Touch extends AsterCommand {
             mTimeout = (Double)settings.get("Timeout");
         }
         if (settings.containsKey("Similarity")) {
-            mTimeout = (Double)settings.get("Similarity");
+            mSimilarity = (Double) settings.get("Similarity");
         }
         if (settings.containsKey("Landscape")) {
             mLandscape = (Boolean)settings.get("Landscape");
@@ -188,15 +191,20 @@ public class Touch extends AsterCommand {
     }
 
     @Override
-    public void executeFromJava()
-            throws Exception {
+    public void execute() {
+        int x=0, y=0;
         if (isAuto()) {
-            super.monkeyDeviceWrapper.touch(String.format("%d.png", mSerial),
-                    mTouchType.getTypeStr(), mTimeout, mSimilarity, mLandscape);
+            MatchResult r = device.waitImageUntil(
+                    String.format("%d.png", mSerial),
+                    device.getScreenShotPath(), mTimeout);
+            x = r.cx();
+            y = r.cy();
         } else {
-            super.monkeyDeviceWrapper.touch((int) mPosition.getX(),
-                    (int) mPosition.getY(),
-                    mTouchType.getTypeStr());
+            x = (int) mPosition.getX();
+            y = (int) mPosition.getY();
         }
+        device.touch(x, y);
     }
+
+
 }
