@@ -57,14 +57,15 @@ import org.zeroxlab.aster.operations.OpDrag;
 import org.zeroxlab.aster.operations.OpTouch;
 
 /*
- * Class used to display the screen and home, menu, etc buttons
+ * Class used to display the screen and home, menu, etc buttons.
+ * and various listeners
  * 
  */
-public class AsterWorkspace extends JPanel implements ComponentListener,
+public class ScreenUpdatePanel extends JPanel implements ComponentListener,
                                                       MouseListener,
                                                       MouseMotionListener,
                                                       ChangeListener,
-                                                      CmdConnection.SnapshotDrawer,
+                                                      ScreenUpdateSession.SnapshotDrawer,
                                                       AsterOperation.OperationListener {
 
     public final static int LANDSCAPE_WIDTH = 800;
@@ -116,21 +117,21 @@ public class AsterWorkspace extends JPanel implements ComponentListener,
     private static AsterCommand sRecordingCmd;
     private static AsterOperation sRecordingOp;
 
-    private static AsterWorkspace sMyself = null;
+    private static ScreenUpdatePanel sMyself = null;
 
-    public static AsterWorkspace getInstance() {
+    public static ScreenUpdatePanel getInstance() {
         if (sMyself == null) {
-            sMyself = new AsterWorkspace();
+            sMyself = new ScreenUpdatePanel();
         }
 
         return sMyself;
     }
 
-    private AsterWorkspace() {
+    private ScreenUpdatePanel() {
         this(new BufferedImage(PORTRAIT_WIDTH, PORTRAIT_HEIGHT, BufferedImage.TYPE_INT_ARGB));
     }
 
-    private AsterWorkspace(BufferedImage img) {
+    private ScreenUpdatePanel(BufferedImage img) {
         initJComponents();
 
         sRegion = new ClipRegion();

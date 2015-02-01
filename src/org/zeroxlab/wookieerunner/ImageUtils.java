@@ -18,20 +18,97 @@
 package org.zeroxlab.wookieerunner;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
+import org.linaro.utils.Constants;
 
 public class ImageUtils {
     public static BufferedImage rotate(BufferedImage src) {
+        return rotate270(src);
+    }
+
+    private static BufferedImage rotate270(BufferedImage src) {
         int width = src.getWidth();
         int height = src.getHeight();
 
-        BufferedImage rotated = new BufferedImage(height, width,
-                src.getColorModel().getTransparency());
+        BufferedImage rotated = new BufferedImage(height, width, src
+                .getColorModel().getTransparency());
 
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
-                rotated.setRGB(j, width -i -1, src.getRGB(i, j));
+        for (int x = 0; x < height; ++x) {
+            for (int y = 0; y < width; ++y) {
+                // rotated.setRGB(y, width -x -1, src.getRGB(x, y));
+                rotated.setRGB(x, y, src.getRGB(y, height - x - 1));
             }
         }
         return rotated;
+    }
+
+    private static BufferedImage rotate90(BufferedImage src) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        BufferedImage rotated = new BufferedImage(height, width, src
+                .getColorModel().getTransparency());
+
+        for (int x = 0; x < height; ++x) {
+            for (int y = 0; y < width; ++y) {
+                rotated.setRGB(x, y, src.getRGB(width - y - 1, x));
+            }
+        }
+        return rotated;
+    }
+
+    private static BufferedImage rotate180(BufferedImage src) {
+        int width = src.getWidth();
+        int height = src.getHeight();
+
+        BufferedImage rotated = new BufferedImage(height, width, src
+                .getColorModel().getTransparency());
+
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                rotated.setRGB(x, y, src.getRGB(width - x - 1, y));
+            }
+        }
+        return rotated;
+    }
+
+    public static String rotateImage(String orignal, int order) {
+        BufferedImage originalImage = getBufferedImage(orignal);
+        BufferedImage rotatedImage = originalImage;
+        if (order == 270) {
+            rotatedImage = rotate270(originalImage);
+        } else if (order == 180) {
+            rotatedImage = rotate180(originalImage);
+        } else if (order == 90) {
+            rotatedImage = rotate90(originalImage);
+        } else {
+            return orignal;
+        }
+        try {
+            File file = new File(Constants.SCR_PATH_HOST_ROTATED);
+            file.delete();
+            ImageIO.write(rotatedImage, "png", file);
+            return Constants.SCR_PATH_HOST_ROTATED;
+        } catch (IOException e) {
+            return orignal;
+        }
+    }
+
+    public static BufferedImage getBufferedImage(String path) {
+        File file = new File(path);
+        BufferedImage image = null;
+        if (file.exists() && file.canRead()) {
+            try {
+                image = ImageIO.read(file);
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return image;
     }
 }

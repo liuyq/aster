@@ -47,9 +47,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
-import org.linaro.utils.DeviceForAster;
-import org.zeroxlab.aster.AsterWorkspace.FillListener;
-import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
+import org.zeroxlab.aster.ScreenUpdatePanel.FillListener;
+import org.zeroxlab.aster.ScreenUpdateSession.SnapshotDrawer;
 import org.zeroxlab.aster.cmds.AsterCommand;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.aster.cmds.Press;
@@ -64,17 +63,19 @@ import org.zeroxlab.aster.operations.OpSelectKey;
  * @author liuyq
  * 
  */
+@SuppressWarnings("serial")
 public class AsterMainPanel extends JPanel {
 
     /**
      * Display the status message
      */
-    static JStatusBar mStatus = new JStatusBar();
+    static StatusBar mStatus = StatusBar.getInstance();
+    static String savedFilePath = null;
 
     /*
      * This is the whole window
      */
-    private AsterWorkspace mWorkspace;
+    private ScreenUpdatePanel mWorkspace;
     /*
      * Used to show the actions list in the top-left part
      */
@@ -82,7 +83,7 @@ public class AsterMainPanel extends JPanel {
 
     private AsterCommandManager mCmdManager;
 
-    private CmdConnection mCmdConn;
+    private ScreenUpdateSession mCmdConn;
 
     private MyListener mCmdFillListener;
 
@@ -100,15 +101,6 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    public static void status(final String msg) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                mStatus.setStatus(msg);
-            }
-        });
-    }
-
     public static void message(final String msg) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -121,13 +113,10 @@ public class AsterMainPanel extends JPanel {
     public final static int MENU_ROTATE = 1;
     public final static int MENU_NOT_ROTATE = 2;
 
-    private enum ExecutionState {
-        NORMAL, EXECUTION
-    }
 
-    public AsterMainPanel(AsterCommandManager cmdMgr, CmdConnection conn,
+    public AsterMainPanel(ScreenUpdateSession conn,
             ActionListModel model) {
-        mCmdManager = cmdMgr;
+        mCmdManager = new AsterCommandManager();
         mCmdConn = conn;
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -154,7 +143,7 @@ public class AsterMainPanel extends JPanel {
         scrollPane.getViewport().setView(mActionList);
         add(scrollPane, c);
         MainKeyMonitor mkmonitor = new MainKeyMonitor();
-        mWorkspace = AsterWorkspace.getInstance();
+        mWorkspace = ScreenUpdatePanel.getInstance();
         mWorkspace.setFillListener(mCmdFillListener);
         mWorkspace.setMainKeyListener(mkmonitor);
         mActionList.getModel().setRecall(new Recall());
@@ -185,7 +174,7 @@ public class AsterMainPanel extends JPanel {
         c.gridheight = 1;
         c.weightx = 0;
         c.weighty = 0;
-        add(ActionDashboard.getInstance(), c);
+        add(PlayStepStopPannel.getInstance(), c);
 
         // add the status window
         c.gridx = 0;
@@ -203,7 +192,7 @@ public class AsterMainPanel extends JPanel {
     }
 
     public SnapshotDrawer getSnapshotDrawer() {
-        return AsterWorkspace.getInstance();
+        return ScreenUpdatePanel.getInstance();
     }
 
     public JMenuBar createMenuBar() {
@@ -238,10 +227,8 @@ public class AsterMainPanel extends JPanel {
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         File file = fc.getSelectedFile();
                         // TODO: Pass the right serial number
-                        DeviceForAster device = mCmdManager
-                                .getConnectedDevice();
                         AsterCommand[] cmds = mCmdManager.load(
-                                file.getAbsolutePath(), device);
+                                file.getAbsolutePath());
                         mActionList.getModel().disableChangeListener();
                         mActionList.getModel().clear();
                         mActionList.getModel().setRecall(cmds[0]);
@@ -267,10 +254,10 @@ public class AsterMainPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                if (mCmdManager.getSaved()) {
+                if (savedFilePath != null) {
                     try {
                         mCmdManager.dump(mActionList.getModel().toArray(),
-                                mCmdManager.getFile().getAbsolutePath(), true);
+                                savedFilePath, true);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -282,6 +269,7 @@ public class AsterMainPanel extends JPanel {
                         try {
                             mCmdManager.dump(mActionList.getModel().toArray(),
                                     file.getAbsolutePath(), false);
+                            savedFilePath = file.getAbsolutePath();
                         } catch (IOException e) {
                             JOptionPane pane = new JOptionPane(
                                     "File exists! Do you want to overwrite?");
@@ -296,6 +284,7 @@ public class AsterMainPanel extends JPanel {
                                     mCmdManager.dump(mActionList.getModel()
                                             .toArray(), file.getAbsolutePath(),
                                             true);
+                                    savedFilePath = file.getAbsolutePath();
                                 } catch (IOException e2) {
                                     e2.printStackTrace();
                                 }
@@ -430,7 +419,7 @@ public class AsterMainPanel extends JPanel {
         }
     }
 
-    class MainKeyMonitor implements AsterWorkspace.MainKeyListener {
+    class MainKeyMonitor implements ScreenUpdatePanel.MainKeyListener {
         @Override
         public void onClickHome() {
             AsterOperation op = new OpSelectKey("KEYCODE_HOME");

@@ -24,27 +24,27 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
-import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
+import org.zeroxlab.aster.operations.OpGetInput;
 
 /**
- * Wake up the device
+ * Call for sub script
  * 
  * @author liuyq
  * 
  */
 public class Recall extends AsterCommand {
     private String mScript;
+    private String tipMsg = "Please input the path of the script!";
 
     public Recall() {
         mScript = new String();
         mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpRecall();
+        mOps[0] = new OpGetInput(tipMsg, "");
     }
 
-    public Recall(String argline, DeviceForAster device)
+    public Recall(String argline)
             throws IllegalArgumentException {
-        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -55,7 +55,7 @@ public class Recall extends AsterCommand {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        //mOps[0] = AsterWorkspace.getOpRecall();
+        mOps[0] = new OpGetInput(tipMsg, "");
     }
 
     @Override
@@ -91,15 +91,12 @@ public class Recall extends AsterCommand {
         // // result.mMessage = e.toString();
         // // }
         // return result;
+
+        // super.device.press("KEYCODE_HOME");
     }
 
     @Override
     public String toScript() {
         return String.format("recall('%s')\n", mScript);
     }
-
-    // @Override
-    // public void executeFromJava() throws Exception {
-    // super.monkeyDeviceWrapper.wake();
-    // }
 }

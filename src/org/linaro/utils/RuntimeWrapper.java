@@ -9,8 +9,39 @@ public class RuntimeWrapper {
 
     private static final String[] ZERO_LENGTH_STRING_ARRAY = new String[0];
 
+    public static BufferedReader monitorOutput(String... command){
+        String cmdline = "";
+        for (String cmd : command) {
+            cmdline = cmdline + " " + cmd;
+        }
+        if (Constants.DEBUG_CMDLINE) {
+            System.out.println(cmdline);
+        }
+        Process process = null;
+        try {
+            process = Runtime.getRuntime().exec(command);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        if (process == null)
+            return null;
+        BufferedReader outReader =new BufferedReader(
+                new InputStreamReader(
+                        process.getInputStream()));
+        // get the return code from the process
+        return outReader;
+    }
+
     public static RuntimeResult executeCommand(String... command) {
         try {
+            String cmdline = "";
+            for (String cmd : command) {
+                cmdline = cmdline + " " + cmd;
+            }
+            if (Constants.DEBUG_CMDLINE) {
+                System.out.println(cmdline);
+            }
             Process process = Runtime.getRuntime().exec(command);
             ArrayList<String> errorOutput = new ArrayList<String>();
             ArrayList<String> stdOutput = new ArrayList<String>();
@@ -68,6 +99,9 @@ public class RuntimeWrapper {
                         String line = errReader.readLine();
                         if (line != null) {
                             errorOutput.add(line);
+                            if (Constants.DEBUG_CMDLINE) {
+                                System.out.println(line);
+                            }
                         } else {
                             break;
                         }
@@ -89,6 +123,9 @@ public class RuntimeWrapper {
                     while (true) {
                         String line = outReader.readLine();
                         if (line != null) {
+                            if (Constants.DEBUG_CMDLINE) {
+                                System.out.println(line);
+                            }
                             stdOutput.add(line);
                         } else {
                             break;
@@ -105,8 +142,7 @@ public class RuntimeWrapper {
 
         // it looks like on windows process#waitFor() can return
         // before the thread have filled the arrays, so we wait for both threads
-        // and the
-        // process itself.
+        // and the process itself.
         if (waitforReaders) {
             try {
                 t1.join();

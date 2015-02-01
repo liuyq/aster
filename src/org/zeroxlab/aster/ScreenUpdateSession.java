@@ -26,47 +26,47 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JCheckBox;
 
+import org.linaro.utils.Constants.ExecutionState;
 import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.cmds.AsterCommand;
-import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
-import org.zeroxlab.wookieerunner.ImageUtils;
 
-class CmdConnection implements Runnable, ItemListener {
+class ScreenUpdateSession implements Runnable, ItemListener {
 
     private boolean mKeepWalking = true;
     private AsterCommand mCmd;
     private ExecutionState mState;
-    private boolean mLandscape = false;
-    private CommandExecutionListener mListener = null;
+    private static boolean mLandscape = false;
+    private ICommandExecutionListener mListener = null;
+
+    public void itemStateChanged(ItemEvent e) {
+        Object source = e.getSource();
+        if (source instanceof JCheckBox) {
+            JCheckBox rotate = (JCheckBox) source;
+            mLandscape = rotate.isSelected();
+        }
+    }
+
+    synchronized private void switchState(ExecutionState state) {
+        mState = state;
+    }
 
     /* FIXME: They should be interface but not implementation */
-    private AsterCommandManager mCmdManager;
-    private SnapshotDrawer      mDrawer;
-
-    public enum ScreenOrientation {
-        PORTRAIT,
-        LANDSCAPE,
-    }
-
-    private enum ExecutionState {
-        NORMAL,
-        EXECUTION,
-    }
-
-    public CmdConnection(AsterCommandManager mgr) {
-        mCmdManager = mgr;
-    }
+    private SnapshotDrawer mDrawer;
 
     public void setDrawer(SnapshotDrawer drawer) {
         mDrawer = drawer;
+    }
+
+    interface SnapshotDrawer {
+        public void setImage(BufferedImage img);
     }
 
     public void finish() {
         mKeepWalking = false;
     }
 
-    synchronized public void setListener(CommandExecutionListener listener) {
+    synchronized public void setListener(ICommandExecutionListener listener) {
         mListener = listener;
     }
 
@@ -75,30 +75,29 @@ class CmdConnection implements Runnable, ItemListener {
         switchState(ExecutionState.EXECUTION);
     }
 
-    public void onScreenRotate(ScreenOrientation orientation) {
-        if (orientation == ScreenOrientation.LANDSCAPE) {
-            mLandscape = true;
-        } else {
-            mLandscape = false;
-        }
-    }
-
-    synchronized private void switchState(ExecutionState state) {
-        mState = state;
-    }
-
     @Override
     public void run() {
         mState = ExecutionState.NORMAL;
-        DeviceForAster device = mCmdManager.getConnectedDevice();
+        DeviceForAster device = null;
+        try {
+            device = DeviceForAster.getInstance();
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        // should not be null here
         AsterMainPanel.message("Connected");
 
         while (mKeepWalking) {
             if (mState == ExecutionState.NORMAL) {
-                updateScreen();
+                try {
+                    updateScreen(device);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             } else {
                 // Reset user.dir everytime
-                mCmdManager.cdCwd();
+                AsterCommandManager.cdCwd();
                 String msg = String.format("Executing %s command ...\n",
                         mCmd.getName());
                 System.err.printf(msg);
@@ -108,10 +107,14 @@ class CmdConnection implements Runnable, ItemListener {
                 mCmd.execute(device);
 
                 switchState(ExecutionState.NORMAL);
-                // if (mListener != null) {
-                // mListener.processResult(result);
-                // }
-                updateScreen();
+                if (mListener != null) {
+                    mListener.processResult(null /* result */);
+                }
+                try {
+                    updateScreen(device);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             try {
                 Thread.sleep(100);
@@ -124,41 +127,16 @@ class CmdConnection implements Runnable, ItemListener {
         }
     }
 
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        Object source = e.getSource();
-        if (source instanceof JCheckBox) {
-            JCheckBox rotate = (JCheckBox) source;
-            if (rotate.isSelected()) {
-                onScreenRotate(ScreenOrientation.LANDSCAPE);
-            } else {
-                onScreenRotate(ScreenOrientation.PORTRAIT);
-            }
-        }
-    }
-
-    private void updateScreen() {
+    private void updateScreen(DeviceForAster device) throws Exception {
         if (mDrawer == null) {
             System.out.println("There is no drawer to update screenshot");
             return;
         }
 
-        // IChimpImage snapshot = mCmdManager.takeSnapshot();
-        // BufferedImage image = snapshot.createBufferedImage();
-        DeviceForAster device = mCmdManager.getConnectedDevice();
-        BufferedImage image = device.getScreenshotBufferedImage();
+        BufferedImage image = device.getScreenshotBufferedImage(mLandscape);
         if (image != null) {
-            if (mLandscape) {
-                // By default, a NOT-ROTATED-Image should be Portrait
-                image = ImageUtils.rotate(image);
-            }
-            // System.out.println(String.format("height=%d, width=%d",
-            // image.getHeight(), image.getWidth()));
             mDrawer.setImage(image);
         }
     }
 
-    interface SnapshotDrawer {
-        public void setImage(BufferedImage img);
-    }
 }

@@ -19,15 +19,15 @@ public class LocalMonkeyRunner extends DeviceForAster {
     }
 
     @Override
-    public void executeAdbShell(String... cmds) {
+    public RuntimeResult executeAdbShell(String... cmds) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
     @Override
-    public void executeAdbCommands(String... cmds) {
+    public RuntimeResult executeAdbCommands(String... cmds) {
         // TODO Auto-generated method stub
-
+        return null;
     }
 
 }

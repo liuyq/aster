@@ -22,7 +22,6 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
-import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpSelectKey;
 
@@ -71,9 +70,8 @@ public class Press extends AsterCommand {
         }
     }
 
-    public Press(String argline, DeviceForAster device)
+    public Press(String argline)
             throws IllegalArgumentException {
-        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 2) {

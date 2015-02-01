@@ -18,7 +18,7 @@
 
 package org.zeroxlab.aster;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.TreeMap;
 
 import javax.swing.JFrame;
@@ -26,93 +26,102 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.zeroxlab.aster.CmdConnection.SnapshotDrawer;
+import org.linaro.utils.Constants;
+import org.linaro.utils.DeviceForAster;
+import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 
 public class AsterMain {
 
-    private AsterCommandManager mCmdMgr;
-    private CmdConnection mCmdConn;
 
-    public AsterMain() {
 
-    }
-
-    public void startCLI(String scriptPath, String serial) {
-        mCmdMgr = new AsterCommandManager(null, null);
-
-        ExecutionResult result = null;
-        try {
-            result = mCmdMgr.run(scriptPath, serial);
-        } catch (IOException e) {
-            System.err.printf(e.toString());
-            System.exit(1);
-        }
-        if (result.mSuccess) {
-            System.out.println("\nFinished\n");
-            System.exit(0);
-        } else {
-            System.out.println("\nFailed\n");
-            System.exit(1);
-        }
-    }
-
-    public void startGUI() {
-        String[] adbTypeKeys = { "LOCAL", "MONKEYRUNNER", "SSH" };
+    private String getAdbType() {
         Object adbType = JOptionPane.showInputDialog(null,
                 "Please choose the adb type",
                 "Choose the type on how to connect device",
-                JOptionPane.QUESTION_MESSAGE, null, adbTypeKeys, "LAVA");
-        String serial = null;
-        String adbTypeStr = null;
-        if (adbType != null) {
-            if (adbType.toString().equals("LAVA")) {
-                adbTypeStr = "SSH";
-                TreeMap<String, String> juno_devices = new TreeMap<String, String>();
-                Object lava_device = JOptionPane.showInputDialog(null,
-                        "Please select the juno device",
-                        "Select the juno device", JOptionPane.QUESTION_MESSAGE,
-                        null, juno_devices.keySet().toArray(), "juno-01");
+                JOptionPane.QUESTION_MESSAGE, null, Constants.ADB_TYPES,
+                Constants.ADB_TYPE_DEFAULT);
+        if (adbType == null || adbType.toString().isEmpty()) {
+            return Constants.ADB_TYPE_LOCAL;
+        } else {
+            return adbType.toString();
+        }
+    }
 
-                if (lava_device != null) {
-                    serial = juno_devices.get(lava_device.toString());
-                }
-            } else {
-                adbTypeStr = adbType.toString();
-                serial = JOptionPane.showInputDialog(null,
-                        "Please input the serial number", "");
+    private String getSerial(String adbTypeStr) {
+        String serial = null;
+        if (adbTypeStr.equals(Constants.ADB_TYPE_LAVA)) {
+            adbTypeStr = Constants.ADB_TYPE_SSH;
+            TreeMap<String, String> devices = LinaroUtils.getJunoDevices();
+            Object device = JOptionPane.showInputDialog(null,
+                    "Please select the juno device", "Select the juno device",
+                    JOptionPane.QUESTION_MESSAGE, null, devices.keySet()
+                            .toArray(),
+                    Constants.JUNO_DEVICES[0]);
+
+            if (device != null) {
+                serial = devices.get(device.toString());
             }
-        }else{
-            adbTypeStr = "LOCAL";
+        } else {
+            serial = JOptionPane.showInputDialog(null,
+                    "Please input the serial number", "");
+        }
+        if (serial != null && serial.isEmpty()) {
+            serial = null;
+        }
+        return serial;
+    }
+
+    public void startGUI() {
+        File screenShot = new File(Constants.SCR_PATH_HOST);
+        screenShot.delete();
+
+        trySetupLookFeel();
+        String frame_title = "Aster";
+        JFrame f = new JFrame(frame_title);// The entire window
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setVisible(true);
+
+        String adbTypeStr = getAdbType();
+        String serial = getSerial(adbTypeStr);
+
+        if (adbTypeStr != null) {
+            frame_title = frame_title + ": type=" + adbTypeStr;
+        }
+        if (serial != null) {
+            frame_title = frame_title + " serial=" + serial;
+        }
+        f.setTitle(frame_title);
+
+        try {
+            DeviceForAster.initialize(adbTypeStr, serial);
+            DeviceForAster.getInstance().connect();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        mCmdMgr = new AsterCommandManager(adbTypeStr, serial);
-        mCmdConn = new CmdConnection(mCmdMgr);
-
+        ScreenUpdateSession mCmdConn = new ScreenUpdateSession();
         ActionListModel model = new DefaultActionListModel();
         /*
          * FIXME: The way to set needed objects before initialize is bad It
          * should be improved to become stable.
          */
-        AsterController.setConnection(mCmdConn);
-        AsterController.setModel(model);
-        AsterController.setCmdMgr(mCmdMgr);
-        AsterController.getInstance();
+        PlayStepStopController.setConnection(mCmdConn);
+        PlayStepStopController.setModel(model);
+//        AsterController.setCmdMgr(mCmdMgr);
+        PlayStepStopController.getInstance();
 
-        trySetupLookFeel();
-        JFrame f = new JFrame("Aster");// The entire window
-        AsterMainPanel p = new AsterMainPanel(mCmdMgr, mCmdConn, model);
+        AsterMainPanel p = new AsterMainPanel(mCmdConn, model);
         f.setContentPane(p);
         f.setJMenuBar(p.createMenuBar());
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.pack();
-        f.setVisible(true);
 
-        SnapshotDrawer drawer = p.getSnapshotDrawer();
-        mCmdConn.setDrawer(drawer);
-        Thread thread = new Thread(mCmdConn);
-        thread.start();
+        mCmdConn.setDrawer(p.getSnapshotDrawer());
+        new Thread(mCmdConn).start();
+
+        new Thread(new StatusBarLogcatUpdateSession()).start();
+        new Thread(new StatusBarKmsgUpdateSession()).start();
     }
 
     private static void trySetupLookFeel() {
@@ -137,16 +146,34 @@ public class AsterMain {
         System.out.printf("Usage: aster [-run TEST.ast]\n\n");
     }
 
-    public static void main(String[] args) {
+    public void startCLI(String scriptPath, String adbType, String serial)
+            throws Exception {
+
+        DeviceForAster.initialize(adbType, serial);
+        DeviceForAster.getInstance().connect();
+        ExecutionResult result = (new AsterCommandManager())
+                .runLocal(scriptPath);
+        if (result.mSuccess) {
+            System.out.println("\nFinished\n");
+            System.exit(0);
+        } else {
+            System.out.println("\nFailed\n");
+            System.exit(1);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
         AsterMain aster = new AsterMain();
         if (args.length > 0) {
             try {
+                // TODO
                 String serial = null;
+                String adbType = null;
                 if (args.length >= 4 && "-serial".equals(args[2])) {
                     serial = args[3];
                 }
                 if ("-run".equals(args[0])) {
-                    aster.startCLI(args[1], serial);
+                    aster.startCLI(args[1], adbType, serial);
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 AsterMain.usage();

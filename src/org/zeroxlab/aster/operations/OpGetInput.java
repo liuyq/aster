@@ -27,9 +27,11 @@ public class OpGetInput implements AsterOperation {
 
     public final static String sName = "Get Input";
     protected String mInput;
+    private String tipMsg = "Input string to send to device";
 
-    public OpGetInput() {
-        mInput = new String("");
+    public OpGetInput(String tipMsg, String defaultValue) {
+        mInput = new String(defaultValue);
+        this.tipMsg = tipMsg;
     }
 
     @Override
@@ -39,10 +41,7 @@ public class OpGetInput implements AsterOperation {
 
     @Override
     public void record(OperationListener listener) {
-        String input = JOptionPane.showInputDialog(
-                null
-                ,"Input string to send to device"
-                , mInput);
+        String input = JOptionPane.showInputDialog(null, tipMsg, mInput);
         if (input != null) {
             setInput(input);
         }

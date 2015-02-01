@@ -39,43 +39,25 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.linaro.utils.DeviceForAster;
-import org.linaro.utils.LocalAdb;
-import org.linaro.utils.SshAdb;
 
 import com.android.monkeyrunner.MonkeyFormatter;
 import com.google.common.io.Files;
 
 
 public class AsterCommandManager {
-    private String serial = null;
-    private String adbType = "LOCAL";
 
-    private File mCwd = null;
-    private File mFile = null;
+    private static File mCwd = null;
     private static Stack<String> mPathStack = new Stack<String>();
     // private static ChimpChat mChimpChat;
-    public static boolean mConnected = false;
-    private static DeviceForAster device = null;
 
-    public AsterCommandManager(String adbType, String serial) {
+    public AsterCommandManager() {
         mCwd = Files.createTempDir();
         System.setProperty("user.dir", mCwd.getAbsolutePath());
-        this.adbType = adbType;
-        this.serial = serial;
-
         replaceAllLogFormatters(MonkeyFormatter.DEFAULT_INSTANCE, Level.SEVERE);
     }
 
-    public void cdCwd() {
+    public static void cdCwd() {
         System.setProperty("user.dir", mCwd.getAbsolutePath());
-    }
-
-    public File getFile() {
-        return mFile;
-    }
-
-    public boolean getSaved() {
-        return mFile != null;
     }
 
     private void zipDir(File prefix, String dir, ZipOutputStream zos)
@@ -159,39 +141,6 @@ public class AsterCommandManager {
         }
     }
 
-    public DeviceForAster getConnectedDevice() {
-        if (mConnected) {
-            return device;
-        } else {
-            if (this.adbType == null || this.adbType.equals("LOCAL")) {
-                device = new LocalAdb(serial);
-            } else if (this.adbType.equals("SSH")) {
-                device = new SshAdb(serial, "aster-adb-host");
-            }// else{
-            // Map<String, String> options = new TreeMap<String, String>();
-            // options.put("backend", "adb");
-            // String adbLocation = System.getProperty("adb.location");
-            // if (adbLocation != null) {
-            // options.put("adbLocation", "adb");
-            // }
-            // mChimpChat = ChimpChat.getInstance(options);
-            // MonkeyRunnerWrapper.setChimpChat(mChimpChat);
-            // }
-            device.connect(this.serial);
-            mConnected = true;
-        }
-        return device;
-    }
-
-    // public IChimpImage takeSnapshot() {
-    // return deviceWrapper.takeSnapshot();
-    // }
-
-    public AsterCommand.ExecutionResult run(String astfile, String serial)
-        throws IOException {
-        return runLocal(astfile, getConnectedDevice());
-    }
-
     public File findFile(String cwd, String astfile)
         throws IOException {
         File ast = new File(cwd, astfile);
@@ -204,25 +153,27 @@ public class AsterCommandManager {
         return ast;
     }
 
-    public AsterCommand.ExecutionResult runLocal(String astfile,
-            DeviceForAster device)
-        throws IOException {
+    public AsterCommand.ExecutionResult runLocal(String astfile)
+            throws Exception {
         if (!mPathStack.empty()) {
             try {
                 astfile = findFile(mPathStack.peek(), astfile).getAbsolutePath();
             } catch(NullPointerException e) {
-                throw new IOException(String.format("Can not open `%s'.", astfile));
+                throw new Exception(
+                        String.format("Can not open `%s'.", astfile));
             }
         }
-        AsterCommand[] cmds = load(astfile, device);
+
+        DeviceForAster device = DeviceForAster.getInstance();
+
+        AsterCommand[] cmds = load(astfile);
 
         System.out.printf("Staring command execution...\n");
         for (AsterCommand c: cmds) {
             System.err.printf("%s", c.toScript());
             cdCwd();
             // AsterCommand.ExecutionResult result = c
-            // .executeFromJava(monkeyDeviceWrapper);
-            c.execute();
+            c.execute(device);
             // if (result.mSuccess != true) {
             // System.err.println(result.mMessage);
             // mPathStack.pop();
@@ -268,11 +219,9 @@ public class AsterCommandManager {
         } catch(FileNotFoundException e) {
             throw new IOException(e);
         }
-
-        mFile = new File(filename);
     }
 
-    public AsterCommand[] load(String zipfile, DeviceForAster device)
+    public AsterCommand[] load(String zipfile)
         throws IOException {
         String filename = "script.py";
         String rootpath = mCwd.getAbsolutePath();
@@ -300,20 +249,17 @@ public class AsterCommandManager {
 
             for (String s: data.split("\n")) {
                 if (s.startsWith("drag")) {
-                    cmds.add(new Drag(rootpath, s.substring(4, s.length()),
-                            device));
+                    cmds.add(new Drag(rootpath, s.substring(4, s.length())));
                 } else if (s.startsWith("touch")) {
-                    cmds.add(new Touch(rootpath, s.substring(5, s.length()),
-                            device));
+                    cmds.add(new Touch(rootpath, s.substring(5, s.length())));
                 } else if (s.startsWith("press")) {
-                    cmds.add(new Press(s.substring(5, s.length()), device));
+                    cmds.add(new Press(s.substring(5, s.length())));
                 } else if (s.startsWith("type")) {
-                    cmds.add(new Type(s.substring(4, s.length()), device));
+                    cmds.add(new Type(s.substring(4, s.length())));
                 } else if (s.startsWith("wait")) {
-                    cmds.add(new Wait(rootpath, s.substring(4, s.length()),
-                            device));
+                    cmds.add(new Wait(rootpath, s.substring(4, s.length())));
                 } else if (s.startsWith("recall")) {
-                    cmds.add(new Recall(s.substring(6, s.length()), device));
+                    cmds.add(new Recall(s.substring(6, s.length())));
                 }
             }
         } catch (FileNotFoundException e) {
@@ -321,9 +267,7 @@ public class AsterCommandManager {
             e.printStackTrace();
         }
 
-        mFile = new File(zipfile);
         AsterCommand[] cmd_array = new AsterCommand[cmds.size()];
-
         return cmds.toArray(cmd_array);
     }
 }

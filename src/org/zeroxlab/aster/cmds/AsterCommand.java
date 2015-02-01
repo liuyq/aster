@@ -132,10 +132,6 @@ public abstract class AsterCommand {
 
     public abstract void execute();
 
-    public interface CommandExecutionListener {
-        public void processResult(ExecutionResult result);
-    }
-
     public ExecutionResult execute(DeviceForAster device) {
         try {
             this.device = device;

@@ -22,23 +22,21 @@ import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
-import org.linaro.utils.DeviceForAster;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpGetInput;
 
 public class Type extends AsterCommand {
-
+    String tipMsg = "Please input the string to send to device";
     String mText;
 
     public Type() {
         mText = new String();
         super.mOps = new AsterOperation[1];
-        super.mOps[0] = new OpGetInput();
+        super.mOps[0] = new OpGetInput(tipMsg, "");
     }
 
-    public Type(String argline, DeviceForAster device)
+    public Type(String argline)
             throws IllegalArgumentException {
-        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -49,7 +47,7 @@ public class Type extends AsterCommand {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput();
+        mOps[0] = new OpGetInput(tipMsg, "");
     }
 
     public String getText() {
@@ -82,7 +80,7 @@ public class Type extends AsterCommand {
 
     @Override
     public String toScript() {
-        return String.format("typet('%s')\n", mText);
+        return String.format("type('%s')\n", mText);
     }
 
     @Override

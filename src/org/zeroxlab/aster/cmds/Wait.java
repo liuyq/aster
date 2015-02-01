@@ -25,8 +25,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
-import org.linaro.utils.DeviceForAster;
-import org.zeroxlab.aster.AsterWorkspace;
+import org.zeroxlab.aster.ScreenUpdatePanel;
 import org.zeroxlab.aster.operations.AsterOperation;
 
 public class Wait extends AsterCommand {
@@ -41,12 +40,11 @@ public class Wait extends AsterCommand {
     public Wait() {
         mWaitType = WaitType.IMAGE;
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
+        mOps[0] = ScreenUpdatePanel.getInstance().getOpTouch();
     }
 
-    public Wait(String prefix, String argline, DeviceForAster device)
+    public Wait(String prefix, String argline)
         throws IllegalArgumentException {
-        super.setDevice(device);
         super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 4) {
@@ -78,7 +76,7 @@ public class Wait extends AsterCommand {
             throw new IllegalArgumentException();
         }
         mOps = new AsterOperation[1];
-        mOps[0] = AsterWorkspace.getInstance().getOpTouch();
+        mOps[0] = ScreenUpdatePanel.getInstance().getOpTouch();
     }
 
     @Override
@@ -138,11 +136,11 @@ public class Wait extends AsterCommand {
     @Override
     public void execute() {
         if (mWaitType == WaitType.IMAGE){
-            device.waitImageUntil(String.format("%d.png", mSerial),
-                    device.getScreenShotPath(), mTimeout);
-            //TODO: need to check more
+            device.waitImageUntil(
+                    String.format("%d.png", mSerial),
+                    device.getScreenShotPath(), mTimeout, mLandscape);
         }else{
-            new Exception("not implemented").printStackTrace();
+            device.executeAdbShell("sleep", "" + mWaitDuration);
         }
     }
 }

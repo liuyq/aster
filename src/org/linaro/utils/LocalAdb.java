@@ -13,34 +13,20 @@ public class LocalAdb extends DeviceForAster {
     protected ArrayList<String> getAdbSerialArrayList() {
         ArrayList<String> cmdArray = new ArrayList<String>();
 
-        if (this.serial == null) {
+        if (this.getSerial() == null) {
             cmdArray.add("adb");
         } else {
             cmdArray.add("adb");
             cmdArray.add("-s");
-            cmdArray.add(this.serial);
+            cmdArray.add(this.getSerial());
         }
         return cmdArray;
     }
 
-    @Override
-    public void executeAdbCommands(String... cmds) {
-        ArrayList<String> cmdArray = getAdbSerialArrayList();
-        RuntimeWrapper.executeCommand(RuntimeWrapper.merge2Strings(cmdArray,
-                cmds));
-    }
-
-    @Override
-    public void executeAdbShell(String... cmds) {
-        String[] shellCmds = new String[1];
-        shellCmds[0] = "shell";
-        executeAdbCommands(RuntimeWrapper.merge2Strings(shellCmds, cmds));
-    }
-
     public String getScreenShotPath() {
-        executeAdbShell("screencap", Contants.SCR_PATH_DEVICE);
-        executeAdbCommands("pull", Contants.SCR_PATH_DEVICE,
-                Contants.SCR_PATH_HOST);
-        return Contants.SCR_PATH_HOST;
+        executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
+        executeAdbCommands("pull", Constants.SCR_PATH_DEVICE,
+                Constants.SCR_PATH_HOST);
+        return Constants.SCR_PATH_HOST;
     }
 }

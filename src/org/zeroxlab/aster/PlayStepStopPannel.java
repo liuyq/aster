@@ -29,32 +29,32 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
- * Display for the play/step/stop button
+ * Display for the play/step/stop button, and set listeners for these 3 buttons
  * 
  * @author liuyq
  * 
  */
-public class ActionDashboard extends JPanel {
+public class PlayStepStopPannel extends JPanel {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
 
-    private final static ActionDashboard sDashboard = new ActionDashboard();
+    private final static PlayStepStopPannel sDashboard = new PlayStepStopPannel();
 
     JButton mPlay;
     JButton mStep;
     JButton mStop;
 
-    ClickListener mListener;
+    PlayStepStopButtonClickListener mListener;
 
-    public synchronized static ActionDashboard getInstance() {
+    public synchronized static PlayStepStopPannel getInstance() {
         return sDashboard;
     }
 
-    private ActionDashboard () {
-        ButtonListener listener = new ButtonListener();
+    private PlayStepStopPannel () {
+        PlayStepStopButtonListener listener = new PlayStepStopButtonListener();
         mPlay = new JButton("Play");
         mStep = new JButton("Step");
         mStop = new JButton("Stop");
@@ -72,7 +72,7 @@ public class ActionDashboard extends JPanel {
         resetButtons();
     }
 
-    public void setListener(ClickListener listener) {
+    public void setListener(PlayStepStopButtonClickListener listener) {
         mListener = listener;
     }
 
@@ -112,7 +112,7 @@ public class ActionDashboard extends JPanel {
         }
     }
 
-    class ButtonListener implements ActionListener {
+    class PlayStepStopButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             if (e.getSource() == mPlay) {
                 playClicked();
@@ -124,7 +124,7 @@ public class ActionDashboard extends JPanel {
         }
     }
 
-    interface ClickListener {
+    interface PlayStepStopButtonClickListener {
         public void onPlayClicked();
         public void onStepClicked();
         public void onStopClicked();

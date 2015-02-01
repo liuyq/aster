@@ -23,9 +23,7 @@ package org.zeroxlab.aster;
 import javax.swing.JOptionPane;
 
 import org.zeroxlab.aster.cmds.AsterCommand;
-import org.zeroxlab.aster.cmds.AsterCommand.CommandExecutionListener;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
-import org.zeroxlab.aster.cmds.AsterCommandManager;
 
 /**
  * Control for the play/step/stop buttons
@@ -33,28 +31,27 @@ import org.zeroxlab.aster.cmds.AsterCommandManager;
  * @author liuyq
  * 
  */
-class AsterController {
+class PlayStepStopController {
 
-    private static AsterCommandManager sCmdMgr;
-    private static AsterController sController;
-    private static CmdConnection sCmdConn;
+    private static PlayStepStopController sController;
+    private static ScreenUpdateSession sCmdConn;
     private static ActionListModel sListModel;
-    private static ActionExecutor sExecutor;
+    private static PlayStepStopButtonActionExecutor sExecutor;
 
-    public static AsterController getInstance() {
+    public static PlayStepStopController getInstance() {
         if (sController == null) {
-            sController = new AsterController();
+            sController = new PlayStepStopController();
         }
 
         return sController;
     }
 
-    private AsterController() {
-        sExecutor = new ActionExecutor();
+    private PlayStepStopController() {
+        sExecutor = new PlayStepStopButtonActionExecutor();
     }
 
     /*FIXME: Its bad since the Connection is always needed*/
-    public static void setConnection(CmdConnection conn) {
+    public static void setConnection(ScreenUpdateSession conn) {
         sCmdConn = conn;
     }
 
@@ -63,29 +60,24 @@ class AsterController {
         sListModel = model;
     }
 
-    /*FIXME: Its bad since the Manager is always needed*/
-    public static void setCmdMgr(AsterCommandManager mgr) {
-        sCmdMgr = mgr;
-    }
-
-    public static ActionExecutor getCommandExecutionListener() {
+    public static PlayStepStopButtonActionExecutor getCommandExecutionListener() {
         return sExecutor;
     }
 
-    class ActionExecutor implements ActionDashboard.ClickListener,
-                                    CommandExecutionListener {
+    class PlayStepStopButtonActionExecutor implements PlayStepStopPannel.PlayStepStopButtonClickListener,
+                                    ICommandExecutionListener {
           AsterCommand[] mList;
 
           /*FIXME: Controller should not use Dashboard directly */
-          ActionDashboard mDashboard;
+          PlayStepStopPannel mButtonPanel;
 
           int mIndex; // refer to a command which is going to be executed
           // but not happen yet
           boolean mInPlaying = false;
 
-          ActionExecutor() {
-              mDashboard = ActionDashboard.getInstance();
-              mDashboard.setListener(this);
+          PlayStepStopButtonActionExecutor() {
+              mButtonPanel = PlayStepStopPannel.getInstance();
+              mButtonPanel.setListener(this);
               reset();
           }
 
@@ -119,7 +111,7 @@ class AsterController {
               }
 
               if (mIndex < mList.length) {
-                  mDashboard.setRunning();
+                  mButtonPanel.setRunning();
                   sCmdConn.runCommand(mList[mIndex]);
                   mList[mIndex].setExecuting(true);
                   sListModel.trigger();
@@ -131,20 +123,21 @@ class AsterController {
 
           public void onStopClicked() {
               reset();
-              mDashboard.resetButtons();
+              mButtonPanel.resetButtons();
           }
 
           public void processResult(ExecutionResult result) {
-              if(result.mSuccess && mIndex < mList.length) {
+            if ( /* result.mSuccess && */mIndex < mList.length) {
                   // process success and is not in the end. (1 for Recall)
                   if (mInPlaying) {
                       this.onStepClicked(); // go to next step automatically
                   } else {
-                      mDashboard.setStep();
+                      mButtonPanel.setStep();
                   }
               } else {
-                  if (!result.mSuccess) {
-                      if (mIndex == 1 && !sCmdMgr.getSaved()) {
+                // if (!result.mSuccess) {
+                if (mIndex != mList.length) {
+                    if (mIndex == 1 /* && !sCmdMgr.getSaved() */) {
                           JOptionPane.showMessageDialog(null,
                                   "Since you have set recall script, you need to \n"
                                   + "save this script first for Aster to locate the\n"
@@ -158,9 +151,9 @@ class AsterController {
                                   "Execution failed",
                                   JOptionPane.ERROR_MESSAGE);
                       }
-                  }
+                 }
                   reset();
-                  mDashboard.resetButtons();
+                  mButtonPanel.resetButtons();
               }
           }
     }
