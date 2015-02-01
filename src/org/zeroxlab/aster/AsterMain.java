@@ -31,6 +31,7 @@ import org.linaro.utils.DeviceForAster;
 import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
+import org.zeroxlab.aster.cmds.InitAndHome;
 
 public class AsterMain {
 
@@ -102,7 +103,7 @@ public class AsterMain {
         }
 
         ScreenUpdateSession mCmdConn = new ScreenUpdateSession();
-        ActionListModel model = new DefaultActionListModel();
+        IActionListContoller model = new ActionListController();
         /*
          * FIXME: The way to set needed objects before initialize is bad It
          * should be improved to become stable.
@@ -119,6 +120,8 @@ public class AsterMain {
 
         mCmdConn.setDrawer(p.getSnapshotDrawer());
         new Thread(mCmdConn).start();
+        p.getActionList().getActionListController()
+                .setInitAndHomeCmd(new InitAndHome());
 
         new Thread(new StatusBarLogcatUpdateSession()).start();
         new Thread(new StatusBarKmsgUpdateSession()).start();

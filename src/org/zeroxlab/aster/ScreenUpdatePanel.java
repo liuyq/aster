@@ -61,6 +61,7 @@ import org.zeroxlab.aster.operations.OpTouch;
  * and various listeners
  * 
  */
+@SuppressWarnings("serial")
 public class ScreenUpdatePanel extends JPanel implements ComponentListener,
                                                       MouseListener,
                                                       MouseMotionListener,
@@ -258,6 +259,9 @@ public class ScreenUpdatePanel extends JPanel implements ComponentListener,
         repaint();
     }
 
+    /*
+     * update ScreenUpdatePanel status according to the selected command
+     */
     public void fillCmd(AsterCommand cmd, FillListener listener) {
         sRecordingCmd = cmd;
         sFillListener = listener;
@@ -498,14 +502,17 @@ public class ScreenUpdatePanel extends JPanel implements ComponentListener,
 
     @Override
     public void stateChanged(ChangeEvent e) {
-        if (!(e.getSource() instanceof ActionListModel)) {
+        if (!(e.getSource() instanceof IActionListContoller)) {
             System.err.println("The source is not an ActionListModel");
             return;
         }
 
-        ActionListModel model = (ActionListModel) e.getSource();
+        IActionListContoller model = (IActionListContoller) e.getSource();
 
-        if (model.empty()) {
+        if (model.isCmdListEmpty()) {
+            if (sFillListener != null) {
+                sFillListener.commandFilled(model.getInitAndHomeCmd());
+            }
             sRegion.setVisible(false);
             repaint();
             return;

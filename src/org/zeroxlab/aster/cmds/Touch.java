@@ -208,4 +208,9 @@ public class Touch extends AsterCommand {
         device.touch(x, y);
     }
 
+    @Override
+    protected String getCommandPrefix() {
+        return "touch";
+    }
+
 }

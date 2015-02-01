@@ -22,15 +22,15 @@ import javax.swing.event.ChangeListener;
 
 import org.zeroxlab.aster.cmds.AsterCommand;
 
-public interface ActionListModel {
+public interface IActionListContoller {
 
     /**
      * The recall command is the start of every script. It should
      * setup the test environment and navigate to the home screen.
      */
-    public void setRecall(AsterCommand cmd);
+    public void setInitAndHomeCmd(AsterCommand cmd);
 
-    public AsterCommand getRecall();
+    public AsterCommand getInitAndHomeCmd();
 
     /**
      * Push command to the command list
@@ -48,7 +48,7 @@ public interface ActionListModel {
     /**
      * Test if the model is empty
      */
-    public boolean empty();
+    public boolean isCmdListEmpty();
 
     /**
      * Empty the model
@@ -87,7 +87,7 @@ public interface ActionListModel {
      *            the ChangeListener to add
      * @see #removeChangeListener
      */
-    public void addChangeListener(ChangeListener x);
+    public void addStateChangeListener(ChangeListener x);
 
     /**
      * Removes a ChangeListener from the model's listener list.
@@ -96,7 +96,7 @@ public interface ActionListModel {
      *            the ChangeListener to remove
      * @see #addChangeListener
      */
-    public void removeChangeListener(ChangeListener x);
+    public void removeStateChangeListener(ChangeListener x);
 
     /**
      * Add a ChangeListener to the model's listener list.

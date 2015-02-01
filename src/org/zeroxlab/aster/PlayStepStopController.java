@@ -35,7 +35,7 @@ class PlayStepStopController {
 
     private static PlayStepStopController sController;
     private static ScreenUpdateSession sCmdConn;
-    private static ActionListModel sListModel;
+    private static IActionListContoller sListModel;
     private static PlayStepStopButtonActionExecutor sExecutor;
 
     public static PlayStepStopController getInstance() {
@@ -56,7 +56,7 @@ class PlayStepStopController {
     }
 
     /*FIXME: Its bad since the Model is always needed*/
-    public static void setModel(ActionListModel model) {
+    public static void setModel(IActionListContoller model) {
         sListModel = model;
     }
 

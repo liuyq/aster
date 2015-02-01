@@ -21,7 +21,7 @@ package org.zeroxlab.aster.ui;
 import java.awt.event.MouseListener;
 import javax.swing.plaf.ComponentUI;
 
-import org.zeroxlab.aster.JActionList;
+import org.zeroxlab.aster.ActionListComponent;
 
 /**
  * UI for JActionList

@@ -21,18 +21,10 @@
 package org.zeroxlab.aster;
 
 import java.awt.Component;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.swing.JOptionPane;
 
 import org.zeroxlab.aster.cmds.AsterCommand;
-import org.zeroxlab.aster.cmds.Drag;
-import org.zeroxlab.aster.cmds.Press;
-import org.zeroxlab.aster.cmds.Recall;
-import org.zeroxlab.aster.cmds.Touch;
-import org.zeroxlab.aster.cmds.Type;
-import org.zeroxlab.aster.cmds.Wait;
 
 /*
  * The class used to show the command selection dialog 
@@ -40,34 +32,25 @@ import org.zeroxlab.aster.cmds.Wait;
  */
 public class CmdSelector {
 
-    @SuppressWarnings("rawtypes")
-    static final Map<String, Class> commands = new LinkedHashMap<String, Class>() {
-        {
-            put("Touch", Touch.class);
-            put("Drag", Drag.class);
-            put("Press", Press.class);
-            put("Type", Type.class);
-            put("Recall", Recall.class);
-            put("Wait", Wait.class);
-        }
-    };
-
     /*
      * The real method used to show the command selection dialog when press the
      * plus button. Called by mouseClicked in AsterMainPanel.java
      */
-    static public AsterCommand selectCommand(Component parent) {
-        String s = (String)JOptionPane.showInputDialog(
-            parent,
-                "Select next command", // Tip message
-                "New Command", // dialog title
-            JOptionPane.PLAIN_MESSAGE,
-            null,
-            commands.keySet().toArray(), // array will be shown in the selectbox
-            null);
+    @SuppressWarnings("unchecked")
+    public static AsterCommand selectCommand(Component parent) {
+        String s = (String) JOptionPane.showInputDialog(parent,
+        // Tip message
+                "Select next command",
+                // dialog title
+                "New Command", JOptionPane.PLAIN_MESSAGE, null,
+                // array will be shown in the selectbox
+                AsterCommand.getSupportedcommands().keySet().toArray(),
+
+                null);
         try {
             if (s != null) {
-                return (AsterCommand)commands.get(s).getConstructor().newInstance();
+                return (AsterCommand) AsterCommand.getSupportedcommands()
+                        .get(s).getConstructor().newInstance();
             }
         } catch (Exception e) {
             System.out.println("Warning: Class cannot be instantiated");

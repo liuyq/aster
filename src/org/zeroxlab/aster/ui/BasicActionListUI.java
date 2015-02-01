@@ -47,19 +47,19 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
 import javax.swing.plaf.ComponentUI;
 
-import org.zeroxlab.aster.JActionList;
+import org.zeroxlab.aster.ActionListComponent;
 import org.zeroxlab.aster.cmds.AsterCommand;
 
 import com.android.ninepatch.NinePatch;
 
 /**
- * Basic UI for {@link JActionList}.
+ * Basic UI for {@link ActionListComponent}.
  */
 public class BasicActionListUI extends ActionListUI {
     /**
      * The associated action list.
      */
-    protected JActionList actionList;
+    protected ActionListComponent actionListComponent;
 
     protected MouseListener mouseListener;
 
@@ -67,7 +67,7 @@ public class BasicActionListUI extends ActionListUI {
 
     protected ChangeListener actionListChangeListener;
 
-    protected EventListenerList newActionListenerList = new EventListenerList();
+
 
     /*
      * @see javax.swing.plaf.ComponentUI#createUI(javax.swing.JComponent)
@@ -81,7 +81,7 @@ public class BasicActionListUI extends ActionListUI {
      */
     @Override
     public void installUI(JComponent c) {
-        actionList = (JActionList) c;
+        actionListComponent = (ActionListComponent) c;
         installDefaults();
         installListeners();
         c.setLayout(null);
@@ -96,7 +96,7 @@ public class BasicActionListUI extends ActionListUI {
         uninstallListeners();
         uninstallDefaults();
 
-        actionList = null;
+        actionListComponent = null;
     }
 
     public void installDefaults() {
@@ -116,24 +116,24 @@ public class BasicActionListUI extends ActionListUI {
             public void mousePressed(MouseEvent e) {
             }
         };
-        actionList.addMouseListener(mouseListener);
+        actionListComponent.addMouseListener(mouseListener);
 
         mouseMotionListener = new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
             }
         };
-        actionList.addMouseMotionListener(mouseMotionListener);
+        actionListComponent.addMouseMotionListener(mouseMotionListener);
 
         actionListChangeListener = new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 updateButtonList();
-                actionList.repaint();
+                actionListComponent.repaint();
             }
         };
-        actionList.getModel().addChangeListener(actionListChangeListener);
-        actionList.getModel()
+        actionListComponent.getActionListController().addStateChangeListener(actionListChangeListener);
+        actionListComponent.getActionListController()
                 .addCommandChangeListener(actionListChangeListener);
     }
 
@@ -141,14 +141,14 @@ public class BasicActionListUI extends ActionListUI {
     }
 
     public void uninstallListeners() {
-        actionList.removeMouseListener(mouseListener);
+        actionListComponent.removeMouseListener(mouseListener);
         mouseListener = null;
 
-        actionList.removeMouseMotionListener(mouseMotionListener);
+        actionListComponent.removeMouseMotionListener(mouseMotionListener);
         mouseMotionListener = null;
 
-        actionList.getModel().removeChangeListener(actionListChangeListener);
-        actionList.getModel().removeCommandChangeListener(
+        actionListComponent.getActionListController().removeStateChangeListener(actionListChangeListener);
+        actionListComponent.getActionListController().removeCommandChangeListener(
                 actionListChangeListener);
         actionListChangeListener = null;
     }
@@ -156,6 +156,7 @@ public class BasicActionListUI extends ActionListUI {
     @Override
     public void paint(Graphics g, JComponent c) {
         super.paint(g, c);
+        // only paint the last close button
         CloseButton delay = null;
         for (Component child : c.getComponents()) {
             if (child instanceof CloseButton) {
@@ -168,6 +169,12 @@ public class BasicActionListUI extends ActionListUI {
             delay.paint(g);
         }
     }
+
+    // ///////////////////////////////////////////////////////////////////////
+    // Listener related Source for new actions, listener definition places are:
+    // 1. constructor of AsterMainPanel
+    // ///////////////////////////////////////////////////////////////////////
+    protected EventListenerList newActionListenerList = new EventListenerList();
 
     @Override
     public void addNewActionListener(MouseListener l) {
@@ -196,33 +203,33 @@ public class BasicActionListUI extends ActionListUI {
 
     protected void updateButtonList() {
         buttonList = new Vector<JComponent>();
-        buttonList.add(new ActionButton(actionList.getModel().getRecall()));
-        for (AsterCommand cmd : actionList.getModel().getCommands()) {
+        buttonList.add(new ActionButton(actionListComponent.getActionListController().getInitAndHomeCmd()));
+        for (AsterCommand cmd : actionListComponent.getActionListController().getCommands()) {
             buttonList.add(new ActionButton(cmd));
         }
         updateComponents();
         updateLayout();
-        actionList.revalidate();
+        actionListComponent.revalidate();
     }
 
     protected void updateComponents() {
-        actionList.removeAll();
+        actionListComponent.removeAll();
         Iterator<JComponent> it = buttonList.iterator();
         while (it.hasNext()) {
             JComponent btn = it.next();
-            if (!it.hasNext() && !actionList.getModel().empty()) {
+            if (!it.hasNext() && !actionListComponent.getActionListController().isCmdListEmpty()) {
                 CloseButton closebtn = new CloseButton();
                 closebtn.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        actionList.getModel().popCmd();
+                        actionListComponent.getActionListController().popCmd();
                     }
                 });
-                actionList.add(closebtn);
+                actionListComponent.add(closebtn);
             }
-            actionList.add(btn);
+            actionListComponent.add(btn);
             LittleArrow arrow = new LittleArrow();
-            actionList.add(arrow);
+            actionListComponent.add(arrow);
         }
         NewActionButton newbtn = new NewActionButton();
         newbtn.addMouseListener(new MouseAdapter() {
@@ -231,30 +238,30 @@ public class BasicActionListUI extends ActionListUI {
                 fireNewAction(e);
             }
         });
-        actionList.add(newbtn);
+        actionListComponent.add(newbtn);
     }
 
     protected void updateLayout() {
         int offset_y = BUTTON_MARGIN;
-        int width = actionList.getPreferredSize().width;
+        int width = actionListComponent.getPreferredSize().width;
         Component focused = null;
-        Component[] cs = actionList.getComponents();
+        Component[] cs = actionListComponent.getComponents();
         for (int i = 0; i < cs.length; i++) {
             ActionButton btn = null;
-            Component cls = null;
+            Component clsBtn = null;
             if (cs[i] instanceof CloseButton) {
-                cls = cs[i];
+                clsBtn = cs[i];
                 i++;
             }
             if (cs[i] instanceof ActionButton) {
                 btn = (ActionButton) cs[i];
-                Dimension size = btn.getPreferredSize();
-                int offset_x = (width - size.width) / 2;
-                btn.setBounds(offset_x, offset_y, size.width, size.height);
+                Dimension btnSize = btn.getPreferredSize();
+                int offset_x = (width - btnSize.width) / 2;
+                btn.setBounds(offset_x, offset_y, btnSize.width, btnSize.height);
                 offset_y += btn.getHeight() + BUTTON_MARGIN;
-                if (cls != null) {
-                    cls.setSize(cls.getPreferredSize());
-                    cls.setLocation(btn.getX() + btn.getWidth() - 15,
+                if (clsBtn != null) {
+                    clsBtn.setSize(clsBtn.getPreferredSize());
+                    clsBtn.setLocation(btn.getX() + btn.getWidth() - 15,
                             btn.getY() - 5);
                 }
                 if (btn.isExecuting())
@@ -276,7 +283,7 @@ public class BasicActionListUI extends ActionListUI {
             }
         }
         if (focused != null)
-            actionList.scrollRectToVisible(focused.getBounds());
+            actionListComponent.scrollRectToVisible(focused.getBounds());
     }
 
     @Override
@@ -436,6 +443,8 @@ public class BasicActionListUI extends ActionListUI {
             Line2D.Double line = new Line2D.Double(bbox.x + bbox.width / 2.0,
                     bbox.y, bbox.x + bbox.width / 2.0, bbox.y + bbox.height);
             Polygon arrowHead = new Polygon();
+            // y increases from up to bottom
+            // x increases from left to right
             arrowHead.addPoint(0, 3);
             arrowHead.addPoint(-3, -3);
             arrowHead.addPoint(3, -3);

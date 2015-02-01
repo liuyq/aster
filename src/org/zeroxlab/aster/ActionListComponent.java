@@ -32,9 +32,12 @@ import javax.swing.UIManager;
 import org.zeroxlab.aster.ui.ActionListUI;
 import org.zeroxlab.aster.ui.BasicActionListUI;
 
-public class JActionList extends JComponent implements Scrollable {
+/*
+ * A Container like component for action button List
+ */
+public class ActionListComponent extends JComponent implements Scrollable {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1L;
     /**
@@ -46,7 +49,7 @@ public class JActionList extends JComponent implements Scrollable {
      * Sets the new UI delegate.
      *
      * @param ui
-     *           New UI delegate.
+     *            New UI delegate.
      */
     public void setUI(ActionListUI ui) {
         super.setUI(ui);
@@ -88,15 +91,15 @@ public class JActionList extends JComponent implements Scrollable {
         return uiClassID;
     }
 
-    protected ActionListModel model;
+    protected IActionListContoller actionListController;
 
-    public JActionList(ActionListModel model) {
-        this.model = model;
+    public ActionListComponent(IActionListContoller contoller) {
+        this.actionListController = contoller;
         this.updateUI();
     }
 
-    public ActionListModel getModel() {
-        return this.model;
+    public IActionListContoller getActionListController() {
+        return this.actionListController;
     }
 
     public void paintChildren(Graphics g) {

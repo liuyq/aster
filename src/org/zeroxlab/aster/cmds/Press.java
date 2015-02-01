@@ -123,4 +123,9 @@ public class Press extends AsterCommand {
     public void execute() {
         super.device.press(mKeyCode);
     }
+
+    @Override
+    protected String getCommandPrefix() {
+        return "press";
+    }
 }

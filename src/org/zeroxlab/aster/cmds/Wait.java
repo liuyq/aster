@@ -143,4 +143,9 @@ public class Wait extends AsterCommand {
             device.executeAdbShell("sleep", "" + mWaitDuration);
         }
     }
+
+    @Override
+    protected String getCommandPrefix() {
+        return "wait";
+    }
 }

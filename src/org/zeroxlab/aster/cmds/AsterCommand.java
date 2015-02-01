@@ -21,6 +21,10 @@ package org.zeroxlab.aster.cmds;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
@@ -30,6 +34,23 @@ import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
 public abstract class AsterCommand {
+
+    @SuppressWarnings({ "rawtypes", "serial" })
+    private static final Map<String, Class> supportedCommands = new LinkedHashMap<String, Class>() {
+        {
+            put("Touch", Touch.class);
+            put("Drag", Drag.class);
+            put("Press", Press.class);
+            put("Type", Type.class);
+            // put("Recall", Recall.class);
+            put("Wait", Wait.class);
+        }
+    };
+
+    public static Map<String, Class> getSupportedcommands() {
+        return supportedCommands;
+    }
+
     protected DeviceForAster device;
 
     public void setDevice(DeviceForAster device) {
@@ -43,7 +64,7 @@ public abstract class AsterCommand {
     protected BufferedImage mImage = null;
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
-    protected boolean mFilled    = false;
+    protected boolean mFilled = false;
 
     // protected MonkeyDeviceWrapper monkeyDeviceWrapper = null;
 
@@ -87,7 +108,8 @@ public abstract class AsterCommand {
     protected String[] splitArgs(String argline) {
         String[] args = argline.split(",");
         for (int i = 0; i < args.length; ++i) {
-            args[i] = args[i].replaceAll("^[() ]+","").replaceAll("[() ]$","");
+            args[i] = args[i].replaceAll("^[() ]+", "").replaceAll("[() ]+$",
+                    "");
         }
         return args;
     }
@@ -125,7 +147,8 @@ public abstract class AsterCommand {
     public abstract SimpleBindings getSettings();
 
     /* Set settings of a command */
-    protected abstract void onFillSettings(SimpleBindings settings) throws IOException;
+    protected abstract void onFillSettings(SimpleBindings settings)
+            throws IOException;
 
     /* Dump command to script text */
     public abstract String toScript();
@@ -142,4 +165,41 @@ public abstract class AsterCommand {
         }
         return new ExecutionResult(true, "");
     }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public AsterCommand getAsterCommandSubInstance(String rootpath, String line) {
+        for (Entry<String, Class> entry : supportedCommands.entrySet()) {
+            try {
+                AsterCommand asterCommand = (AsterCommand) (entry.getValue()
+                        .getConstructor().newInstance());
+                if (line.startsWith(asterCommand.getCommandPrefix())) {
+                    return (AsterCommand) (entry.getValue().getConstructor(
+                            String.class, String.class).newInstance(rootpath,
+                            line.substring(asterCommand.getCommandPrefix()
+                                    .length(), line.length())));
+                }
+            } catch (InstantiationException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    protected abstract String getCommandPrefix();
 }

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Authored by Wei-Ning Huang <azhuang@0xlab.org>
+ * Authored by Julian Chu <walkingice@0xlab.org>
+ *             Kan-Ru Chen <kanru@0xlab.org>
+ *             Wei-Ning Huang <azhuang@0xlab.org>
  */
 
 package org.zeroxlab.aster.cmds;
@@ -23,73 +25,59 @@ import java.io.IOException;
 import javax.script.SimpleBindings;
 
 import org.zeroxlab.aster.operations.AsterOperation;
-import org.zeroxlab.aster.operations.OpGetInput;
 
-public class Type extends AsterCommand {
-    String tipMsg = "Please input the string to send to device";
-    String mText;
+/**
+ * Do initialization and go to home when the script start
+ * 
+ * @author liuyq
+ * 
+ */
+public class InitAndHome extends AsterCommand {
 
-    public Type() {
-        mText = new String();
-        super.mOps = new AsterOperation[1];
-        super.mOps[0] = new OpGetInput(tipMsg, "");
+    public InitAndHome() {
+        mOps = new AsterOperation[1];
     }
 
-    public Type(String argline)
+    public InitAndHome(String argline)
             throws IllegalArgumentException {
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
-        if (args.length == 1) {
-            // type(text)
-            mText = stripQuote(args[0]);
-        } else {
+        if (args.length != 0) {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput(tipMsg, "");
-    }
-
-    public String getText() {
-	return mText;
     }
 
     @Override
     public String getName() {
-        return "Type";
+        return "InitAndHome";
     }
 
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", "Type");
-        settings.put("Text", mText);
+        settings.put("Name", "InitAndHome");
         return settings;
     }
 
     @Override
     protected void onFillSettings(SimpleBindings settings) throws IOException {
-        if (settings == null) {
-            return;
-        }
-
-        if (settings.containsKey("Text")) {
-            mText = (String)settings.get("Text");
-        }
-    }
-
-    @Override
-    public String toScript() {
-        return String.format("type('%s')\n", mText);
     }
 
     @Override
     public void execute() {
-        super.device.inputText(mText);
+        super.device.connect();
+        super.device.press("KEYCODE_HOME");
+    }
+
+    @Override
+    public String toScript() {
+        return String.format("InitAndHome()\n");
     }
 
     @Override
     protected String getCommandPrefix() {
-        return "type";
+        return "InitAndHome";
     }
 }

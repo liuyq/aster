@@ -58,7 +58,7 @@ public class Drag extends AsterCommand {
         String[] args = splitArgs(argline);
         super.setFilled(true);
 
-        if (args.length == 8) {
+        if (args.length == 6) {
             // drag(start_image, (dx, dy), timeout, similarity, landscape)
             mCoordType = CoordType.AUTO;
             try {
@@ -81,7 +81,8 @@ public class Drag extends AsterCommand {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 6) {
+        } else if (args.length == 4) {
+            // drag((%d, %d), (%d, %d))
             try {
                 mCoordType = CoordType.FIXED;
                 mStartPosition = new Point(Integer.parseInt(args[0]),
@@ -171,8 +172,7 @@ public class Drag extends AsterCommand {
     @Override
     public String toScript() {
         if (isAuto()) {
-            return String.format(
-                    "drag('%d.png', (%d, %d), %.1f, %d, %.1f, %.2f, %s)\n",
+            return String.format("drag('%d.png', (%d, %d), %.1f, %.2f, %s)\n",
                     mSerial, (int) mShiftDistance.getX(),
                     (int) mShiftDistance.getY(), mTimeout, mSimilarity,
                     mLandscape ? "True" : "False");
@@ -201,5 +201,10 @@ public class Drag extends AsterCommand {
             y2 = (int) mEndPosition.getY();
         }
         super.device.drag(x1, y1, x2, y2);
+    }
+
+    @Override
+    protected String getCommandPrefix() {
+        return "drag";
     }
 }
