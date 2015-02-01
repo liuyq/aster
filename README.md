@@ -12,6 +12,4 @@ TODO: clean and get rid of jython to make it easier to maintain
 upstream
 ---
 
-git push https://github.com/liuyq/aster.git
-
-account: liuyq
+git push https://liuyq@github.com/liuyq/aster.git master:master
