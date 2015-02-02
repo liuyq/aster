@@ -2,6 +2,8 @@ package org.linaro.utils;
 
 import java.util.ArrayList;
 
+import org.linaro.utils.RuntimeWrapper.RuntimeResult;
+
 public class SshAdb extends DeviceForAster {
     public String adbHost = Constants.SSH_ADB_HOST;
 

@@ -26,11 +26,11 @@ import javax.swing.JOptionPane;
 public class OpGetInput implements AsterOperation {
 
     public final static String sName = "Get Input";
-    protected String mInput;
+    private String mInput;
     private String tipMsg = "Input string to send to device";
 
     public OpGetInput(String tipMsg, String defaultValue) {
-        mInput = new String(defaultValue);
+        this.mInput = new String(defaultValue);
         this.tipMsg = tipMsg;
     }
 

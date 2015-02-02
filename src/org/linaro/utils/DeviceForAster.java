@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import org.linaro.utils.RuntimeWrapper.RuntimeResult;
 import org.zeroxlab.owl.Finder;
 import org.zeroxlab.owl.IMatcher;
 import org.zeroxlab.owl.MatchResult;

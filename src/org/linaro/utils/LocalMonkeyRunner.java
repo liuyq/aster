@@ -2,6 +2,7 @@ package org.linaro.utils;
 
 import java.util.ArrayList;
 
+import org.linaro.utils.RuntimeWrapper.RuntimeResult;
 
 public class LocalMonkeyRunner extends DeviceForAster {
     public LocalMonkeyRunner(String serial) {

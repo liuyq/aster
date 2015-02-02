@@ -40,5 +40,5 @@ public interface Constants {
         PORTRAIT, LANDSCAPE,
     }
 
-    public static int STATUS_BAR_ROWS = 10;
+    public static int STATUS_BAR_ROWS = 7;
 }

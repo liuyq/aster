@@ -28,6 +28,7 @@ import org.zeroxlab.aster.operations.OpGetInput;
 public class Type extends AsterCommand {
     String tipMsg = "Please input the string to send to device";
     String mText;
+    private static final String name = "Type";
 
     public Type() {
         mText = new String();
@@ -35,8 +36,7 @@ public class Type extends AsterCommand {
         super.mOps[0] = new OpGetInput(tipMsg, "");
     }
 
-    public Type(String argline)
-            throws IllegalArgumentException {
+    public Type(String argline) throws IllegalArgumentException {
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -51,18 +51,18 @@ public class Type extends AsterCommand {
     }
 
     public String getText() {
-	return mText;
+        return mText;
     }
 
     @Override
     public String getName() {
-        return "Type";
+        return name;
     }
 
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", "Type");
+        settings.put("Name", name);
         settings.put("Text", mText);
         return settings;
     }
@@ -74,13 +74,13 @@ public class Type extends AsterCommand {
         }
 
         if (settings.containsKey("Text")) {
-            mText = (String)settings.get("Text");
+            mText = (String) settings.get("Text");
         }
     }
 
     @Override
     public String toScript() {
-        return String.format("type('%s')\n", mText);
+        return String.format("%s('%s')\n", name, mText);
     }
 
     @Override
@@ -90,6 +90,6 @@ public class Type extends AsterCommand {
 
     @Override
     protected String getCommandPrefix() {
-        return "type";
+        return name;
     }
 }
