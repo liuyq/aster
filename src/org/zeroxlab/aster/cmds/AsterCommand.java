@@ -43,10 +43,12 @@ public abstract class AsterCommand {
             put("Press", Press.class);
             put("Type", Type.class);
             // put("Recall", Recall.class);
+            put("AdbShell", AdbShell.class);
             put("Wait", Wait.class);
         }
     };
 
+    @SuppressWarnings("rawtypes")
     public static Map<String, Class> getSupportedcommands() {
         return supportedCommands;
     }
