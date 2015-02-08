@@ -75,7 +75,9 @@ public class Touch extends AsterCommand {
         mOps[0] = ScreenUpdatePanel.getInstance().getOpTouch();
     }
 
-    public Touch(String prefix, String argline) throws IllegalArgumentException {
+    public Touch(String rootPath, String argline)
+            throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
@@ -84,7 +86,7 @@ public class Touch extends AsterCommand {
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
-                mImage = ImageIO.read(new File(prefix, args[0]));
+                mImage = ImageIO.read(new File(rootPath, args[0]));
                 mSerial = Integer.parseInt(args[0].substring(0,
                         args[0].length() - 4));
                 mSeqNext = mSerial + 1;
@@ -160,7 +162,7 @@ public class Touch extends AsterCommand {
         if (settings.containsKey("Image")) {
             mImage = (BufferedImage) settings.get("Image");
             mSerial = mSeqNext++;
-            saveImage(System.getProperty("user.dir"));
+            saveImage(getRootPath());
         }
         if (settings.containsKey("Pos")) {
             mPosition = (Point) settings.get("Pos");

@@ -25,35 +25,29 @@ import javax.script.SimpleBindings;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.aster.operations.OpGetInput;
 
-public class Type extends AsterCommand {
-    String tipMsg = "Please input the string to send to device";
-    String mText;
-    private static final String name = "Type";
+public class WaitTimeout extends AsterCommand {
+    private static final String name = "WaitTimeout";
+    String tipMsg = "Please input the time value(in seconds) you want to wait:";
+    String mTimeout = "30";
 
-    public Type() {
-        mText = new String();
+    public WaitTimeout() {
         super.mOps = new AsterOperation[1];
-        super.mOps[0] = new OpGetInput(tipMsg, "");
+        super.mOps[0] = new OpGetInput(tipMsg, mTimeout);
     }
 
-    public Type(String rootPath, String argline)
+    public WaitTimeout(String rootPath, String argline)
             throws IllegalArgumentException {
         super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
-
         if (args.length == 1) {
-            // type(text)
-            mText = stripQuote(args[0]);
+            // WaitTimeout(time)
+            mTimeout = args[0];
         } else {
-            throw new IllegalArgumentException("Invalid argument line.");
+            throw new IllegalArgumentException();
         }
-        mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput(tipMsg, "");
-    }
-
-    public String getText() {
-        return mText;
+        super.mOps = new AsterOperation[1];
+        super.mOps[0] = new OpGetInput(tipMsg, mTimeout);
     }
 
     @Override
@@ -64,8 +58,8 @@ public class Type extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", name);
-        settings.put("Text", mText);
+        settings.put("Name", "Wait");
+        settings.put("Timeout", mTimeout);
         return settings;
     }
 
@@ -76,18 +70,18 @@ public class Type extends AsterCommand {
         }
 
         if (settings.containsKey("Text")) {
-            mText = (String) settings.get("Text");
+            mTimeout = (String) settings.get("Text");
         }
     }
 
     @Override
     public String toScript() {
-        return String.format("%s('%s')\n", name, mText);
+        return String.format("%s(%s)\n", name, mTimeout);
     }
 
     @Override
     public void execute() {
-        super.device.inputText(mText);
+        device.executeAdbShell("sleep", mTimeout);
     }
 
     @Override

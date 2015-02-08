@@ -132,6 +132,10 @@ class ScreenUpdateSession implements Runnable, ItemListener {
             System.out.println("There is no drawer to update screenshot");
             return;
         }
+        if (device == null) {
+            System.out.println("There is no device available");
+            return;
+        }
 
         BufferedImage image = device.getScreenshotBufferedImage(mLandscape);
         if (image != null) {

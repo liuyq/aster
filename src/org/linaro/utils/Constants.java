@@ -15,7 +15,7 @@ public interface Constants {
     public static final String ADB_TYPE_LOCAL = "LOCAL";
     public static final String ADB_TYPE_MONKEYRUNNER = "MONKEYRUNNER";
     public static final String ADB_TYPE_SSH = "SSH";
-    public static final String ADB_TYPE_DEFAULT = ADB_TYPE_LAVA;
+    public static final String ADB_TYPE_DEFAULT = ADB_TYPE_LOCAL;
     public static final String[] ADB_TYPES = { ADB_TYPE_LAVA, ADB_TYPE_LOCAL,
             ADB_TYPE_MONKEYRUNNER, ADB_TYPE_SSH };
 
@@ -27,6 +27,7 @@ public interface Constants {
             "10.10.3.11:5555", "10.10.3.12:5555", "10.10.3.13:5555",
             "10.7.0.5:5555", "10.10.3.14:5555" };
 
+    public static boolean DEBUG = false;
     public static boolean DEBUG_CMDLINE = false;
     public static boolean DEBUG_IMAGE_MATCH = false;
 

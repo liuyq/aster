@@ -43,11 +43,13 @@ import org.linaro.utils.DeviceForAster;
 import com.android.monkeyrunner.MonkeyFormatter;
 import com.google.common.io.Files;
 
-
 public class AsterCommandManager {
 
+    // TODO: this variant should be deleted or use a single instance
+    // Or use the rootPath variant in the AsterCommand
     private static File mCwd = null;
     private static Stack<String> mPathStack = new Stack<String>();
+
     // private static ChimpChat mChimpChat;
 
     public AsterCommandManager() {
@@ -61,7 +63,7 @@ public class AsterCommandManager {
     }
 
     private void zipDir(File prefix, String dir, ZipOutputStream zos)
-        throws FileNotFoundException, IOException {
+            throws FileNotFoundException, IOException {
         File dirfile = new File(dir);
         String[] dirlist = dirfile.list();
         byte[] buffer = new byte[4096];
@@ -86,8 +88,7 @@ public class AsterCommandManager {
         }
     }
 
-    private void unzipDir(String zipfile, String prefix)
-        throws IOException {
+    private void unzipDir(String zipfile, String prefix) throws IOException {
         Enumeration<?> entries;
         ZipFile zipFile = new ZipFile(zipfile);
         byte[] buffer = new byte[4096];
@@ -97,15 +98,15 @@ public class AsterCommandManager {
         entries = zipFile.entries();
 
         while (entries.hasMoreElements()) {
-            ZipEntry entry = (ZipEntry)entries.nextElement();
-            if(entry.isDirectory()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if (entry.isDirectory()) {
                 (new File(prefix, entry.getName())).mkdir();
                 continue;
             }
 
             InputStream is = zipFile.getInputStream(entry);
-            OutputStream os = new BufferedOutputStream(new FileOutputStream
-                               ((new File(prefix, entry.getName())).getPath()));
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(
+                    (new File(prefix, entry.getName())).getPath()));
             while ((len = is.read(buffer)) > 0) {
                 os.write(buffer, 0, len);
             }
@@ -141,8 +142,7 @@ public class AsterCommandManager {
         }
     }
 
-    public File findFile(String cwd, String astfile)
-        throws IOException {
+    public File findFile(String cwd, String astfile) throws IOException {
         File ast = new File(cwd, astfile);
         while (!ast.exists()) {
             if (ast.getParentFile().getParent() == null) {
@@ -157,8 +157,9 @@ public class AsterCommandManager {
             throws Exception {
         if (!mPathStack.empty()) {
             try {
-                astfile = findFile(mPathStack.peek(), astfile).getAbsolutePath();
-            } catch(NullPointerException e) {
+                astfile = findFile(mPathStack.peek(), astfile)
+                        .getAbsolutePath();
+            } catch (NullPointerException e) {
                 throw new Exception(
                         String.format("Can not open `%s'.", astfile));
             }
@@ -169,7 +170,7 @@ public class AsterCommandManager {
         AsterCommand[] cmds = load(astfile);
 
         System.out.printf("Staring command execution...\n");
-        for (AsterCommand c: cmds) {
+        for (AsterCommand c : cmds) {
             System.err.printf("%s", c.toScript());
             cdCwd();
             // AsterCommand.ExecutionResult result = c
@@ -187,9 +188,9 @@ public class AsterCommandManager {
         mPathStack.pop();
         return new AsterCommand.ExecutionResult(true, "");
     }
-    
+
     public void dump(AsterCommand[] cmds, String filename, boolean overwrite)
-        throws IOException {
+            throws IOException {
         if (!filename.endsWith(".ast")) {
             filename += ".ast";
         }
@@ -197,9 +198,10 @@ public class AsterCommandManager {
         File root = Files.createTempDir();
 
         FileOutputStream out = new FileOutputStream(new File(root, "script.py"));
-        for (AsterCommand c: cmds) {
+        for (AsterCommand c : cmds) {
             out.write(c.toScript().getBytes());
             c.saveImage(root.getAbsolutePath());
+            c.saveInputFile(root.getAbsolutePath());
         }
         out.close();
 
@@ -209,20 +211,21 @@ public class AsterCommandManager {
                 if (overwrite) {
                     outfile.delete();
                 } else {
-                    throw new IOException(String.format("File `%s' exists", filename));
+                    throw new IOException(String.format("File `%s' exists",
+                            filename));
                 }
             }
-            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filename));
+            ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(
+                    filename));
             zipDir(root, root.getAbsolutePath(), zos);
             zos.close();
             deleteDir(root);
-        } catch(FileNotFoundException e) {
+        } catch (FileNotFoundException e) {
             throw new IOException(e);
         }
     }
 
-    public AsterCommand[] load(String zipfile)
-        throws IOException {
+    public AsterCommand[] load(String zipfile) throws IOException {
         String filename = "script.py";
         String rootpath = mCwd.getAbsolutePath();
         unzipDir(zipfile, rootpath);
@@ -247,19 +250,11 @@ public class AsterCommandManager {
                 System.out.println(e);
             }
 
-            for (String s: data.split("\n")) {
-                if (s.startsWith("drag")) {
-                    cmds.add(new Drag(rootpath, s.substring(4, s.length())));
-                } else if (s.startsWith("touch")) {
-                    cmds.add(new Touch(rootpath, s.substring(5, s.length())));
-                } else if (s.startsWith("press")) {
-                    cmds.add(new Press(s.substring(5, s.length())));
-                } else if (s.startsWith("type")) {
-                    cmds.add(new Type(s.substring(4, s.length())));
-                } else if (s.startsWith("wait")) {
-                    cmds.add(new Wait(rootpath, s.substring(4, s.length())));
-                } else if (s.startsWith("recall")) {
-                    cmds.add(new Recall(s.substring(6, s.length())));
+            for (String line : data.split("\n")) {
+                AsterCommand asterCmdInstance = AsterCommand
+                        .getAsterCommandSubInstance(rootpath, line);
+                if (asterCmdInstance != null) {
+                    cmds.add(asterCmdInstance);
                 }
             }
         } catch (FileNotFoundException e) {

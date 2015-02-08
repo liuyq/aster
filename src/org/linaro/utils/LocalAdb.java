@@ -1,5 +1,6 @@
 package org.linaro.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -28,5 +29,20 @@ public class LocalAdb extends DeviceForAster {
         executeAdbCommands("pull", Constants.SCR_PATH_DEVICE,
                 Constants.SCR_PATH_HOST);
         return Constants.SCR_PATH_HOST;
+    }
+
+    @Override
+    public void installApk(String apkFilePath) {
+        super.executeAdbCommands("install", apkFilePath);
+    }
+
+    public void push(String filePathHost) {
+        String baseName = new File(filePathHost).getName();
+        executeAdbCommands("push", filePathHost,
+                String.format("/data/local/tmp/%s", baseName));
+    }
+
+    public void pull(String filePathHost, String fileDevicePath) {
+        executeAdbCommands("pull", fileDevicePath, filePathHost);
     }
 }

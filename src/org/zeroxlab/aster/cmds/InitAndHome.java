@@ -38,9 +38,11 @@ public class InitAndHome extends AsterCommand {
         mOps = new AsterOperation[1];
     }
 
-    public InitAndHome(String argline)
+    public InitAndHome(String rootPath, String argline)
             throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         super.setFilled(true);
+
         String[] args = splitArgs(argline);
 
         if (args.length != 0) {

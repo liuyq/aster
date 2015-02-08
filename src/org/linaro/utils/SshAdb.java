@@ -1,5 +1,6 @@
 package org.linaro.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.linaro.utils.RuntimeWrapper.RuntimeResult;
@@ -33,7 +34,7 @@ public class SshAdb extends DeviceForAster {
         return cmdArray;
     }
 
-    public String getScreenShotPath(){
+    public String getScreenShotPath() {
         executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
         executeAdbCommands("pull", Constants.SCR_PATH_DEVICE,
                 Constants.SCR_PATH_HOST);
@@ -44,5 +45,40 @@ public class SshAdb extends DeviceForAster {
             return null;
         }
         return Constants.SCR_PATH_HOST;
+    }
+
+    @Override
+    public void installApk(String apkFilePath) {
+        scpFileToSshRemote(apkFilePath);
+        String baseName = new File(apkFilePath).getName();
+        executeAdbCommands("install", String.format("~/%s", baseName));
+    }
+
+    public void push(String filePathHost) {
+        scpFileToSshRemote(filePathHost);
+        String baseName = new File(filePathHost).getName();
+        executeAdbCommands("push", String.format("~/%s", baseName),
+                String.format("/data/local/tmp/%s", baseName));
+    }
+
+    public void pull(String filePathHost, String fileDevicePath) {
+        String baseName = new File(fileDevicePath).getName();
+        executeAdbCommands("pull", fileDevicePath,
+                String.format("~/%s", baseName));
+        scpFileFromSshRemote(String.format("~/%s", baseName), filePathHost);
+    }
+
+    private RuntimeResult scpFileToSshRemote(String filePathHost) {
+        String baseName = new File(filePathHost).getName();
+        RuntimeResult res = RuntimeWrapper.executeCommand("scp", filePathHost,
+                String.format("%s:~/%s", adbHost, baseName));
+        return res;
+    }
+
+    private RuntimeResult scpFileFromSshRemote(String filePathHost,
+            String filePathSshHost) {
+        RuntimeResult res = RuntimeWrapper.executeCommand("scp",
+                String.format("%s:", adbHost, filePathSshHost), filePathHost);
+        return res;
     }
 }

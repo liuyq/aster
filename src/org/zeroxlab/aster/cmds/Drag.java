@@ -54,7 +54,9 @@ public class Drag extends AsterCommand {
         mOps[0] = ScreenUpdatePanel.getInstance().getOpDrag();
     }
 
-    public Drag(String prefix, String argline) throws IllegalArgumentException {
+    public Drag(String rootPath, String argline)
+            throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         String[] args = splitArgs(argline);
         super.setFilled(true);
 
@@ -63,7 +65,7 @@ public class Drag extends AsterCommand {
             mCoordType = CoordType.AUTO;
             try {
                 args[0] = stripQuote(args[0]);
-                mImage = ImageIO.read(new File(prefix, args[0]));
+                mImage = ImageIO.read(new File(rootPath, args[0]));
                 mSerial = Integer.parseInt(args[0].substring(0,
                         args[0].length() - 4));
                 mSeqNext = mSerial + 1;

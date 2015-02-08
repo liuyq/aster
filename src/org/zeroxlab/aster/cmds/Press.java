@@ -70,8 +70,9 @@ public class Press extends AsterCommand {
         }
     }
 
-    public Press(String argline)
+    public Press(String rootPath, String argline)
             throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
         if (args.length == 2) {

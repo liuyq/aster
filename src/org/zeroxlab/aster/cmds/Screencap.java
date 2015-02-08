@@ -18,42 +18,32 @@
 
 package org.zeroxlab.aster.cmds;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.operations.AsterOperation;
-import org.zeroxlab.aster.operations.OpGetInput;
 
-public class Type extends AsterCommand {
-    String tipMsg = "Please input the string to send to device";
-    String mText;
-    private static final String name = "Type";
+public class Screencap extends AsterCommand {
+    private static final String name = "Screencap";
 
-    public Type() {
-        mText = new String();
-        super.mOps = new AsterOperation[1];
-        super.mOps[0] = new OpGetInput(tipMsg, "");
+    public Screencap() {
+        mOps = new AsterOperation[0];
     }
 
-    public Type(String rootPath, String argline)
+    public Screencap(String rootPath, String argline)
             throws IllegalArgumentException {
         super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
-
-        if (args.length == 1) {
-            // type(text)
-            mText = stripQuote(args[0]);
-        } else {
-            throw new IllegalArgumentException("Invalid argument line.");
+        if (args.length != 0) {
+            // Screencap()
+            throw new IllegalArgumentException(
+                    "Screencap does not support any parameter");
         }
         mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput(tipMsg, "");
-    }
-
-    public String getText() {
-        return mText;
     }
 
     @Override
@@ -65,29 +55,26 @@ public class Type extends AsterCommand {
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", name);
-        settings.put("Text", mText);
         return settings;
     }
 
     @Override
     protected void onFillSettings(SimpleBindings settings) throws IOException {
-        if (settings == null) {
-            return;
-        }
-
-        if (settings.containsKey("Text")) {
-            mText = (String) settings.get("Text");
-        }
+        // Nothing to do
     }
 
     @Override
     public String toScript() {
-        return String.format("%s('%s')\n", name, mText);
+        return String.format("%s()\n", name);
     }
 
     @Override
     public void execute() {
-        super.device.inputText(mText);
+        File target = new File(getRootPath(), String.format(
+                "screenshot_%d.png", mSerial));
+        LinaroUtils.copyFile(new File(device.getScreenShotPath()), target);
+        System.out.println("Catched screenshot:" + target.getAbsolutePath());
+
     }
 
     @Override

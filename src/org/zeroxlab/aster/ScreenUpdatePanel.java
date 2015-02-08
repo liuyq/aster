@@ -271,7 +271,8 @@ public class ScreenUpdatePanel extends JPanel implements ComponentListener,
         }
         AsterOperation[] ops = sRecordingCmd.getOperations();
         if (ops == null || ops.length == 0) {
-            System.err.println("You are asking me to fill an empty command");
+            System.err.println("You are asking me to fill an empty command:"
+                    + sRecordingCmd.getName());
             return;
         }
 

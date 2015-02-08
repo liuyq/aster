@@ -236,7 +236,6 @@ public class AsterMainPanel extends JPanel {
                                 file.getAbsolutePath());
                         mActionList.getActionListController().disableChangeListener();
                         mActionList.getActionListController().clear();
-                        // mActionList.getActionListController().setInitAndHomeCmd(cmds[0]);
                         for (int i = 0; i < cmds.length; i++) {
                             mActionList.getActionListController().pushCmd(cmds[i]);
                         }

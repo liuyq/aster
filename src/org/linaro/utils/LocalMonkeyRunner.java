@@ -31,4 +31,22 @@ public class LocalMonkeyRunner extends DeviceForAster {
         return null;
     }
 
+    @Override
+    public void installApk(String apkFilePath) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void push(String filePathHost) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void pull(String filePathHost, String fileDevicePath) {
+        // TODO Auto-generated method stub
+
+    }
+
 }

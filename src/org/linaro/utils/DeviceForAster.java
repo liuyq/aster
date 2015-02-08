@@ -22,6 +22,12 @@ public abstract class DeviceForAster {
 
     public abstract String getScreenShotPath();
 
+    public abstract void installApk(String apkFilePath);
+
+    public abstract void push(String filePathHost);
+
+    public abstract void pull(String filePathHost, String fileDevicePath);
+
     protected DeviceForAster(String serial) {
         this.serial = serial;
     }

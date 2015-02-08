@@ -28,33 +28,30 @@ import javax.script.SimpleBindings;
 import org.zeroxlab.aster.ScreenUpdatePanel;
 import org.zeroxlab.aster.operations.AsterOperation;
 
-public class Wait extends AsterCommand {
+public class WaitImage extends AsterCommand {
+    private static final String name = "WaitImage";
 
-    private enum WaitType { IMAGE, TIME }
-
-    WaitType mWaitType;
     double mTimeout = 30.0;
     double mSimilarity = 0.9;
     double mWaitDuration = 10.0;
 
-    public Wait() {
-        mWaitType = WaitType.IMAGE;
+    public WaitImage() {
         mOps = new AsterOperation[1];
         mOps[0] = ScreenUpdatePanel.getInstance().getOpTouch();
     }
 
-    public Wait(String prefix, String argline)
-        throws IllegalArgumentException {
+    public WaitImage(String rootPath, String argline)
+            throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
-        if (args.length == 4) {
-            // wait(image, timeout, similarity, landscape)
-            mWaitType = WaitType.IMAGE;
+        if (args.length == 2) {
+            // wait(image, landscape)
             try {
                 args[0] = stripQuote(args[0]);
-                mImage = ImageIO.read(new File(prefix, args[0]));
+                mImage = ImageIO.read(new File(rootPath, args[0]));
                 mSerial = Integer.parseInt(args[0].substring(0,
-                                           args[0].length() -4));
+                        args[0].length() - 4));
                 mSeqNext = mSerial + 1;
             } catch (IOException e) {
                 throw new IllegalArgumentException(e.toString());
@@ -68,10 +65,6 @@ public class Wait extends AsterCommand {
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(e.toString());
             }
-        } else if (args.length == 1) {
-            // wait(time)
-            mWaitType = WaitType.TIME;
-            mWaitDuration = Double.parseDouble(args[0]);
         } else {
             throw new IllegalArgumentException();
         }
@@ -81,71 +74,47 @@ public class Wait extends AsterCommand {
 
     @Override
     public String getName() {
-        return "Wait";
+        return name;
     }
 
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         settings.put("Name", "Wait");
-        settings.put("WaitType", mWaitType);
         if (mImage != null) {
             settings.put("Image", mImage);
         }
-        settings.put("Timeout", mTimeout);
-        settings.put("Similarity", mSimilarity);
         settings.put("Landscape", mLandscape);
-        settings.put("WaitDuration", mWaitDuration);
         return settings;
     }
 
     @Override
     protected void onFillSettings(SimpleBindings settings) throws IOException {
-        if (settings.containsKey("WaitType")) {
-            mWaitType = (WaitType)settings.get("WaitType");
-        }
         if (settings.containsKey("Image")) {
-            mImage = (BufferedImage)settings.get("Image");
+            mImage = (BufferedImage) settings.get("Image");
             mSerial = mSeqNext++;
-            saveImage(System.getProperty("user.dir"));
-        }
-        if (settings.containsKey("Timeout")) {
-            mTimeout = (Double)settings.get("Timeout");
-        }
-        if (settings.containsKey("Similarity")) {
-            mSimilarity = (Double)settings.get("Similarity");
+            saveImage(getRootPath());
         }
         if (settings.containsKey("Landscape")) {
-            mLandscape = (Boolean)settings.get("Landscape");
-        }
-        if (settings.containsKey("WaitDuration")) {
-            mLandscape = (Boolean)settings.get("WaitDuration");
+            mLandscape = (Boolean) settings.get("Landscape");
         }
     }
 
     @Override
     public String toScript() {
-        if (mWaitType == WaitType.IMAGE) {
-            return String.format("wait('%d.png', %.1f, %.2f, %s)\n", mSerial,
-                    mTimeout, mSimilarity, mLandscape? "True": "False");
-        } else {
-            return String.format("wait(%.2f)\n", mWaitDuration);
-        }
+        return String.format("%s('%d.png', %s)\n", name, mSerial,
+                mLandscape ? "True" : "False");
     }
 
     @Override
     public void execute() {
-        if (mWaitType == WaitType.IMAGE){
-            device.waitImageUntil(
-                    String.format("%d.png", mSerial),
-                    device.getScreenShotPath(), mTimeout, mLandscape);
-        }else{
-            device.executeAdbShell("sleep", "" + mWaitDuration);
-        }
+        device.waitImageUntil(String.format("%d.png", mSerial),
+                device.getScreenShotPath(), mLandscape);
+
     }
 
     @Override
     protected String getCommandPrefix() {
-        return "wait";
+        return name;
     }
 }

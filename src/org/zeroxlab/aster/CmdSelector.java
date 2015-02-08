@@ -49,6 +49,7 @@ public class CmdSelector {
                 null);
         try {
             if (s != null) {
+                // TODO: need to pass the rootPath for the AsterCommand instance
                 return (AsterCommand) AsterCommand.getSupportedcommands()
                         .get(s).getConstructor().newInstance();
             }

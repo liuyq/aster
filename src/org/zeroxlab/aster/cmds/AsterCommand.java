@@ -19,21 +19,49 @@
 package org.zeroxlab.aster.cmds;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import javax.imageio.ImageIO;
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.Constants;
 import org.linaro.utils.DeviceForAster;
+import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.operations.AsterOperation;
 import org.zeroxlab.wookieerunner.ScriptRunner;
 
+import com.google.common.io.Files;
+
 public abstract class AsterCommand {
+    // directory where images/files are saved for this command
+    private String rootPath = null;
+
+    public String getRootPath() {
+        if (rootPath == null) {
+            return System.getProperty("user.dir");
+        } else {
+            return rootPath;
+        }
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
+    }
 
     @SuppressWarnings({ "rawtypes", "serial" })
     private static final Map<String, Class> supportedCommands = new LinkedHashMap<String, Class>() {
@@ -42,9 +70,13 @@ public abstract class AsterCommand {
             put("Drag", Drag.class);
             put("Press", Press.class);
             put("Type", Type.class);
-            // put("Recall", Recall.class);
+            put("Call", Call.class);
+            put("InstallApk", InstallApk.class);
+            put("UninstallPackage", UninstallPackage.class);
             put("AdbShell", AdbShell.class);
-            put("Wait", Wait.class);
+            put("WaitTimeout", WaitTimeout.class);
+            put("WaitImage", WaitImage.class);
+            put("Screencap", Screencap.class);
         }
     };
 
@@ -64,11 +96,11 @@ public abstract class AsterCommand {
     protected int mSerial = 0;
     protected boolean mLandscape = false;
     protected BufferedImage mImage = null;
+    protected String inputFileName = new String();
+
     protected AsterOperation[] mOps;
     protected boolean mExecuting = false;
     protected boolean mFilled = false;
-
-    // protected MonkeyDeviceWrapper monkeyDeviceWrapper = null;
 
     public static class ExecutionResult {
         public boolean mSuccess;
@@ -132,6 +164,22 @@ public abstract class AsterCommand {
         }
     }
 
+    public void saveInputFile(String prefix) {
+        if (inputFileName != null && !inputFileName.isEmpty()) {
+            File orgInputFile = new File(new File(this.getRootPath(),
+                    inputFileName).getAbsolutePath());
+            String baseName = orgInputFile.getName();
+            File targetFile = new File(prefix, baseName);
+            if (!orgInputFile.getAbsolutePath().equals(
+                    targetFile.getAbsolutePath())) {
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+                LinaroUtils.copyFile(orgInputFile, targetFile);
+            }
+        }
+    }
+
     /* Return operations that stored in this Command */
     public AsterOperation[] getOperations() {
         return mOps;
@@ -169,7 +217,8 @@ public abstract class AsterCommand {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public AsterCommand getAsterCommandSubInstance(String rootpath, String line) {
+    public static AsterCommand getAsterCommandSubInstance(String rootpath,
+            String line) {
         for (Entry<String, Class> entry : supportedCommands.entrySet()) {
             try {
                 AsterCommand asterCommand = (AsterCommand) (entry.getValue()
@@ -204,4 +253,99 @@ public abstract class AsterCommand {
     }
 
     protected abstract String getCommandPrefix();
+
+    public static ExecutionResult runAsterScript(String scriptPath,
+            DeviceForAster device) {
+
+        ArrayList<AsterCommand> cmds = null;
+        try {
+            cmds = loadActionsFromAsterScript(scriptPath);
+        } catch (IOException e) {
+            return new AsterCommand.ExecutionResult(false, e.toString());
+        }
+
+        for (AsterCommand c : cmds) {
+            if (Constants.DEBUG) {
+                System.out.printf("%s", c.toScript());
+            }
+            // AsterCommand.ExecutionResult result = c
+            c.execute(device);
+            // if (result.mSuccess != true) {
+            // return result;
+            // }
+            // try {
+            // Thread.sleep(1000);
+            // } catch (InterruptedException e) {
+            // }
+        }
+        return new AsterCommand.ExecutionResult(true, "");
+    }
+
+    public static ArrayList<AsterCommand> loadActionsFromAsterScript(
+            String scriptPath) throws IOException {
+        ArrayList<AsterCommand> cmds = new ArrayList<AsterCommand>();
+        String filename = "script.py";
+        File rootDir = unzipDir(scriptPath);
+
+        try {
+            FileInputStream ist = new FileInputStream(new File(
+                    rootDir.getAbsolutePath(), filename));
+            byte[] buf = new byte[4096];
+            String data = new String();
+
+            try {
+                while (ist.available() > 0) {
+                    ist.read(buf);
+                    data += new String(buf);
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+
+            for (String line : data.split("\n")) {
+                AsterCommand asterCmdInstance = AsterCommand
+                        .getAsterCommandSubInstance(rootDir.getAbsolutePath(),
+                                line);
+                if (asterCmdInstance != null) {
+                    cmds.add(asterCmdInstance);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println(e);
+            e.printStackTrace();
+        }
+        return cmds;
+    }
+
+    private static File unzipDir(String zipfile) throws IOException {
+        Enumeration<?> entries;
+        ZipFile zipFile = new ZipFile(zipfile);
+        byte[] buffer = new byte[4096];
+        int len = 0;
+
+        File rootDir = Files.createTempDir();
+        rootDir.mkdirs();
+
+        entries = zipFile.entries();
+
+        while (entries.hasMoreElements()) {
+            ZipEntry entry = (ZipEntry) entries.nextElement();
+            if (entry.isDirectory()) {
+                (new File(rootDir.getAbsolutePath(), entry.getName())).mkdir();
+                continue;
+            }
+
+            InputStream is = zipFile.getInputStream(entry);
+            OutputStream os = new BufferedOutputStream(new FileOutputStream(
+                    (new File(rootDir.getAbsolutePath(), entry.getName()))
+                            .getAbsolutePath()));
+            while ((len = is.read(buffer)) > 0) {
+                os.write(buffer, 0, len);
+            }
+            is.close();
+            os.close();
+        }
+        zipFile.close();
+        return rootDir;
+    }
 }

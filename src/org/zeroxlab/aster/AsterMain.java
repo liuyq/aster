@@ -43,8 +43,12 @@ public class AsterMain {
                 "Choose the type on how to connect device",
                 JOptionPane.QUESTION_MESSAGE, null, Constants.ADB_TYPES,
                 Constants.ADB_TYPE_DEFAULT);
-        if (adbType == null || adbType.toString().isEmpty()) {
-            return Constants.ADB_TYPE_LOCAL;
+        if (adbType == null) {
+            return Constants.ADB_TYPE_DEFAULT;
+        } else if (adbType.toString().isEmpty()) {
+            return Constants.ADB_TYPE_DEFAULT;
+        } else if (adbType.toString().equals(Constants.ADB_TYPE_LAVA)) {
+            return Constants.ADB_TYPE_SSH;
         } else {
             return adbType.toString();
         }

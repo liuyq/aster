@@ -20,89 +20,81 @@
 
 package org.zeroxlab.aster.cmds;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.script.SimpleBindings;
 
+import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.operations.AsterOperation;
-import org.zeroxlab.aster.operations.OpGetInput;
+import org.zeroxlab.aster.operations.OpFileChooser;
 
 /**
  * Call for sub script
  * 
- * @author liuyq
- * 
  */
-public class Recall extends AsterCommand {
-    private String mScript;
-    private String tipMsg = "Please input the path of the script!";
+public class Call extends AsterCommand {
+    private static final String name = "Call";
 
-    public Recall() {
-        mScript = new String();
+    public Call() {
         mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput(tipMsg, "");
+        mOps[0] = new OpFileChooser();
     }
 
-    public Recall(String argline)
+    public Call(String rootPath, String argline)
             throws IllegalArgumentException {
+        super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
 
         if (args.length == 1) {
-            // recall(script)
-            mScript = stripQuote(args[0]);
+            // Call(script)
+            inputFileName = stripQuote(args[0]);
         } else {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
-        mOps[0] = new OpGetInput(tipMsg, "");
+        mOps[0] = new OpFileChooser();
     }
 
     @Override
     public String getName() {
-        return "Recall";
+        return name;
     }
 
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", "Recall");
-        settings.put("Script", mScript);
+        settings.put("FilePath", inputFileName);
         return settings;
     }
 
     @Override
     protected void onFillSettings(SimpleBindings settings) throws IOException {
-        if (settings.containsKey("Script")) {
-            mScript = (String)settings.get("Script");
+        if (settings.containsKey("FilePath")) {
+            String inputFilePath = (String) settings.get("FilePath");
+            inputFileName = new File(inputFilePath).getName();
+            LinaroUtils.copyFile(new File(inputFilePath),
+                    new File(super.getRootPath(),
+                    inputFileName));
         }
+    }
+
+    @Override
+    public String toScript() {
+        return String.format("%s('%s')\n", name, inputFileName);
     }
 
     @Override
     public void execute() {
         // ExecutionResult result = new ExecutionResult(true, "");
-        // mRunner.runStringLocal("wake()\n");
-        // // try {
-        // // if (mScript.length() != 0) {
-        // // result = (new AsterCommandManager()).runLocal(mScript);
-        // // }
-        // // } catch(IOException e) {
-        // // result.mSuccess = false;
-        // // result.mMessage = e.toString();
-        // // }
-        // return result;
-
-        // super.device.press("KEYCODE_HOME");
-    }
-
-    @Override
-    public String toScript() {
-        return String.format("recall('%s')\n", mScript);
+        String scriptPath = new File(super.getRootPath(), inputFileName)
+                .getAbsolutePath();
+        super.runAsterScript(scriptPath, super.device);
     }
 
     @Override
     protected String getCommandPrefix() {
-        // TODO Auto-generated method stub
-        return "recall";
+        return name;
     }
 }
