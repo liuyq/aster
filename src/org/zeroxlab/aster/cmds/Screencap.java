@@ -38,7 +38,7 @@ public class Screencap extends AsterCommand {
         super.setRootPath(rootPath);
         super.setFilled(true);
         String[] args = splitArgs(argline);
-        if (args.length != 0) {
+        if (args.length != 0 && !args[0].isEmpty()) {
             // Screencap()
             throw new IllegalArgumentException(
                     "Screencap does not support any parameter");

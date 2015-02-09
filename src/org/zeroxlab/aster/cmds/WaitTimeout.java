@@ -58,8 +58,8 @@ public class WaitTimeout extends AsterCommand {
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", "Wait");
-        settings.put("Timeout", mTimeout);
+        settings.put("Name", name);
+        settings.put("Text", mTimeout);
         return settings;
     }
 

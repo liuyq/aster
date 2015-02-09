@@ -33,7 +33,7 @@ import org.zeroxlab.aster.operations.AsterOperation;
  * 
  */
 public class InitAndHome extends AsterCommand {
-
+    private static final String name = "InitAndHome";
     public InitAndHome() {
         mOps = new AsterOperation[1];
     }
@@ -45,7 +45,7 @@ public class InitAndHome extends AsterCommand {
 
         String[] args = splitArgs(argline);
 
-        if (args.length != 0) {
+        if (args.length != 0 && !args[0].isEmpty()) {
             throw new IllegalArgumentException("Invalid argument line.");
         }
         mOps = new AsterOperation[1];
@@ -53,13 +53,13 @@ public class InitAndHome extends AsterCommand {
 
     @Override
     public String getName() {
-        return "InitAndHome";
+        return name;
     }
 
     @Override
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
-        settings.put("Name", "InitAndHome");
+        settings.put("Name", name);
         return settings;
     }
 
@@ -75,11 +75,11 @@ public class InitAndHome extends AsterCommand {
 
     @Override
     public String toScript() {
-        return String.format("InitAndHome()\n");
+        return String.format("%s()\n", name);
     }
 
     @Override
     protected String getCommandPrefix() {
-        return "InitAndHome";
+        return name;
     }
 }

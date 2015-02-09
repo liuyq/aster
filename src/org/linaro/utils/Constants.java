@@ -1,6 +1,5 @@
 package org.linaro.utils;
 
-
 public interface Constants {
     public static final String SCR_PATH_HOST = "/tmp/aster_screencap.png";
     public static final String SCR_PATH_HOST_ROTATED = "/tmp/aster_screencap_rotated.png";
@@ -16,8 +15,8 @@ public interface Constants {
     public static final String ADB_TYPE_MONKEYRUNNER = "MONKEYRUNNER";
     public static final String ADB_TYPE_SSH = "SSH";
     public static final String ADB_TYPE_DEFAULT = ADB_TYPE_LOCAL;
-    public static final String[] ADB_TYPES = { ADB_TYPE_LAVA, ADB_TYPE_LOCAL,
-            ADB_TYPE_MONKEYRUNNER, ADB_TYPE_SSH };
+    public static final String[] ADB_TYPES = { /* ADB_TYPE_LAVA, */
+    ADB_TYPE_LOCAL, ADB_TYPE_SSH, ADB_TYPE_MONKEYRUNNER };
 
     public static final String[] JUNO_DEVICES = { "juno-01", "juno-02",
             "juno-03", "juno-04", "juno-05", "juno-06", "juno-07", "juno-08",
