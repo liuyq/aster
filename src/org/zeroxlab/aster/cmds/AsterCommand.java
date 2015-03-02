@@ -67,6 +67,10 @@ public abstract class AsterCommand {
     private static final Map<String, Class> supportedCommands = new LinkedHashMap<String, Class>() {
         {
             put("Touch", Touch.class);
+            put("TouchWithText", TouchWithText.class);
+            put("TouchWithContentDesc", TouchWithContentDesc.class);
+            put("TouchWithResId", TouchWithResId.class);
+            put("WaitIdWithTextMatch", WaitIdWithTextMatch.class);
             put("Drag", Drag.class);
             put("Press", Press.class);
             put("Type", Type.class);

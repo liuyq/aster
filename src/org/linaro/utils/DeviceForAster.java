@@ -2,10 +2,20 @@ package org.linaro.utils;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.linaro.utils.RuntimeWrapper.RuntimeResult;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 import org.zeroxlab.owl.Finder;
 import org.zeroxlab.owl.IMatcher;
 import org.zeroxlab.owl.MatchResult;
@@ -149,7 +159,32 @@ public abstract class DeviceForAster {
             return findImage(targetImage, newBaseImage,
                     Constants.DEFAULT_SIMILARITY);
         }
+    }
 
+    public ArrayList<String> dumpXMLLayout() {
+        ArrayList<String> nodes = new ArrayList<String>();
+
+        NodeList nl = getAllNodes();
+        for (int i = 0; i < nl.getLength(); i++) {
+            NamedNodeMap attributes = nl.item(i).getAttributes();
+            if (null != attributes) {
+                String classAttr = attributes.getNamedItem("class")
+                        .getNodeValue();
+                String resId = attributes.getNamedItem("resource-id")
+                        .getNodeValue();
+                String text = attributes.getNamedItem("text").getNodeValue();
+                String contentDesc = attributes.getNamedItem("content-desc")
+                        .getNodeValue();
+                String bounds = attributes.getNamedItem("bounds")
+                        .getNodeValue();
+
+                nodes.add(String
+                        .format("class=%s, resource-id=%s, text=%s, content-desc=%s,bounds=%s",
+                                classAttr, resId, text, contentDesc, bounds));
+            }
+        }
+
+        return nodes;
     }
 
     public MatchResult waitImageUntil(String targetImage, String baseImage,
@@ -195,6 +230,28 @@ public abstract class DeviceForAster {
             if (newBaseImage != null) {
                 return waitImage(targetImage, newBaseImage);
             }
+        }
+        return null;
+    }
+
+    public NodeList getAllNodes() {
+        executeAdbShell("uiautomator", "dump", "--compressed",
+                Constants.XML_LAYOUT_FILE_DEVICE_PATH);
+        pull(Constants.XML_LAYOUT_FILE_HOST_PATH,
+                Constants.XML_LAYOUT_FILE_DEVICE_PATH);
+
+        File f = new File(Constants.XML_LAYOUT_FILE_HOST_PATH);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        try {
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(f);
+            return doc.getElementsByTagName("node");
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return null;
     }

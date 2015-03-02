@@ -23,8 +23,10 @@ package org.zeroxlab.aster;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
+import javax.swing.SwingUtilities;
 
 import org.linaro.utils.Constants.ExecutionState;
 import org.linaro.utils.DeviceForAster;
@@ -112,6 +114,7 @@ class ScreenUpdateSession implements Runnable, ItemListener {
                 }
                 try {
                     updateScreen(device);
+                    updateXMLLayoutLog(device);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -141,6 +144,20 @@ class ScreenUpdateSession implements Runnable, ItemListener {
         if (image != null) {
             mDrawer.setImage(image);
         }
+    }
+
+    private void updateXMLLayoutLog(DeviceForAster device) {
+        StatusBar.getInstance().dumpXMLLayout("============================");
+        ArrayList<String> output = device.dumpXMLLayout();
+        for (final String line : output) {
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
+                    StatusBar.getInstance().dumpXMLLayout(line);
+                }
+            });
+        }
+        StatusBar.getInstance().dumpXMLLayout("============================");
     }
 
 }

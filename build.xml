@@ -95,6 +95,7 @@
 
 	<!-- WookieeRunner -->
 	<target name="-compile-wookieerunner" depends="init">
+    <!--
 		<javac includeantruntime="false" srcdir="src/org/zeroxlab/wookieerunner"
 			destdir="${build.classes.dir}">
 			<classpath>
@@ -103,7 +104,8 @@
 			</classpath>
 		</javac>
 		<copy file="src/python/WookieeRunnerWrapper.py" todir="${build.classes.dir}" />
-	</target>
+	-->
+    </target>
 	<target name="-jar-wookieerunner" depends="-compile-wookieerunner">
 		<jar destfile="${dist.dir}/jar/wookieerunner.jar" basedir="${build.classes.dir}"
 			includes="org/zeroxlab/wookieerunner/**/*.class,**/*.py" manifest="etc/wookieerunner/manifest.txt" />

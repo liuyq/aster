@@ -5,6 +5,9 @@ public interface Constants {
     public static final String SCR_PATH_HOST_ROTATED = "/tmp/aster_screencap_rotated.png";
     public static final String SCR_PATH_DEVICE = "/data/local/tmp/aster_screencap.png";
 
+    public static final String XML_LAYOUT_FILE_DEVICE_PATH = "/data/local/tmp/uiautomator-dump-compressed.xml";
+    public static final String XML_LAYOUT_FILE_HOST_PATH = "/tmp/uiautomator-dump-compressed.xml";
+
     public static final String SSH_ADB_HOST = "aster-adb-host";
 
     public static double DEFAULT_SIMILARITY = 0.9;

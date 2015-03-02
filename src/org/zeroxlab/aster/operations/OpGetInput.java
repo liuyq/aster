@@ -28,12 +28,18 @@ public class OpGetInput implements AsterOperation {
     public final static String sName = "Get Input";
     private String mInput;
     private String tipMsg = "Input string to send to device";
+    private String settingsKey = "Text";
 
     public OpGetInput(String tipMsg, String defaultValue) {
         this.mInput = new String(defaultValue);
         this.tipMsg = tipMsg;
     }
 
+    public OpGetInput(String tipMsg, String defaultValue, String settingsKey) {
+        this.mInput = new String(defaultValue);
+        this.tipMsg = tipMsg;
+        this.settingsKey = settingsKey;
+    }
     @Override
     public String getName() {
         return sName;
@@ -52,7 +58,7 @@ public class OpGetInput implements AsterOperation {
     public SimpleBindings getSettings() {
         SimpleBindings settings = new SimpleBindings();
         if (!mInput.equals("")) {
-            settings.put("Text", mInput);
+            settings.put(settingsKey, mInput);
         }
         return settings;
     }

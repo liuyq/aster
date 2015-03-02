@@ -35,6 +35,7 @@ public class StatusBar extends JPanel {
     private static JTextArea miniBuf;
     private static JTextArea logcatBuf;
     private static JTextArea kmsgBuf;
+    private static JTextArea xmlLayoutBuf;
     private static StatusBar instance = null;
 
     private StatusBar() {
@@ -46,6 +47,8 @@ public class StatusBar extends JPanel {
         logcatBuf = createTap(tp, "Logcat",
                 "Show logcat message of the device", "");
         kmsgBuf = createTap(tp, "Kmsg", "Show kernel log message", "");
+        xmlLayoutBuf = createTap(tp, "XML Layout",
+                "Show XML information of UI layout", "");
 
         // 设置合适的显示尺寸，这个是必须的，因为如果所有的标签都
         // 不指定适合的显示尺寸，系统无法判断初始显示尺寸大小
@@ -75,6 +78,10 @@ public class StatusBar extends JPanel {
 
     public void kmsg(String msg) {
         kmsgBuf.append("\n" + msg);
+    }
+
+    public void dumpXMLLayout(String msg) {
+        xmlLayoutBuf.append("\n" + msg);
     }
 
     private JTextArea createTap(JTabbedPane tabPanel, String title,
