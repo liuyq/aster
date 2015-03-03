@@ -24,13 +24,6 @@ public class LocalAdb extends DeviceForAster {
         return cmdArray;
     }
 
-    public String getScreenShotPath() {
-        executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
-        executeAdbCommands("pull", Constants.SCR_PATH_DEVICE,
-                Constants.SCR_PATH_HOST);
-        return Constants.SCR_PATH_HOST;
-    }
-
     @Override
     public void installApk(String apkFilePath) {
         super.executeAdbCommands("install", apkFilePath);

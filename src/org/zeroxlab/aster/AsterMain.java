@@ -18,9 +18,6 @@
 
 package org.zeroxlab.aster;
 
-import java.io.File;
-import java.util.TreeMap;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
@@ -28,7 +25,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.linaro.utils.Constants;
 import org.linaro.utils.DeviceForAster;
-import org.linaro.utils.LinaroUtils;
 import org.zeroxlab.aster.cmds.AsterCommand.ExecutionResult;
 import org.zeroxlab.aster.cmds.AsterCommandManager;
 import org.zeroxlab.aster.cmds.InitAndHome;
@@ -55,23 +51,8 @@ public class AsterMain {
     }
 
     private String getSerial(String adbTypeStr) {
-        String serial = null;
-        if (adbTypeStr.equals(Constants.ADB_TYPE_LAVA)) {
-            adbTypeStr = Constants.ADB_TYPE_SSH;
-            TreeMap<String, String> devices = LinaroUtils.getJunoDevices();
-            Object device = JOptionPane.showInputDialog(null,
-                    "Please select the juno device", "Select the juno device",
-                    JOptionPane.QUESTION_MESSAGE, null, devices.keySet()
-                            .toArray(),
-                    Constants.JUNO_DEVICES[0]);
-
-            if (device != null) {
-                serial = devices.get(device.toString());
-            }
-        } else {
-            serial = JOptionPane.showInputDialog(null,
+        String serial = JOptionPane.showInputDialog(null,
                     "Please input the serial number", "");
-        }
         if (serial != null && serial.isEmpty()) {
             serial = null;
         }
@@ -79,9 +60,6 @@ public class AsterMain {
     }
 
     public void startGUI() {
-        File screenShot = new File(Constants.SCR_PATH_HOST);
-        screenShot.delete();
-
         trySetupLookFeel();
         String frame_title = "Aster";
         JFrame f = new JFrame(frame_title);// The entire window

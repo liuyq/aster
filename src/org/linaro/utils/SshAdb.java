@@ -34,19 +34,6 @@ public class SshAdb extends DeviceForAster {
         return cmdArray;
     }
 
-    public String getScreenShotPath() {
-        executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
-        executeAdbCommands("pull", Constants.SCR_PATH_DEVICE,
-                Constants.SCR_PATH_HOST);
-        RuntimeResult res = RuntimeWrapper.executeCommand("scp",
-                String.format("%s:%s", adbHost, Constants.SCR_PATH_HOST),
-                Constants.SCR_PATH_HOST);
-        if (res.getStatus() != 0) {
-            return null;
-        }
-        return Constants.SCR_PATH_HOST;
-    }
-
     @Override
     public void installApk(String apkFilePath) {
         scpFileToSshRemote(apkFilePath);

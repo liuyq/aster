@@ -1,12 +1,9 @@
 package org.linaro.utils;
 
 public interface Constants {
-    public static final String SCR_PATH_HOST = "/tmp/aster_screencap.png";
-    public static final String SCR_PATH_HOST_ROTATED = "/tmp/aster_screencap_rotated.png";
+    public static final String SCR_DIR_HOST = "/tmp/";
     public static final String SCR_PATH_DEVICE = "/data/local/tmp/aster_screencap.png";
-
     public static final String XML_LAYOUT_FILE_DEVICE_PATH = "/data/local/tmp/uiautomator-dump-compressed.xml";
-    public static final String XML_LAYOUT_FILE_HOST_PATH = "/tmp/uiautomator-dump-compressed.xml";
 
     public static final String SSH_ADB_HOST = "aster-adb-host";
 
@@ -18,16 +15,8 @@ public interface Constants {
     public static final String ADB_TYPE_MONKEYRUNNER = "MONKEYRUNNER";
     public static final String ADB_TYPE_SSH = "SSH";
     public static final String ADB_TYPE_DEFAULT = ADB_TYPE_LOCAL;
-    public static final String[] ADB_TYPES = { /* ADB_TYPE_LAVA, */
-    ADB_TYPE_LOCAL, ADB_TYPE_SSH, ADB_TYPE_MONKEYRUNNER };
-
-    public static final String[] JUNO_DEVICES = { "juno-01", "juno-02",
-            "juno-03", "juno-04", "juno-05", "juno-06", "juno-07", "juno-08",
-            "juno-09" };
-    public static final String[] JUNO_DEVICES_IP = { "10.10.3.7:5555",
-            "10.10.3.8:5555", "10.10.3.9:5555", "10.10.3.10:5555",
-            "10.10.3.11:5555", "10.10.3.12:5555", "10.10.3.13:5555",
-            "10.7.0.5:5555", "10.10.3.14:5555" };
+    public static final String[] ADB_TYPES = { ADB_TYPE_LOCAL, ADB_TYPE_SSH,
+            ADB_TYPE_MONKEYRUNNER };
 
     public static boolean DEBUG = false;
     public static boolean DEBUG_CMDLINE = false;

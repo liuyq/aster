@@ -17,4 +17,4 @@ if [ z"$1" == z"-debug" ]; then
     echo "$ jdb -attach 127.0.0.1:5487"
 fi
 
-exec java $debug_parameters -Xmx128M -Djava.ext.dirs="${jar_files}" -jar "${aster_jarpath}" "$@"
+exec java $debug_parameters -Xms512M -Xmx512M -Djava.ext.dirs="${jar_files}" -jar "${aster_jarpath}" "$@"

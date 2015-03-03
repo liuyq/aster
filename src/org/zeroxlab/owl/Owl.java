@@ -18,14 +18,6 @@
 
 package org.zeroxlab.owl;
 
-import com.googlecode.javacv.*;
-import static com.googlecode.javacv.cpp.opencv_core.*;
-import static com.googlecode.javacv.cpp.opencv_imgproc.*;
-import static com.googlecode.javacv.cpp.opencv_highgui.*;
-import com.googlecode.javacv.ObjectFinder;
-
-import java.io.FileNotFoundException;
-
 class TestResult {
     public String name;
     public double duration;
@@ -38,7 +30,7 @@ class TestResult {
 }
 
 public class Owl {
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         doTest();
     }
 
@@ -56,14 +48,14 @@ public class Owl {
         try {
             start = System.nanoTime();
             r = Finder.dispatch(matcher, "test-images/Haystack.png",
-                                         "test-images/Needle.png", 0.9);
+                    "test-images/Needle.png", 0.9);
             end = System.nanoTime();
         } catch (Exception e) {
             System.out.println(e);
         } finally {
             result.name = matcher.getClass().getName();
             result.result = r;
-            result.duration = (int)(end - start) / 1000000.0;
+            result.duration = (int) (end - start) / 1000000.0;
         }
 
         System.out.println(result);

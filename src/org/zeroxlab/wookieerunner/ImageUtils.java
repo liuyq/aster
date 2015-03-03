@@ -23,8 +23,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import org.linaro.utils.Constants;
-
 public class ImageUtils {
     public static BufferedImage rotate(BufferedImage src) {
         return rotate270(src);
@@ -76,7 +74,7 @@ public class ImageUtils {
         return rotated;
     }
 
-    public static String rotateImage(String orignal, int order) {
+    public static String rotateImage(String orignal, int order, String filePath) {
         BufferedImage originalImage = getBufferedImage(orignal);
         BufferedImage rotatedImage = originalImage;
         if (order == 270) {
@@ -89,10 +87,10 @@ public class ImageUtils {
             return orignal;
         }
         try {
-            File file = new File(Constants.SCR_PATH_HOST_ROTATED);
+            File file = new File(filePath);
             file.delete();
             ImageIO.write(rotatedImage, "png", file);
-            return Constants.SCR_PATH_HOST_ROTATED;
+            return filePath;
         } catch (IOException e) {
             return orignal;
         }

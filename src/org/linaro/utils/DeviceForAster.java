@@ -30,7 +30,28 @@ public abstract class DeviceForAster {
 
     protected abstract ArrayList<String> getAdbSerialArrayList();
 
-    public abstract String getScreenShotPath();
+    public String getScreenShotPath() {
+        return getScreenShot(getPathWithSerial("aster_screencap", "png"));
+    }
+
+    private String getScreenShot(String scr_host_path) {
+        File screenShot = new File(scr_host_path);
+        if (screenShot.exists()) {
+            screenShot.delete();
+        }
+        executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
+        this.pull(scr_host_path, Constants.SCR_PATH_DEVICE);
+
+        return scr_host_path;
+    }
+
+    private String getPathWithSerial(String base, String ext) {
+        if (serial != null && !serial.isEmpty()) {
+            return String.format("%s/%s_%s.%s", Constants.SCR_DIR_HOST, base,
+                    serial.replaceAll(":|\\.", "_"), ext);
+        }
+        return String.format("%s/%s.%s", Constants.SCR_DIR_HOST, base, ext);
+    }
 
     public abstract void installApk(String apkFilePath);
 
@@ -155,7 +176,8 @@ public abstract class DeviceForAster {
                     Constants.DEFAULT_SIMILARITY);
         } else {
             String newBaseImage = ImageUtils.rotateImage(baseImage,
-                    Constants.DEFAULT_ROTATE_ORDER);
+                    Constants.DEFAULT_ROTATE_ORDER,
+                    getPathWithSerial("aster_screencap_rotated", "png"));
             return findImage(targetImage, newBaseImage,
                     Constants.DEFAULT_SIMILARITY);
         }
@@ -226,7 +248,8 @@ public abstract class DeviceForAster {
             return waitImageUntil(targetImage, baseImage);
         } else {
             String newBaseImage = ImageUtils.rotateImage(baseImage,
-                    Constants.DEFAULT_ROTATE_ORDER);
+                    Constants.DEFAULT_ROTATE_ORDER,
+                    getPathWithSerial("aster_screencap_rotated", "png"));
             if (newBaseImage != null) {
                 return waitImage(targetImage, newBaseImage);
             }
@@ -235,12 +258,16 @@ public abstract class DeviceForAster {
     }
 
     public NodeList getAllNodes() {
+        String hostPath = getPathWithSerial("uiautomator-dump-compressed",
+                "xml");
+        File f = new File(hostPath);
+        if (f.exists())
+            f.delete();
         executeAdbShell("uiautomator", "dump", "--compressed",
                 Constants.XML_LAYOUT_FILE_DEVICE_PATH);
-        pull(Constants.XML_LAYOUT_FILE_HOST_PATH,
-                Constants.XML_LAYOUT_FILE_DEVICE_PATH);
+        pull(hostPath, Constants.XML_LAYOUT_FILE_DEVICE_PATH);
 
-        File f = new File(Constants.XML_LAYOUT_FILE_HOST_PATH);
+        f = new File(hostPath);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();

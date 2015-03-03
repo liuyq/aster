@@ -5,18 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.TreeMap;
 
 public class LinaroUtils {
-    public static TreeMap<String, String> getJunoDevices() {
-        TreeMap<String, String> juno_devices = new TreeMap<String, String>();
-        for (int i = 0; i < Constants.JUNO_DEVICES.length; i++) {
-            juno_devices.put(Constants.JUNO_DEVICES[i],
-                    Constants.JUNO_DEVICES_IP[i]);
-        }
-        return juno_devices;
-    }
-
     public static boolean copyFile(File src, File target) {
         FileOutputStream fs = null;
         InputStream inStream = null;
