@@ -3,10 +3,14 @@ package org.linaro.utils;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -23,6 +27,9 @@ import org.zeroxlab.owl.PyramidTemplateMatcher;
 import org.zeroxlab.owl.TemplateNotFoundException;
 import org.zeroxlab.wookieerunner.ImageUtils;
 
+import com.android.ddmlib.Log;
+import com.android.ddmlib.RawImage;
+
 public abstract class DeviceForAster {
 
     private String serial = null;
@@ -34,15 +41,183 @@ public abstract class DeviceForAster {
         return getScreenShot(getPathWithSerial("aster_screencap", "png"));
     }
 
-    private String getScreenShot(String scr_host_path) {
-        File screenShot = new File(scr_host_path);
+    private String getScreenShot(String png_host_path) {
+        File screenShot = new File(png_host_path);
         if (screenShot.exists()) {
             screenShot.delete();
         }
-        executeAdbShell("screencap", Constants.SCR_PATH_DEVICE);
-        this.pull(scr_host_path, Constants.SCR_PATH_DEVICE);
+        executeAdbShell(String.format("screencap >%s",
+                Constants.SCREENCAP_RAW_DEVICE));
+        String rawHostPath = getPathWithSerial("aster_screencap", "raw");
+        this.pull(rawHostPath, Constants.SCREENCAP_RAW_DEVICE);
+        try {
+            boolean result = this.convertRaw2Png(rawHostPath, png_host_path);
+            if (!result) {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
 
-        return scr_host_path;
+        return png_host_path;
+    }
+
+    private boolean convertRaw2Png(String rawFilePath, String pngFilePath)
+            throws IOException {
+        RawImage rawImage = new RawImage();
+        File rawDataFile = new File(rawFilePath);
+        FileInputStream rawFileInputStream = new FileInputStream(rawDataFile);
+
+        byte[] whf = new byte[12];
+        rawFileInputStream.read(whf);
+        ByteBuffer buf = ByteBuffer.wrap(whf);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        int w = buf.getInt();
+        int h = buf.getInt();
+        int format = buf.getInt();
+
+        int version = Constants.DDMS_RAWIMAGE_VERSION;
+        int headerSize = RawImage.getHeaderSize(version);
+
+        ByteBuffer headerBuf = ByteBuffer.allocate(headerSize * 4);
+        FBInfo fbinfo = generateFBInfoBasedOnImgInfo(w, h, format);
+        if (fbinfo == null) {
+            rawFileInputStream.close();
+            return false;
+        }
+        fbinfo.putToByteBuffer(headerBuf);
+
+        // fill the RawImage with the header
+        if (rawImage.readHeader(version, headerBuf) == false) {
+            Log.e("Screenshot", "Unsupported version: " + version);
+            rawFileInputStream.close();
+            return false;
+        }
+
+        byte[] imageData = new byte[rawImage.size];
+        rawFileInputStream.read(imageData);
+        rawImage.data = imageData;
+        rawFileInputStream.close();
+        BufferedImage bufferedImage = new BufferedImage(rawImage.width,
+                rawImage.height, BufferedImage.TYPE_INT_ARGB);
+        int index = 0;
+        int IndexInc = rawImage.bpp >> 3;
+        for (int y = 0; y < rawImage.height; y++) {
+            for (int x = 0; x < rawImage.width; x++) {
+                int value = rawImage.getARGB(index);
+                index += IndexInc;
+                bufferedImage.setRGB(x, y, value);
+            }
+        }
+        File file = new File(pngFilePath);
+        file.delete();
+        ImageIO.write(bufferedImage, "png", file);
+        return true;
+    }
+
+    class FBInfo {
+        int bpp;
+        int size;
+        int width;
+        int height;
+        int red_offset;
+        int red_length;
+        int green_offset;
+        int green_length;
+        int blue_offset;
+        int blue_length;
+        int alpha_offset;
+        int alpha_length;
+
+        public void putToByteBuffer(ByteBuffer headerBuf) {
+            headerBuf.putInt(this.bpp);
+            headerBuf.putInt(this.size);
+            headerBuf.putInt(this.width);
+            headerBuf.putInt(this.height);
+            headerBuf.putInt(this.red_offset);
+            headerBuf.putInt(this.red_length);
+            headerBuf.putInt(this.blue_offset);
+            headerBuf.putInt(this.blue_length);
+            headerBuf.putInt(this.green_offset);
+            headerBuf.putInt(this.green_length);
+            headerBuf.putInt(this.alpha_offset);
+            headerBuf.putInt(this.alpha_length);
+            headerBuf.flip();
+        }
+    }
+
+    private FBInfo generateFBInfoBasedOnImgInfo(int w, int h, int format) {
+        FBInfo fbinfo = new FBInfo();
+        if (format == 1) { /* RGBA_8888 */
+            fbinfo.bpp = 32;
+            fbinfo.size = w * h * 4;
+            fbinfo.width = w;
+            fbinfo.height = h;
+            fbinfo.red_offset = 0;
+            fbinfo.red_length = 8;
+            fbinfo.green_offset = 8;
+            fbinfo.green_length = 8;
+            fbinfo.blue_offset = 16;
+            fbinfo.blue_length = 8;
+            fbinfo.alpha_offset = 24;
+            fbinfo.alpha_length = 8;
+        } else if (format == 2) { /* RGBX_8888 */
+            fbinfo.bpp = 32;
+            fbinfo.size = w * h * 4;
+            fbinfo.width = w;
+            fbinfo.height = h;
+            fbinfo.red_offset = 0;
+            fbinfo.red_length = 8;
+            fbinfo.green_offset = 8;
+            fbinfo.green_length = 8;
+            fbinfo.blue_offset = 16;
+            fbinfo.blue_length = 8;
+            fbinfo.alpha_offset = 24;
+            fbinfo.alpha_length = 0;
+        } else if (format == 3) { /* RGB_888 */
+            fbinfo.bpp = 24;
+            fbinfo.size = w * h * 3;
+            fbinfo.width = w;
+            fbinfo.height = h;
+            fbinfo.red_offset = 0;
+            fbinfo.red_length = 8;
+            fbinfo.green_offset = 8;
+            fbinfo.green_length = 8;
+            fbinfo.blue_offset = 16;
+            fbinfo.blue_length = 8;
+            fbinfo.alpha_offset = 24;
+            fbinfo.alpha_length = 0;
+        } else if (format == 4) { /* RGB_565 */
+            fbinfo.bpp = 16;
+            fbinfo.size = w * h * 2;
+            fbinfo.width = w;
+            fbinfo.height = h;
+            fbinfo.red_offset = 11;
+            fbinfo.red_length = 5;
+            fbinfo.green_offset = 5;
+            fbinfo.green_length = 6;
+            fbinfo.blue_offset = 0;
+            fbinfo.blue_length = 5;
+            fbinfo.alpha_offset = 0;
+            fbinfo.alpha_length = 0;
+        } else if (format == 5) { /* BGRA_8888 */
+            fbinfo.bpp = 32;
+            fbinfo.size = w * h * 4;
+            fbinfo.width = w;
+            fbinfo.height = h;
+            fbinfo.red_offset = 16;
+            fbinfo.red_length = 8;
+            fbinfo.green_offset = 8;
+            fbinfo.green_length = 8;
+            fbinfo.blue_offset = 0;
+            fbinfo.blue_length = 8;
+            fbinfo.alpha_offset = 24;
+            fbinfo.alpha_length = 8;
+        } else {
+            Log.e("Screenshot", "Unsupported format: " + format);
+            return null;
+        }
+        return fbinfo;
     }
 
     private String getPathWithSerial(String base, String ext) {
@@ -149,7 +324,7 @@ public abstract class DeviceForAster {
     public void inputText(String text) {
         // TODO: need to normalize the text here more
         // Now only use single quote to do the normalization simply
-        executeAdbShell("input", "text", "'" + text + "'");
+        executeAdbShell("input", "text", text);
     }
 
     public MatchResult findImage(String targetImage, String baseImage,
@@ -187,25 +362,27 @@ public abstract class DeviceForAster {
         ArrayList<String> nodes = new ArrayList<String>();
 
         NodeList nl = getAllNodes();
-        for (int i = 0; i < nl.getLength(); i++) {
-            NamedNodeMap attributes = nl.item(i).getAttributes();
-            if (null != attributes) {
-                String classAttr = attributes.getNamedItem("class")
-                        .getNodeValue();
-                String resId = attributes.getNamedItem("resource-id")
-                        .getNodeValue();
-                String text = attributes.getNamedItem("text").getNodeValue();
-                String contentDesc = attributes.getNamedItem("content-desc")
-                        .getNodeValue();
-                String bounds = attributes.getNamedItem("bounds")
-                        .getNodeValue();
+        if (nl != null) {
+            for (int i = 0; i < nl.getLength(); i++) {
+                NamedNodeMap attributes = nl.item(i).getAttributes();
+                if (null != attributes) {
+                    String classAttr = attributes.getNamedItem("class")
+                            .getNodeValue();
+                    String resId = attributes.getNamedItem("resource-id")
+                            .getNodeValue();
+                    String text = attributes.getNamedItem("text")
+                            .getNodeValue();
+                    String contentDesc = attributes
+                            .getNamedItem("content-desc").getNodeValue();
+                    String bounds = attributes.getNamedItem("bounds")
+                            .getNodeValue();
 
-                nodes.add(String
-                        .format("class=%s, resource-id=%s, text=%s, content-desc=%s,bounds=%s",
-                                classAttr, resId, text, contentDesc, bounds));
+                    nodes.add(String
+                            .format("class=%s, resource-id=%s, text=%s, content-desc=%s,bounds=%s",
+                                    classAttr, resId, text, contentDesc, bounds));
+                }
             }
         }
-
         return nodes;
     }
 
@@ -268,6 +445,9 @@ public abstract class DeviceForAster {
         pull(hostPath, Constants.XML_LAYOUT_FILE_DEVICE_PATH);
 
         f = new File(hostPath);
+        if (!f.exists()) {
+            return null;
+        }
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();

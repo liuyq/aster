@@ -2,8 +2,10 @@ package org.linaro.utils;
 
 public interface Constants {
     public static final String SCR_DIR_HOST = "/tmp/";
-    public static final String SCR_PATH_DEVICE = "/data/local/tmp/aster_screencap.png";
+    public static final String SCREENCAP_RAW_DEVICE = "/data/local/tmp/aster_screencap.raw";
     public static final String XML_LAYOUT_FILE_DEVICE_PATH = "/data/local/tmp/uiautomator-dump-compressed.xml";
+
+    public static final int DDMS_RAWIMAGE_VERSION = 1;
 
     public static final String SSH_ADB_HOST = "aster-adb-host";
 

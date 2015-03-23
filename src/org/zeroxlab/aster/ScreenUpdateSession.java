@@ -114,7 +114,6 @@ class ScreenUpdateSession implements Runnable, ItemListener {
                 }
                 try {
                     updateScreen(device);
-                    updateXMLLayoutLog(device);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -144,6 +143,7 @@ class ScreenUpdateSession implements Runnable, ItemListener {
         if (image != null) {
             mDrawer.setImage(image);
         }
+        updateXMLLayoutLog(device);
     }
 
     private void updateXMLLayoutLog(DeviceForAster device) {

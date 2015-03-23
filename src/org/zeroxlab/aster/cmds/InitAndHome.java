@@ -70,10 +70,11 @@ public class InitAndHome extends AsterCommand {
     @Override
     public void execute() {
         super.device.connect();
-        super.device.press("KEYCODE_HOME");
+        // super.device.executeAdbShell("disablesuspend.sh");
         super.device.executeAdbShell("sleep", "2");
         super.device.press("KEYCODE_MENU");
         super.device.press("KEYCODE_BACK");
+        super.device.press("KEYCODE_HOME");
     }
 
     @Override
